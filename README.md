@@ -84,7 +84,7 @@ A complete Minecraft plugin that recreates the Werewolf game with an immersive a
 
 ### Steps
 
-1. Download the JAR file from [Releases](https://github.com/lightshoro/lgmc/releases) or compile it yourself
+1. Download the JAR file from [Releases](https://github.com/DarkShoro/lgmc/releases) or compile it yourself
 2. Place the `lgmc-2.7.1-SNAPSHOT.jar` file in your server's `plugins/` folder
 3. Start or restart the server
 4. Configuration files will be automatically generated in `plugins/lgmc/`
