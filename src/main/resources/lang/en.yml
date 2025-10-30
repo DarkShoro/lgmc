@@ -265,6 +265,8 @@ commands:
     usage: "&cUsage: /goodGuys"
     header: "&9=== Good Guys Alive ==="
     player: "&a- {player}"
+  opengui:
+    usage: "&cUsage: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"
 
 # Errors
 errors:

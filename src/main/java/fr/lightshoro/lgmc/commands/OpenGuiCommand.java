@@ -1,7 +1,7 @@
 package fr.lightshoro.lgmc.commands;
 
 import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.gui.SorciereGUI;
+import fr.lightshoro.lgmc.gui.*;
 import fr.lightshoro.lgmc.managers.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +23,13 @@ public class OpenGuiCommand implements CommandExecutor {
     // sorciere -> SorciereGUI
 
     public static final Map<String, String> VALID_GUIS = Map.of(
-        "sorciere", "SorciereGUI"
+            "sorciere", "SorciereGUI",
+            "capitaine", "CapitaineVoteGUI",
+            "loupgarou", "LoupGarouGUI",
+            "vote", "VoteGUI",
+            "voyante", "VoyanteGUI",
+            "sorcierePoison", "SorcierePoisonGUI",
+            "cupidon", "CupidonGUI"
     );
 
     @Override
@@ -49,13 +55,33 @@ public class OpenGuiCommand implements CommandExecutor {
                 SorciereGUI sorciereGUI = new SorciereGUI(plugin);
                 sorciereGUI.open(player);
             }
+            case "CapitaineVoteGUI" -> {
+                CapitaineVoteGUI capitaineVoteGUI = new CapitaineVoteGUI(plugin);
+                capitaineVoteGUI.open(player);
+            }
+            case "LoupGarouGUI" -> {
+                LoupGarouGUI loupGarouGUI = new LoupGarouGUI(plugin);
+                loupGarouGUI.open(player);
+            }
+            case "VoteGUI" -> {
+                VoteGUI voteGUI = new VoteGUI(plugin);
+                voteGUI.open(player);
+            }
+            case "VoyanteGUI" -> {
+                VoyanteGUI voyanteGUI = new VoyanteGUI(plugin);
+                voyanteGUI.open(player);
+            }
+            case "SorcierePoisonGUI" -> {
+                SorcierePoisonGUI sorcierePoisonGUI = new SorcierePoisonGUI(plugin);
+                sorcierePoisonGUI.open(player);
+            }
+            case "CupidonGUI" -> {
+                CupidonGUI cupidonGUI = new CupidonGUI(plugin);
+                cupidonGUI.open(player);
+            }
             default -> player.sendMessage(plugin.getLanguageManager().getMessage("commands.opengui.usage")
                 .replace("{guis}", String.join(", ", VALID_GUIS.keySet())));
         }
-
-
-
-
 
         return true;
     }

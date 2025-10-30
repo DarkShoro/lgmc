@@ -266,6 +266,9 @@ commands:
     header: "&9=== Gentils en vie ==="
     player: "&a- {player}"
 
+  opengui:
+      usage: "&cUtilisation: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"
+
 # Erreurs
 errors:
   game-not-started: "&cAucune partie n'est en cours."
