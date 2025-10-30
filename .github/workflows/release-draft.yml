@@ -16,7 +16,8 @@ jobs:
       - name: Extract version from build.gradle
         id: extract_version
         run: |
-          version=$(grep -oP 'version\s*=\s*\"\K[^"]+' build.gradle)
+          version=$(grep -Eo 'version\s*=\s*"[^"]+"' build.gradle | sed 's/version\s*=\s*"\(.*\)"/\1/')
+          echo "version=$version"
           echo "::set-output name=version::$version"
 
       - name: Set up Java
