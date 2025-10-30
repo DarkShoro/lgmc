@@ -12,6 +12,7 @@ import fr.lightshoro.lgmc.managers.ConfigManager;
 import fr.lightshoro.lgmc.managers.GameManager;
 import fr.lightshoro.lgmc.managers.LanguageManager;
 import fr.lightshoro.lgmc.managers.LocationManager;
+import fr.lightshoro.lgmc.managers.ResourcePackManager;
 import fr.lightshoro.lgmc.managers.TimerManager;
 import fr.lightshoro.lgmc.tasks.VisibilityTask;
 import fr.lightshoro.lgmc.tasks.VoteCheckTask;
@@ -21,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Lgmc - Loup-Garou Minecraft Plugin
  * Recréation du script lg.sk en Java
- *
  * Ce plugin implémente un jeu de Loup-Garou pour Minecraft avec :
  * - Système de rôles (Loup-Garou, Villageois, Voyante, Sorcière, Chasseur, Cupidon, Petite Fille)
  * - Gestion des phases jour/nuit
@@ -36,11 +36,12 @@ public final class Lgmc extends JavaPlugin {
     private GameManager gameManager;
     private TimerManager timerManager;
     private LocationManager locationManager;
+    private ResourcePackManager resourcePackManager;
 
-    private String ASCII_ART =
+    private static final String ASCII_ART =
 
             "   ⠀⠀⠀⠀⠀⣀⣠⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⠀ " + "\n" +
-            "   ⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀" + "\n" +
+            "   ⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀" + "\n" +
             "   ⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢿⣿⣷⡀⠀  ██       ██████  ███    ███  ██████ " + "\n" +
             "   ⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⣴⢿⣿⣧⠀  ██      ██       ████  ████ ██     " + "\n" +
             "   ⣿⣿⣿⣿⣿⡿⠛⣩⠍⠀⠀⠀⠐⠉⢠⣿⣿⡇  ██      ██   ███ ██ ████ ██ ██     " + "\n" +
@@ -60,6 +61,7 @@ public final class Lgmc extends JavaPlugin {
         this.locationManager = new LocationManager(this);
         this.gameManager = new GameManager(this);
         this.timerManager = new TimerManager(this);
+        this.resourcePackManager = new ResourcePackManager(this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
@@ -160,5 +162,12 @@ public final class Lgmc extends JavaPlugin {
     public LocationManager getLocationManager() {
         return locationManager;
     }
-}
 
+    /**
+     * Récupère le gestionnaire de packs de ressources
+     * @return ResourcePackManager instance
+     */
+    public ResourcePackManager getResourcePackManager() {
+        return resourcePackManager;
+    }
+}

@@ -3,7 +3,6 @@ package fr.lightshoro.lgmc.listeners;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.models.GamePlayer;
 import fr.lightshoro.lgmc.models.Role;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,9 +10,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class GameListener implements Listener {
     private final Lgmc plugin;
@@ -58,48 +54,8 @@ public class GameListener implements Listener {
             }
         }
 
-        // Configuration du pack de ressources pour le joueur de manière asynchrone
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                // Obtenir la version du protocole du joueur via réflexion
-                Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + plugin.getServer().getClass().getPackage().getName().split("\\.")[3] + ".entity.CraftPlayer");
-                Object craftPlayer = craftPlayerClass.cast(player);
-                Object entityPlayer = craftPlayerClass.getMethod("getHandle").invoke(craftPlayer);
-                Object playerConnection = entityPlayer.getClass().getField("c").get(entityPlayer); // 'c' pour playerConnection dans 1.21
-                int protocolVersion = (int) playerConnection.getClass().getField("protocolVersion").get(playerConnection);
-
-                // Log a la console la version du protocole du joueur
-                plugin.getLogger().info("Le joueur " + player.getName() + " utilise la la version de protocole: " + protocolVersion);
-
-                String version = switch (protocolVersion) {
-                    case 767 -> "1.21";
-                    case 768 -> "1.21.1";
-                    case 769 -> "1.21.2";
-                    case 770 -> "1.21.3";
-                    case 771 -> "1.21.4";
-                    case 772 -> "1.21.5";
-                    case 773 -> "1.21.6";
-                    case 774 -> "1.21.7";
-                    case 775 -> "1.21.8";
-                    case 776 -> "1.21.9";
-                    case 777 -> "1.21.10";
-                    default -> "1.21";
-                };
-
-                String url = "https://cdn.eradium.fr/lgrsp/public/" + version + ".zip";
-                String hashUrl = "https://cdn.eradium.fr/lgrsp/public/" + version + ".txt";
-
-                URI hashFileUri = new URI(hashUrl);
-                Path tempFile = Files.createTempFile("hash", ".txt");
-                Files.copy(hashFileUri.toURL().openStream(), tempFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                String sha1Hash = Files.readString(tempFile).trim();
-
-                // Appliquer le pack sur le thread principal
-                Bukkit.getScheduler().runTask(plugin, () -> player.setResourcePack(url, sha1Hash));
-            } catch (Exception e) {
-                plugin.getLogger().warning("Impossible de configurer le pack de ressources pour le joueur " + player.getName() + ": " + e.getMessage());
-            }
-        });
+        // Configuration du pack de ressources pour le joueur
+        plugin.getResourcePackManager().applyResourcePack(player);
     }
 
     @EventHandler
