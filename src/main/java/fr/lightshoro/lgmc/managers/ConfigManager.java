@@ -261,5 +261,9 @@ public class ConfigManager {
     public int getWebsocketReconnectInterval() {
         return config.getInt("websocket.reconnect-interval", 10);
     }
+
+    public boolean isWebsocketEnabled() {
+        return config.getBoolean("websocket.enabled", false);
+    }
 }
 

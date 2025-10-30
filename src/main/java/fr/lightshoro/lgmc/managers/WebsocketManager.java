@@ -27,6 +27,14 @@ public class WebsocketManager {
         connect();
     }
 
+    public WebsocketManager(boolean enable, Lgmc plugin) {
+        this.uri = null;
+        this.secret = null;
+        this.plugin = plugin;
+        this.logger = this.plugin.getLogger();
+        logger.info("Not connecting to WebSocket as it is disabled in config.");
+    }
+
     private void connect() {
         try {
             socket = new WebSocketClient(new URI(uri)) {

@@ -64,7 +64,6 @@ public final class Lgmc extends JavaPlugin {
         this.timerManager = new TimerManager(this);
         this.resourcePackManager = new ResourcePackManager(this);
         this.motdManager = new MotdManager(this);
-        this.websocketManager = new WebsocketManager(this.configManager.getWebsocketUrl(), this.configManager.getWebsocketSecret(), this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
@@ -131,6 +130,13 @@ public final class Lgmc extends JavaPlugin {
         getLogger().info("║          Plugin activé avec succès     ║");
         getLogger().info("║   Langue: " + languageManager.getCurrentLanguage().toUpperCase() + " | Config v" + configManager.getConfig().getInt("config-version") + "               ║");
         getLogger().info("╚════════════════════════════════════════╝");
+
+        if (this.getConfigManager().isWebsocketEnabled()) {
+            this.websocketManager = new WebsocketManager(this.configManager.getWebsocketUrl(), this.configManager.getWebsocketSecret(), this);
+        } else {
+            this.websocketManager = new WebsocketManager(false,this);
+        }
+
     }
 
     @Override

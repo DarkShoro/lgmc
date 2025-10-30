@@ -87,7 +87,7 @@ The plugin itself is hardcoded in French in its variables and comments, but it s
 ### Steps
 
 1. Download the JAR file from [Releases](https://github.com/DarkShoro/lgmc/releases) or compile it yourself
-2. Place the `lgmc-3.0-BETA.jar` file in your server's `plugins/` folder
+2. Place the `lgmc-3.2-BETA.jar` file in your server's `plugins/` folder
 3. Start or restart the server
 4. Configuration files will be automatically generated in `plugins/lgmc/`
 
@@ -323,7 +323,7 @@ cd lgmc
 gradlew.bat shadowJar      # Windows
 
 # The JAR will be generated in:
-# build/libs/lgmc-3.0-BETA.jar
+# build/libs/lgmc-3.2-BETA.jar
 ```
 
 ### Automatic Build
