@@ -107,6 +107,7 @@ public class WebsocketManager {
     }
 
     private void authenticate() {
+        if (this.isDisabled()) return;
         if (socket != null && socket.isOpen()) {
             String authMessage = String.format("{\"type\":\"auth\",\"secret\":\"%s\"}", secret);
             socket.send(authMessage);
@@ -115,12 +116,14 @@ public class WebsocketManager {
     }
 
     private void attemptreconnect() {
+        if (this.isDisabled()) return;
         Integer interval = plugin.getConfigManager().getWebsocketReconnectInterval();
         // Interval to ticks
         plugin.getServer().getScheduler().runTaskLater(plugin, this::connect, interval * 20L);
     }
 
     public void sendAction(String action) {
+        if (this.isDisabled()) return;
         if (socket != null && socket.isOpen()) {
             String msg = String.format("{\"action\":\"%s\"}", action);
             socket.send(msg);
@@ -128,6 +131,7 @@ public class WebsocketManager {
     }
 
     public void sendPlayerDied(String playerName) {
+        if (this.isDisabled()) return;
         if (socket != null && socket.isOpen()) {
             String msg = String.format("{\"action\":\"player_died\",\"player\":\"%s\"}", playerName);
             socket.send(msg);
@@ -151,6 +155,7 @@ public class WebsocketManager {
     }
 
     public void sendLink(String uuid, String username) {
+        if (this.isDisabled()) return;
         if (socket != null && socket.isOpen()) {
             String msg = String.format("{\"action\":\"link\",\"uuid\":\"%s\",\"username\":\"%s\"}", uuid, username);
             socket.send(msg);
@@ -166,6 +171,6 @@ public class WebsocketManager {
     }
 
     public boolean isDisabled() {
-        return socket == null;
+        return !plugin.getConfigManager().isWebsocketEnabled();
     }
 }

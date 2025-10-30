@@ -175,7 +175,6 @@ public class GameManager {
         }
 
         freezeAll = false;
-        plugin.getWebsocketManager().sendGameOver();
 
         if (isAdmin) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -394,6 +393,7 @@ public class GameManager {
                 player.sendTitle(plugin.getLanguageManager().getMessage("victory.stalemate.title"),
                                 plugin.getLanguageManager().getMessage("victory.stalemate.subtitle"), 10, 70, 20);
             }
+            plugin.getWebsocketManager().sendGameOver();
             gameReset(false);
             return;
         }
@@ -513,6 +513,8 @@ public class GameManager {
                                .replace("{nights}", String.valueOf(nightCount))
                                .replace("{days}", String.valueOf(dayCount)));
         Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.village.broadcast-footer"));
+
+        plugin.getWebsocketManager().sendGameOver();
     }
 
     /**
@@ -546,6 +548,7 @@ public class GameManager {
                                .replace("{nights}", String.valueOf(nightCount))
                                .replace("{days}", String.valueOf(dayCount)));
         Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.werewolves.broadcast-footer"));
+        plugin.getWebsocketManager().sendGameOver();
     }
 
     public void startGame() {

@@ -92,12 +92,7 @@ public final class Lgmc extends JavaPlugin {
         if (getCommand("lgopengui") != null) {
             Objects.requireNonNull(getCommand("lgopengui")).setExecutor(new OpenGuiCommand(this));
         }
-        if (getCommand("wsaction") != null) {
-            Objects.requireNonNull(getCommand("wsaction")).setExecutor(new WSActionCommand(this));
-        }
-        if (getCommand("linkDiscord") != null) {
-            Objects.requireNonNull(getCommand("linkDiscord")).setExecutor(new DiscordLinkCommand(this));
-        }
+
         // Démarrer la tâche périodique de vérification des votes (toutes les 7 secondes)
         new VoteCheckTask(this).runTaskTimer(this, 140L, 140L);
 
@@ -131,11 +126,21 @@ public final class Lgmc extends JavaPlugin {
         getLogger().info("║   Langue: " + languageManager.getCurrentLanguage().toUpperCase() + " | Config v" + configManager.getConfig().getInt("config-version") + "               ║");
         getLogger().info("╚════════════════════════════════════════╝");
 
+        // Initialize WebsocketManager before registering commands
         if (this.getConfigManager().isWebsocketEnabled()) {
             this.websocketManager = new WebsocketManager(this.configManager.getWebsocketUrl(), this.configManager.getWebsocketSecret(), this);
         } else {
             this.websocketManager = new WebsocketManager(false,this);
         }
+
+        if (getCommand("wsaction") != null) {
+            Objects.requireNonNull(getCommand("wsaction")).setExecutor(new WSActionCommand(this));
+        }
+        if (getCommand("linkDiscord") != null) {
+            Objects.requireNonNull(getCommand("linkDiscord")).setExecutor(new DiscordLinkCommand(this));
+        }
+
+
 
     }
 
