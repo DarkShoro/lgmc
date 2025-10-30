@@ -1,0 +1,138 @@
+# ============================================
+# Configuration du plugin Loup-Garou Minecraft
+# Version: 1.6
+# ============================================
+
+# Ne modifiez pas cette valeur - elle permet la mise à jour automatique de la config
+config-version: 2
+
+# Langue du plugin (fr, en)
+language: fr
+
+# Emplacements pour le jeu
+locations:
+  # Emplacement du feu de camp (centre du jeu)
+  campfire:
+    world: world
+    x: 0.0
+    y: 64.0
+    z: 0.0
+
+  # Emplacement de téléportation du chasseur pour tirer
+  chasseur-tp:
+    world: world
+    x: 0.0
+    y: 100.0
+    z: 0.0
+    yaw: 0.0
+    pitch: 0.0
+
+  # Points d'apparition des joueurs
+  # Utilisez /lgsetup spawn <numéro> pour les définir
+  spawns:
+    1:
+      world: world
+      x: 10.0
+      y: 64.0
+      z: 0.0
+      yaw: 180.0
+      pitch: 0.0
+    2:
+      world: world
+      x: -10.0
+      y: 64.0
+      z: 0.0
+      yaw: 0.0
+      pitch: 0.0
+
+# Paramètres du jeu
+game:
+  # Nombre minimum de joueurs pour démarrer
+  min-players: 4
+
+  # Nombre de joueurs pour avoir 2 loups-garous
+  two-wolves-threshold: 9
+
+  # Activer Cupidon avec 9+ joueurs
+  cupidon-enabled: true
+
+  # Durée du compte à rebours avant le début (secondes)
+  countdown-duration: 10
+
+  # Durées des phases (secondes)
+  timers:
+    cupidon: 60
+    voyante: 30
+    loups-garous: 30  # par loup-garou (multiplié par le nombre)
+    sorciere: 30
+    vote-capitaine: 60
+    debat: 300  # 5 minutes
+    chasseur: 30
+    capitaine-succession: 30
+    capitaine-tiebreaker: 60
+
+  # Vote du capitaine
+  capitaine:
+    # Le vote du capitaine compte double
+    vote-double: true
+
+# Paramètres d'affichage
+display:
+  # Afficher les particules lors des morts
+  death-particles: true
+
+  # Afficher la foudre lors des morts
+  death-lightning: true
+
+  # Effet de cécité la nuit
+  night-blindness: true
+
+  # Afficher la trace de balle du chasseur
+  chasseur-bullet-trace: true
+
+  # Afficher les messages de debug
+  debug-messages: false
+
+# Paramètres des rôles
+roles:
+  # Casques des rôles (items Minecraft)
+  helmets:
+    loup-garou: RED_DYE
+    villageois: LIME_DYE
+    petite-fille: PURPLE_DYE
+    voyante: PINK_DYE
+    sorciere: GRAY_DYE
+    cupidon: LIGHT_GRAY_DYE
+    chasseur: CYAN_DYE
+    capitaine: BLUE_DYE
+    mort: CARVED_PUMPKIN
+
+# Paramètres des GUI
+gui:
+  # Titres personnalisés (laisser vide pour utiliser les valeurs par défaut de la langue)
+  titles:
+    vote: ""
+    vote-capitaine: ""
+    loup-garou: ""
+    voyante: ""
+    sorciere: ""
+    cupidon: ""
+
+# Paramètres avancés
+advanced:
+  # Sauvegarder les statistiques des parties
+  save-stats: true
+
+  # Permettre aux spectateurs de voir les morts
+  spectators-see-dead: true
+
+  # Téléporter automatiquement les joueurs aux spawns
+  auto-teleport-spawns: true
+
+  # Geler les joueurs pendant les phases de nuit
+  freeze-during-night: true
+
+messages:
+  game-start: "&eLa partie commence !"
+  game-stop: "&cLa partie a été arrêtée."
+

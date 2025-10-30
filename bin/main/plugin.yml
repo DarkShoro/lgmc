@@ -1,0 +1,55 @@
+name: lgmc
+version: '2.7.1-SNAPSHOT'
+main: fr.lightshoro.lgmc.Lgmc
+api-version: '1.21'
+description: Plugin de jeu Loup-Garou pour Minecraft (4-12 joueurs)
+author: LightShoro
+
+commands:
+  lgstart:
+    description: Démarre une partie de Loup-Garou (4-12 joueurs)
+    usage: /lgstart
+    permission: lgmc.start
+    aliases: [lggo, startlg]
+  lgstop:
+    description: Arrête la partie de Loup-Garou en cours
+    usage: /lgstop
+    permission: lgmc.stop
+    aliases: [stoplg]
+  lgreload:
+    description: Recharge la configuration du plugin
+    usage: /lgreload
+    permission: lgmc.reload
+    aliases: [lgrl, reloadlg]
+  lgsetup:
+    description: Configure les emplacements pour le jeu
+    usage: /lgsetup <campfire|chasseurtp|spawn|info> [numéro]
+    permission: lgmc.setup
+  testament:
+    description: Permet au capitaine de nommer son successeur
+    usage: /testament <joueur>
+    permission: lgmc.testament
+  goodGuys:
+    description: Affiche le nombre de bons joueurs restants (debug)
+    usage: /goodGuys
+    permission: lgmc.debug
+
+permissions:
+  lgmc.start:
+    description: Permet de démarrer une partie
+    default: op
+  lgmc.stop:
+    description: Permet d'arrêter une partie
+    default: op
+  lgmc.reload:
+    description: Permet de recharger la configuration
+    default: op
+  lgmc.setup:
+    description: Permet de configurer les emplacements
+    default: op
+  lgmc.testament:
+    description: Permet d'utiliser la commande testament
+    default: true
+  lgmc.debug:
+    description: Permet d'utiliser les commandes de débogage
+    default: op

@@ -1,0 +1,275 @@
+# ============================================
+# Fichier de langue Française
+# Loup-Garou Minecraft
+# ============================================
+
+# Messages généraux
+general:
+  prefix: "&9[LG]&r "
+  game-starting: "&eLa partie commence dans &c&l{time}&e seconde(s)"
+  game-started: "&eC'est parti !"
+  game-reset: "&eLe jeu a été réinitialisé par un administrateur."
+  game-in-progress: "&eUne partie est déjà en cours. Vous pouvez observer mais vous ne pouvez pas participer à cette partie."
+  not-enough-players: "&9Pas assez de joueurs pour démarrer. Minimum : 4 joueurs."
+  too-many-players: "&cTrop de joueurs connectés ! Maximum : 12 joueurs."
+  player-joined: "&a{player} a rejoint la partie"
+  player-left: "&c{player} a quitté la partie"
+  village: "&a&lVillage"
+  amoureux: "&dAmoureux"
+  timer-advanced-capitaine: "&9Le timer a été avancé car tout le monde a voté pour le {roles.capitaine.name}&9."
+  timer-advanced-vote: "&9Le timer a été avancé car tout le monde a voté."
+
+# Phases du jeu
+phases:
+  night: "&6------------------ &eNuit {count} &6------------------"
+  day: "&6------------------ &eJour {count} &6------------------"
+  night-falls: "&9Les {roles.villageois.name}&9 s'endorment paisiblement."
+  day-breaks: "&9Les {roles.villageois.name}&9 se réveillent."
+
+# Rôles
+roles:
+  loup-garou:
+    name: "&c&lLoup Garou"
+    title: "&6Tu es {roles.loup-garou.name}"
+    subtitle: "&6Tu gagnes avec les {roles.loup-garou.name}&c&ls"
+  villageois:
+    name: "&a&lVillageois"
+    title: "&6Tu es {roles.villageois.name}"
+    subtitle: "&6Tu gagnes avec le {general.village}"
+  petite-fille:
+    name: "&a&lPetite Fille"
+    title: "&6Tu es {roles.petite-fille.name}"
+    subtitle: "&6Tu gagnes avec le {general.village}"
+  voyante:
+    name: "&a&lVoyante"
+    title: "&6Tu es {roles.voyante.name}"
+    subtitle: "&6Tu gagnes avec le {general.village}"
+  sorciere:
+    name: "&a&lSorcière"
+    title: "&6Tu es {roles.sorciere.name}"
+    subtitle: "&6Tu gagnes avec le {general.village}"
+  cupidon:
+    name: "&a&lCupidon"
+    title: "&6Tu es {roles.cupidon.name}"
+    subtitle: "&6Tu gagnes avec le {general.village}"
+  chasseur:
+    name: "&a&lChasseur"
+    title: "&6Tu es {roles.chasseur.name}"
+    subtitle: "&6Tu gagnes avec le {general.village}"
+  capitaine:
+    name: "&6&lCapitaine"
+
+# Actions des rôles
+actions:
+  cupidon:
+    announce: "&9{roles.cupidon.name} &9va choisir deux amoureux..."
+    timer: "&a{roles.cupidon.name} &achoisit les amoureux"
+    first-lover: "&9Premier amoureux : &7&l{player}"
+    second-lover: "&9Second amoureux : &7&l{player}"
+    same-player: "&cVous ne pouvez pas choisir la même personne deux fois !"
+    no-couple: "&9Vous n'avez créé aucun couple."
+    in-love: "&d❤ Vous êtes tombé amoureux de &l{player}&d ! ❤"
+
+  voyante:
+    announce: "&9La {roles.voyante.name} &9va sonder un joueur."
+    timer: "&aLa {roles.voyante.name} &aeffectue sa consultation"
+    no-probe: "&9Vous n'avez sondé personne."
+    probe: "&9Vous avez sondé &7&l{player}&9, il est {role}&9."
+
+  loups-garous:
+    announce: "&9Les {roles.loup-garou.name}&c&ls &9vont choisir une victime."
+    timer: "&cLes {roles.loup-garou.name}&c&ls choisissent une nouvelle victime"
+    no-target: "&9Vous n'avez désigné personne."
+    designated: "&9Vous avez désigné &7&l{player}&9."
+    no-agreement: "&9Vous n'avez pas su vous mettre d'accord."
+
+  sorciere:
+    announce: "&9La {roles.sorciere.name} &9prépare une nouvelle potion."
+    timer: "&aLa {roles.sorciere.name} &aprépare ses potions"
+    saved: "&9Vous avez décidé de sauver &7&l{player}&9."
+    poisoned: "&9Vous avez empoisonné &7&l{player}&9."
+    no-action: "&9Vous n'avez rien fait."
+    no-poison: "&9Vous n'avez empoisonné personne."
+    target-info: "&6&l{player}&e est pris pour cible"
+
+  chasseur:
+    announce: "&6&l{player} &9est sur le point de mourir. Cependant, il était {roles.chasseur.name}&9. Il va choisir un joueur à emporter avec lui dans la mort."
+    timer: "&aLe {roles.chasseur.name} &ava choisir un joueur à emporter avec lui dans la mort"
+    instruction: "&7Vous êtes sur le point de mourir, choisissez un joueur à emporter avec vous"
+    shot: "&6&l{chasseur} &9a tiré sur &6&l{target}&9 !"
+    aim: "&aVous avez visé &l{player}"
+    must-aim: "&cVous devez viser un joueur !"
+    already-dead: "&cCe joueur est déjà mort !"
+    cant-shoot-self: "&cVous ne pouvez pas vous tirer dessus !"
+
+# Vote
+vote:
+  capitaine:
+    announce: "&9Les {roles.villageois.name} &9vont élire un nouveau {roles.capitaine.name}&9."
+    timer: "&9Les {roles.villageois.name} &9élisent un nouveau {roles.capitaine.name}"
+    elected: "&9Le village a élu un nouveau {roles.capitaine.name}&9, &6&l{player}&9."
+    voted-for: "&9Vous avez voté pour &7&l{player}&9."
+    already-voted: "&cVous avez déjà voté pour un nouveau {roles.capitaine.name}&c."
+    no-vote: "&9Vous n'avez voté pour personne."
+
+  day:
+    announce: "&9Les {roles.villageois.name} &9débattent pour savoir qui éliminer."
+    timer: "&9Les {roles.villageois.name} &9débattent pour savoir qui éliminer"
+    voted-for: "&9Vous avez voté pour &7&l{player}&9."
+    already-voted: "&cVous avez déjà voté."
+    no-vote: "&9Vous n'avez voté pour personne."
+    no-agreement: "&9Le village n'a pas su se mettre d'accord sur l'élimination. Personne n'est éliminé."
+    no-elimination: "&9Personne n'a été éliminé car le village n'a pas voté."
+
+  tiebreaker:
+    announce: "&9Égalité - Le {roles.capitaine.name} &9va départager"
+    capitaine-decides: "&9Le {roles.capitaine.name} &9va départager l'égalité."
+    capitaine-message: "&9Le village n'a pas pu se départager et laisse le {roles.capitaine.name} &9choisir."
+    choice: "&9Le village hésite entre &6&l{player1}&9 et &6&l{player2}&9."
+    instruction: "&7Choisissez le joueur que vous voulez éliminer."
+    timer: "&aLe {roles.capitaine.name} &ava départager l'égalité"
+    decided: "&9Le {roles.capitaine.name} &6&l{capitaine}&9 a choisi d'éliminer &6&l{player}&9."
+
+# Succession du capitaine
+succession:
+  testament-random: "&6&l{dying}&9 avait décidé dans son testament de nommer le nouveau {roles.capitaine.name} &9au hasard, &6&l{new}&9 a été tiré au sort."
+  testament-chosen: "&9Dans son testament, &6&l{dying}&9 avait nommé &6&l{new}&9 comme successeur au poste de {roles.capitaine.name}&9."
+  dying-message: "&9Le village vous prend pour cible, vous êtes sur le point de mourir."
+  instruction: "&7Veuillez nommer votre successeur avec la commande (/testament <joueur>)"
+  timer: "&aLe {roles.capitaine.name} &ava nommer son successeur"
+
+# Messages de mort
+death:
+  default: "&9Le village a perdu un de ses membres, {player}&9 était {role}"
+  love: "&9Par chagrin d'amour, {player}&9 s'est suicidé, il était {role}"
+  werewolf: "{player} &9a été dévoré par les {roles.loup-garou.name}&c&ls&9, il était {role}"
+  witch: "{player} &9a été empoisonné par la {roles.sorciere.name}&9, il était {role}"
+  hunter: "{player} &9s'est pris la dernière balle du {roles.chasseur.name}&9, il était {role}"
+  vote: "&9Le {general.village} &9a décidé d'éliminer {player}, &9il était {role}"
+  no-deaths: "&9Aucun joueur n'est en attente de mort."
+
+# Victoires
+victory:
+  lovers:
+    title: "&d&lVictoire !"
+    subtitle: "&eLes {general.amoureux}&e ont gagné !"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&d&lVictoire des {general.amoureux} &d&l!"
+    broadcast-players: "&e{lover1}&9 et &e{lover2}&9 ont gagné !"
+    broadcast-footer: "&6═══════════════════════════════════"
+
+  village:
+    title: "&a&lVictoire !"
+    subtitle: "&eLe {general.village}&e a gagné !"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&a&lVictoire du {general.village} &a&l!"
+    broadcast-all-dead: "&9Tous les {roles.loup-garou.name}&c&ls &9ont été éliminés !"
+    broadcast-stats: "&9Survivants: &e{alive}&9 / &e{total}"
+    broadcast-duration: "&9Durée: &e{nights}&9 nuits et &e{days}&9 jours"
+    broadcast-footer: "&6═══════════════════════════════════"
+
+  werewolves:
+    title: "&a&lVictoire !"
+    subtitle: "&eLes {roles.loup-garou.name}&c&ls&e ont gagné !"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&c&lVictoire des {roles.loup-garou.name}&c&ls &c&l!"
+    broadcast-domination: "&9Les {roles.loup-garou.name}&c&ls &9ont dominé le village !"
+    broadcast-wolves: "&9Loups restants: &e{wolves}"
+    broadcast-villagers: "&9{roles.villageois.name} restants: &e{villagers}"
+    broadcast-duration: "&9Durée: &e{nights}&9 nuits et &e{days}&9 jours"
+    broadcast-footer: "&6═══════════════════════════════════"
+
+  stalemate:
+    title: "&7&lÉgalité !"
+    subtitle: "&8Personne n'a gagné !"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&7&lÉgalité !"
+    broadcast-message: "&9Le {roles.chasseur.name} &9et le {roles.loup-garou.name} &9se sont entre-tués !"
+    broadcast-no-winner: "&8Personne n'a gagné !"
+    broadcast-footer: "&6═══════════════════════════════════"
+
+  defeat:
+    title: "&c&lDéfaite !"
+
+# GUI
+gui:
+  vote: "&4&lChoisir un coupable à éliminer"
+  vote-capitaine: "&d&lVoter pour le nouveau {roles.capitaine.name}"
+  loup-garou: "&4&lChoisir une victime"
+  voyante: "&d&lChoisir un joueur à sonder"
+  sorciere: "&eChoisissez une action à effectuer"
+  sorciere-poison: "&4&lChoisir une cible"
+  cupidon-first: "&dChoisir le premier amoureux"
+  cupidon-second: "&dChoisir le second amoureux"
+
+  items:
+    vote-paper: "&a&lVoter pour le nouveau {roles.capitaine.name}"
+    vote-day: "&a&lVoter"
+    skip: "&c&lNe rien faire"
+    skip-gray: "&7&lNe rien faire"
+    life-potion: "&a&lPotion de vie"
+    life-potion-lore: "&9Sauver la vie de {player}."
+    death-potion: "&c&lPotion de mort"
+    death-potion-lore: "&9Empoisonner quelqu'un."
+    first-lover: "&d❤ Premier amoureux"
+
+# Commandes
+commands:
+  no-permission: "&cVous n'avez pas la permission d'utiliser cette commande."
+  player-only: "&cCette commande doit être exécutée par un joueur."
+
+  lgstart:
+    usage: "&cUtilisation: /lgstart"
+    started: "&aDémarrage de la partie de Loup-Garou..."
+
+  lgstop:
+    usage: "&cUtilisation: /lgstop"
+    stopped: "&eArrêt de la partie en cours..."
+
+  lgsetup:
+    usage: "&cUtilisation: /lgsetup <campfire|chasseur|spawn <numéro>>"
+    campfire-set: "&aEmplacement du feu de camp défini à votre position."
+    chasseur-set: "&aEmplacement de téléportation du chasseur défini à votre position."
+    spawn-set: "&aPoint d'apparition #{number} défini à votre position."
+    help-header: "&6=== Commandes de Configuration ==="
+    help-campfire: "&e/lgsetup campfire&f - Définir l'emplacement du feu de camp"
+    help-chasseurtp: "&e/lgsetup chasseurtp&f - Définir l'emplacement de téléportation du chasseur"
+    help-spawn: "&e/lgsetup spawn <numéro>&f - Définir un point d'apparition"
+    help-info: "&e/lgsetup info&f - Afficher les informations de configuration"
+    info-header: "&6=== Configuration Loup-Garou ==="
+    info-campfire: "&eFeu de camp: &f{location}"
+    info-chasseur: "&eTP Chasseur: &f{location}"
+    info-spawns: "&ePoints d'apparition: &f{count}"
+    not-set: "Non défini"
+
+  lgreload:
+    usage: "&cUtilisation: /lgreload"
+    config-updated: "&e⚠ Configuration mise à jour de v{old} à v{new}"
+    reloading: "&e⟳ Rechargement de la configuration en cours..."
+    reloaded: "&a✔ Configuration rechargée avec succès !"
+    language-info: "&7Langue: &b{language}"
+    not-capitaine: "&cVous n'êtes pas le {roles.capitaine.name}&c."
+    player-not-found: "&cLe joueur n'est pas en ligne."
+    cant-self: "&cVous ne pouvez pas vous nommer vous même, &lvous êtes en train de mourir&c."
+    player-dead: "&cCe joueur n'est pas en vie."
+
+  testament:
+    usage: "&cUtilisation: /testament <joueur>"
+    not-capitaine: "&cVous n'êtes pas le capitaine."
+    not-dying: "&cVous n'êtes pas en train de mourir."
+    player-not-found: "&cJoueur introuvable."
+    player-dead: "&cCe joueur est mort."
+    success: "&aVous avez nommé &l{player}&a comme successeur."
+
+  goodguys:
+    usage: "&cUtilisation: /goodGuys"
+    header: "&9=== Gentils en vie ==="
+    player: "&a- {player}"
+
+# Erreurs
+errors:
+  game-not-started: "&cAucune partie n'est en cours."
+  game-already-started: "&cUne partie est déjà en cours."
+  not-in-game: "&cVous n'êtes pas dans la partie."
+  cannot-vote-now: "&cVous ne pouvez pas voter maintenant."
+  config-error: "&c❌ Erreur lors du rechargement de la configuration !"

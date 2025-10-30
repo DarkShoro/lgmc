@@ -1,0 +1,1413 @@
+# Game Stuff
+
+on player move:
+    if {freezeall} is true:
+        cancel event
+on damage:
+    if {freezeall} is true:
+        cancel event
+    
+every 1 second:
+    if {timerTime} is 0:
+        clearTimer()
+        NextStep()
+        loop all players:
+            close loop-player's inventory
+        stop
+
+    if {timerTime} is greater than 0:
+        set {timerTime} to {timerTime} - 1
+        set bossbar progress of {timerBar} to {timerTime} / {timerMax} * 100
+            
+# Functions
+
+function GameReset(isAdmin: boolean):
+    clear {lg::InGame}
+    clear {lg::nightCount}
+    clear {lg::dayCount}
+    clear {lg::GameStep}
+    clear {lg::loupGarou::*}
+    clear {lg::villageois::*}
+    clear {lg::joueursEnVie::*}
+    clear {lg::joueursMorts::*}
+    clear {lg::playingPlayers::*}
+    clear {playingPlayersCount}
+    clear {lg::cupidon}
+    clear {lg::petiteFille}
+    clear {lg::chasseur}
+    clear {lg::sorciere}
+    clear {lg::voyante}
+    clear {ActionQueue::*}
+    clear {queueMode}
+    clear {BarTime}
+
+    clear {lg::designatedPlayers::*}
+    clear {lg::designationCount}
+    clear {lg::voyante.sondage}
+    clear {lg::InterceptChasseur}
+    clear {lg::InterceptCapitaine}
+    clear {lg::chasseurOldPos}
+    clear {lg::chasseurTarget}
+    clear {lg::nextLGTarget}
+    clear {lg::potionVie}
+    clear {lg::potionMort}
+    clear {lg::sorciere.action}
+    clear {waitList::*}
+
+    clear {lg::badGuys::*}
+    clear {lg::goodGuys::*}
+    clear {lg::badGuysCount}
+    clear {lg::goodGuysCount}
+    clear {lg::chasseurDidLastKill}
+
+    clear {lg::capitaine}
+    clear {lg::capitaineVoteInProg}
+    clear {lg::capitaineTieBreakerInProg}
+    clear {lg::capitaineSuccession}
+    clear {lg::dyingCapitaine}
+    clear {lg::voteCount::*}
+    clear {lg::mostVoted}
+    clear {lg::mostVotedNum}
+    clear {lg::doubleMostVoted}
+    clear {lg::doubleMostVotedNum}
+    clear {lg::voteCapitaine::*}
+    clear {lg::vote::*}
+    clear {lg::voteInProg}
+
+    clear {lg::votewasMade}
+    
+    UnSeparatePlayers()
+
+    set time in world "world" to 12:00
+    set block at {campfireLocation} to eastward lit campfire
+
+    loop 20 times:
+        delete bossbar named "TimerBar"
+
+    loop all players:
+        clear {lg::%loop-player%}
+        clear {lg::%loop-player%.role}
+        clear {lg::%loop-player%.didDesignation}
+        clear {lg::%loop-player%.deathReason}
+        clear {lg::%loop-player%.designated}
+        clear {lg::%loop-player%.vote}
+        clear {lg::%loop-player%.didVoteForCapitaine}
+        clear {lg::%loop-player%.didVote}
+        clear {lg::voteCapitaine::%loop-player%}
+        clear {lg::vote::%loop-player%}
+        set the off hand item of loop-player to air
+        set loop-player's helmet to air
+        reveal loop-player to all players
+        reveal all players to loop-player
+        remove blindness from the loop-player
+        clear {lg::%loop-player%}
+        clear {lg::%loop-player%.role}
+
+        if item in slot 4 of loop-value's inventory is paper:
+            set slot 4 of loop-value's inventory to air
+        else if item in slot 4 of loop-value's inventory is wooden hoe:
+            set slot 4 of loop-value's inventory to air
+
+    set {freezeall} to false
+
+    if {_isAdmin} is true:
+        send action bar "&eLe jeu a été réinitialisé par un administrateur." to all players
+
+function SeparatePlayers():
+    # will make every player invisible to player
+    loop all players:
+        hide loop-player from all players
+
+function UnSeparatePlayers():
+    # will make every player invisible to player
+    loop all players:
+        reveal loop-player to all players
+
+function ActionQueue(action: text, move: text=""):
+    if {_action} is "clear":
+        clear {ActionQueue::*}
+    if {_action} is "add":
+        add {_move} to {ActionQueue::*}
+    if {_action} is "pocketNext":
+        add {_move} to {_temp::*}
+        loop {ActionQueue::*}:
+            add loop-value to {_temp::*}
+        set {ActionQueue::*} to {_temp::*}
+
+    if {_action} is "remove":
+        remove {_move} from {ActionQueue::*}
+        loop {ActionQueue::*}:
+            add loop-value to {_temp::*}
+        set {ActionQueue::*} to {_temp::*}
+    if {_action} is "list":
+        loop {ActionQueue::*}:
+            send loop-value to all players
+
+function waitList(action: text, player: text="none", reason: text="none"):
+    if {_player} is not "none":
+        set {_player} to {_player} parsed as an offline player
+
+    if {_action} is "add":
+        add {_player} to {waitList::*}
+        if {_reason} is not "none":
+            set {lg::%{_player}%.deathReason} to {_reason}
+        else if {_reason} is "none" or "<none>":
+            set {lg::%{_player}%.deathReason} to "default"
+        else:
+            set {lg::%{_player}%.deathReason} to "default"
+    if {_action} is "remove":
+        remove {_player} from {waitList::*}
+        clear {lg::%{_player}%.deathReason}
+    if {_action} is "kill":
+        if {waitList::*} is not set:
+            broadcast "&cAucun joueur n'est en attente de mort."
+        loop {waitList::*}:
+            killPlayer(loop-value, {lg::%loop-value%.deathReason})
+        clear {waitList::*}
+    if ( {_action} is "list" ):
+        loop {waitList::*}:
+            send "&9%loop-value% est en attente de mort." to all players
+
+function killPlayer(player: player, deathtype: text="default"):
+    if {_player} is not an offline player:
+        exit
+
+    if {lg::InterceptChasseur} is not set:
+        set {lg::InterceptChasseur} to false
+    if {lg::InterceptCapitaine} is not set:
+        set {lg::InterceptCapitaine} to false
+
+    if {_player} is {lg::capitaine}:
+        if {lg::InterceptCapitaine} is false:
+            # if the capitaine is the only one alive in the good guys, we do not 
+            broadcast "capitaine is dying"
+            if {lg::goodGuysCount} is greater than 1:
+                broadcast "more than one good guy"
+                set {lg::InterceptCapitaine} to true
+                set {lg::%{lg::capitaine}%.deathReason} to {_deathtype}
+                ActionQueue("pocketNext", "doCapitaineSuccessor")
+                broadcast "pocketed doCapitaineSuccessor"
+                # if action queue only has one element, add endDay
+                set {_cnt} to 0
+                loop {ActionQueue::*}:
+                    add 1 to {_cnt}
+                
+                if {_cnt} is 1:
+                    if {lg::capitaine} is not {lg::chasseur}:
+                        ActionQueue("add", "endDay")
+                    else:
+                        ActionQueue("add", "skip")
+                        
+                stop     
+
+    if {_player} is {lg::chasseur}:
+        if {lg::InterceptChasseur} is false:
+            set {lg::InterceptChasseur} to true
+            set {lg::%{lg::chasseur}%.deathReason} to {_deathtype}         
+            #if {lg::votewasMade} is false:
+            #    ActionQueue("remove", "doVote")
+            #    ActionQueue("pocketNext", "doVote")
+            ActionQueue("pocketNext", "doChasseur")
+            # if action queue only has one element, add endDay
+            set {_cnt} to 0
+            loop {ActionQueue::*}:
+                add 1 to {_cnt}
+            
+            if {_cnt} is 1:
+                ActionQueue("add", "endDay")
+            
+            stop
+        else:
+            set {_numLG} to 0
+            loop {lg::loupGarou::*}:
+                add 1 to {_numLG}
+
+            remove 1 from {_numLG}
+            
+            if {_numLG} is less or equal to 0:
+                # broadcast "GOT NUMLG 0 AT CHASSEUR"
+                if {lg::goodGuysCount} is equal to 1:
+                    broadcast "awoo, le chasseur a fait le dernier kill"
+                    set {lg::chasseurDidLastKill} to true
+                    checkforWinCondition()
+                    stop
+        
+    set {_playerRole} to {lg::%{_player}%.role}
+
+    if {_playerRole} is "loupGarou":
+        remove 1 from {lg::badGuysCount}
+    else:
+        remove 1 from {lg::goodGuysCount}
+
+    remove {_player} from {lg::joueursEnVie::*}
+    add {_player} to {lg::joueursMorts::*}
+
+    set the off hand item of {_player} to air
+    set {_player}'s helmet to carved pumpkin
+
+    hide {_player} from {lg::joueursEnVie::*}
+
+    reveal {lg::joueursMorts::*} to {_player}
+    reveal {_player} to {lg::joueursMorts::*}
+
+    strike lightning at {_player}
+
+    if {_deathtype} is not set:
+        set {_deathtype} to "default"
+    
+    if "%{_deathType}%" is "<none>":
+        set {_deathtype} to "default"
+
+    if {_deathtype} is "default":
+        broadcast "&9Le village a perdu un de ses membres, &6&l%{_player}%&9 était %getPlayerRoleName({_player})%"
+    if {_deathtype} is "love":
+        broadcast "&9Par chagrin d'amour, &6&l%{_player}%&9 s'est suicidé, il était %getPlayerRoleName({_player})%"
+    if {_deathtype} is "loupGarou":
+        broadcast "&6&l%{_player}% &9a été dévoré par les Loups-Garous, il était %getPlayerRoleName({_player})%"
+    if {_deathtype} is "sorciere":
+        broadcast "&6&l%{_player}% &9a été empoisonné par la Sorcière, il était %getPlayerRoleName({_player})%"
+    if {_deathtype} is "chasseur":
+        broadcast "&6&l%{_player}% &9s'est pris la dernière balle du Chasseur, il était %getPlayerRoleName({_player})%"
+    if {_deathtype} is "vote":
+        broadcast "&9Le Village a décidé d'éliminer &6&l%{_player}%, &9il était %getPlayerRoleName({_player})%"
+    if {_deathtype} is "silent":
+        set {_silent} to true
+
+    set {lg::%{_player}%.role} to "dead"
+
+    if {lesAmoureux::*} contains {_player}:
+        remove {_player} from {lesAmoureux::*}
+        wait 1 tick
+        killPlayer({lesAmoureux::1}, "love")
+        clear {lesAmoureux::*}
+
+    RemovePlayerFromRole({_player})
+    checkforWinCondition()
+
+function RemovePlayerFromRole(player: player):
+    if {_player} is {lg::cupidon}:
+        clear {lg::cupidon}
+    if {_player} is {lg::voyante}:
+        clear {lg::voyante}
+    if {_player} is {lg::sorciere}:
+        clear {lg::sorciere}
+    if {_player} is {lg::chasseur}:
+        if {lg::goodGuysCount} is not 0:
+            clear {lg::chasseur}
+    if {_player} is {lg::petiteFille}:
+        clear {lg::petiteFille}
+    if {_player} is {lg::loupGarou::*}:
+        remove {_player} from {lg::loupGarou::*}
+    if {_player} is {lg::villageois::*}:
+        remove {_player} from {lg::villageois::*}
+
+function NightAction():
+    clear {lg::nextLGTarget}
+    clear {lg::designationCount}
+    clear {lg::designatedPlayers::*}
+    clear {lg::voyante.sondage}
+
+    clear {lg::so}
+
+    add 1 to {lg::nightCount}
+    set {queueMode} to "night"
+    loop {lg::joueursEnVie::*}:
+        hide loop-value from {lg::joueursEnVie::*}
+        hide {lg::joueursEnVie::*} from loop-value
+        apply blindness without any particles to loop-value for 9999 days
+        
+    broadcast "&6------------------ &eNuit %{lg::nightCount}% &6------------------"
+
+    loop {lg::playingPlayers::*}:
+        send "&9Les Villageois s'endorment paisiblement." to loop-value
+    set time in world "world" to 00:00
+    set block at {campfireLocation} to eastward unlit campfire
+    
+    wait 5 seconds
+
+    ActionQueue("clear")
+    if {lg::cupidon} is set:
+        if {lg::nightCount} is 1:
+            ActionQueue("add", "doCupidon")
+    
+    if {lg::voyante} is set:
+        ActionQueue("add", "doVoyante")
+    ActionQueue("add", "doLoupGarou")
+    if {lg::sorciere} is set:
+        ActionQueue("add", "doSorciere")
+    ActionQueue("add", "endNight")
+    
+    wait 3 seconds
+    NextStep()
+
+function isActionQueueEmpty() :: boolean:
+    if {ActionQueue::*} is not set:
+        return true
+    if {ActionQueue::*} is "<none>":
+        return true
+    if {ActionQueue::*} is "none":
+        return true
+    set {_cnt} to 0
+    loop {ActionQueue::*}:
+        add 1 to {_cnt}
+    if {_cnt} is 0:
+        return true
+    return false
+
+function DayAction():
+    add 1 to {lg::dayCount}
+    set {lg::votewasMade} to false
+    set {queueMode} to "day"
+    loop {lg::joueursEnVie::*}:
+        reveal loop-value to {lg::joueursEnVie::*}
+        reveal {lg::joueursEnVie::*} to loop-value
+        remove blindness from loop-value's active potion effects
+
+    broadcast "&6------------------ &eJour %{lg::dayCount}% &6------------------"
+
+    loop {lg::playingPlayers::*}:
+        clear {lg::%loop-value%.didDesignation}
+        clear {lg::%loop-value%.designated}
+        clear {lg::%loop-value%.vote}
+        clear {lg::%loop-value%.didVote}
+        send "&9Les Villageois se réveillent." to loop-value
+    set time in world "world" to 12:00
+    set block at {campfireLocation} to eastward lit campfire
+
+    wait 5 seconds
+    
+    ActionQueue("clear")
+    ActionQueue("add", "reavealDeath")
+    if {lg::capitaine} is not set:
+        ActionQueue("add", "doCapitaine")
+    ActionQueue("add", "doVote")
+    ActionQueue("add", "endDay")
+    wait 3 seconds
+    NextStep()
+
+function NextStep():
+
+    if {lg::InGame} is not set:
+        stop
+
+    set {_empty} to isActionQueueEmpty()
+
+    if {_empty} is true:
+        if {queueMode} is "night":
+            # Si la queue est vide, on passe au jour, sinon on continue la nuit
+            DayAction()
+            stop
+        if {queueMode} is "day":
+            # Si la queue est vide, on passe a la nuit, sinon on continue le jour
+            NightAction()
+            stop
+    
+    set {_current} to {lg::GameStep}
+    
+    
+
+    if {_current} is "doVoyante":
+        finishVoyante()
+    if {_current} is "doLoupGarou":
+        finishLoupGarou()
+    if {_current} is "doChasseur":
+        finishChasseur()
+        wait 1 second
+    if {_current} is "doSorciere":
+        hide {lg::joueursEnVie::*} from {lg::sorciere}
+        wait 1 second
+    if {_current} is "doCapitaine":
+        finishCapitaine()
+        wait 1 second
+    if {_current} is "doVote":
+        finishVote()
+        wait 1 second
+    if {_current} is "doCapitaineTieBreaker":
+        finishTieBreaker()
+        wait 1 second
+    if {_current} is "doCapitaineSuccessor":
+        finishCapitaineSuccessor()
+        wait 1 second
+
+    set {_next} to {ActionQueue::1}
+    ActionQueue("remove", {_next})
+
+    # broadcast "Next step: %{_next}%"
+
+    # Annulation de l'action du joueur si il n'a pas fait d'action
+    # Effectue l'action du joueur si il a fait une action (Exemple: choisi au pif si les deux loups garous sont pas d'accord)
+    # Agis a la fin du tour.
+
+
+
+
+    # Decide de l'action a effectuer
+
+    set {lg::GameStep} to {_next}
+    if {_next} is "doCupidon":
+        doCupidon()
+    if {_next} is "doVoyante":
+        doVoyante()
+    if {_next} is "doLoupGarou":
+        doLoupGarou()
+    if {_next} is "doSorciere":
+        doSorciere()
+    if {_next} is "doCapitaine":
+        doCapitaine()
+    if {_next} is "doVote":
+        doVote()
+    if {_next} is "doChasseur":
+        doChasseur()
+    if {_next} is "doCapitaineSuccessor":
+        doCapitaineSuccessor()
+    if {_next} is "skip":
+        wait 5 tick
+        NextStep()
+        stop
+
+    if {_next} is "reavealDeath":
+        waitList("kill")
+        wait 2 seconds
+        NextStep()
+        stop
+
+
+
+    if {_next} is "endNight":
+        apply blindness without any particles to {lg::joueursEnVie::*} for 9999 days
+        wait 5 seconds
+        NextStep()
+        stop
+    if {_next} is "endDay":
+        wait 5 seconds
+        NextStep()
+        stop
+
+function doCupidon():
+    # TODO
+    stop
+
+function doVoyante():
+
+    if {lg::voyante} is not set:
+        if {lg::InGame} is true:
+            NextStep()
+            stop
+
+    loop {lg::playingPlayers::*}:
+        send "&9La &a&lVoyante &9va sonder un joueur." to loop-value
+    remove blindness from {lg::voyante}'s active potion effects
+    reveal {lg::joueursEnVie::*} to {lg::voyante}
+
+    defineTimer("&aLa voyante effectue sa consultation", 30)
+    wait 20 ticks
+    openVoyanteChest({lg::voyante})
+
+function doLoupGarou():
+
+    clear {lg::nextLGTarget}
+
+    loop {lg::playingPlayers::*}:
+        send "&9Les &c&lLoups Garous &9vont choisir une victime." to loop-value
+    set {_CountLoupGarou} to 0
+    loop {lg::loupGarou::*}:
+        add 1 to {_CountLoupGarou}
+    set {_num} to 30 * {_CountLoupGarou}
+    defineTimer("&cLes Loups-Garous choisissent une nouvelle victime", {_num})
+    wait 20 ticks
+    
+    loop {lg::loupGarou::*}:
+        set {_player} to loop-value parsed as an offline player
+        remove blindness from loop-value's active potion effects
+        reveal {lg::joueursEnVie::*} to loop-value
+        openLGChest(loop-value)
+    
+    remove blindness from {lg::petiteFille}'s active potion effects
+    reveal {lg::joueursEnVie::*} to {lg::petiteFille}
+
+function doSorciere():
+    
+    if {lg::sorciere} is not set:
+        if {lg::InGame} is true:
+            NextStep()
+            stop
+
+    loop {lg::playingPlayers::*}:
+        send "&9La &a&lSorcière &9prépare une nouvelle potion." to loop-value
+
+    remove blindness from {lg::sorciere}'s active potion effects
+    reveal {lg::joueursEnVie::*} to {lg::sorciere}
+
+    defineTimer("&aLa sorcière prépare ses potions", 30)
+    wait 20 ticks
+    openSorciereChest({lg::sorciere})
+
+    stop
+
+function doCapitaine():
+
+    set {lg::capitaineVoteInProg} to true
+    loop {lg::playingPlayers::*}:
+        send "&9Les Villageois vont élire un nouveau Capitaine." to loop-value
+    
+    defineTimer("&aLes Villageois élisent un nouveau Capitaine", 60)
+    wait 10 ticks
+
+    loop {lg::joueursEnVie::*}:
+        set slot 4 of loop-value's inventory to paper named "&a&lVoter pour le nouveau Capitaine"
+    stop
+
+function doVote():
+    set {lg::votewasMade} to false
+    set {lg::voteInProg} to true
+    loop {lg::playingPlayers::*}:
+        send "&9Les Villageois débattent pour savoir qui éliminer." to loop-value
+    defineTimer("&aLes Villageois débattent pour savoir qui éliminer", 300)
+    wait 10 ticks
+
+    loop {lg::joueursEnVie::*}:
+        set slot 4 of loop-value's inventory to paper named "&a&lVoter"
+
+function doChasseur():
+    set {lg::InterceptChasseur} to true
+    loop {lg::playingPlayers::*}:
+        send "&6&l%{lg::chasseur}% &9est sur le point de mourir, Cependant, il était &a&lChasseur&9. Il va choisir un joueur à emporter avec lui dans la mort." to loop-value
+    defineTimer("&aLe chasseur va choisir un joueur à emporter avec lui dans la mort", 30)
+    wait 10 ticks
+    send "&7Vous êtes sur le point de mourir, choisissez un joueur à emporter avec vous" to {lg::chasseur}
+    set slot 4 of {lg::chasseur}'s inventory to wooden hoe
+    set {lg::chasseurOldPos} to {lg::chasseur}'s location
+    wait 1 tick
+    teleport {lg::chasseur} to {lg::chasseurtp}
+    clear {lg::chasseurTarget}
+    set block at {campfireLocation} to eastward unlit campfire
+    stop
+
+function DoCapitaineTieBreaker(player1: text, player2: text):
+
+    set {lg::capitaineTieBreakerInProg} to true
+
+    set {_player1} to {_player1} parsed as an offline player
+    set {_player2} to {_player2} parsed as an offline player
+
+    loop {lg::playingPlayers::*}:
+        send "&9Le Capitaine va départager l'égalité." to loop-value
+    send "&9Le village n'a pas pu se départager et laisse le Capitaine choisir." to {lg::capitaine}
+    wait 10 ticks
+    send "&9Le village hésite entre &6&l%{_player1}% &9et &6&l%{_player2}%&9." to {lg::capitaine}
+    wait 10 ticks
+    defineTimer("&aLe Capitaine va départager l'égalité", 60)
+    wait 10 ticks
+    send "&8Choisissez le joueur que vous voulez éliminer." to {lg::capitaine}
+    loop {lg::playingPlayers::*}:
+        set slot 4 of loop-value's inventory to air
+    set slot 3 of {lg::capitaine}'s inventory to skull of {_player1} named "&6&l%{_player1}%"
+    set slot 5 of {lg::capitaine}'s inventory to skull of {_player2} named "&6&l%{_player2}%"
+
+function doCapitaineSuccessor():
+    if {lg::capitaine} is not set:
+        stop
+    if {lg::capitaine} is set:
+        send "&9Le village vous prend pour cible, vous êtes sur le point de mourir." to {lg::capitaine}
+        wait 10 ticks
+        send "&8Veuillez nommer votre successeur avec la commande (/testament <joueur>)" to {lg::capitaine}
+        set {lg::capitaineSuccession} to true
+        defineTimer("&aLe Capitaine va nommer son successeur", 30)
+
+command /testament [<player>]:
+    trigger:
+        if {lg::capitaineSuccession} is not true:
+            send "&cVous n'êtes pas en train de nommer votre successeur."
+            stop
+        if arg-1 is not set:
+            send "&cVous devez nommer un joueur."
+            stop
+        if {lg::capitaine} is not player:
+            send "&cVous n'êtes pas le Capitaine."
+            stop
+        if arg 1 is player:
+            send "&cVous ne pouvez pas vous nommer vous même, &lvous êtes en train de mourir&c."
+            stop
+        if {lg::capitaine} is player:
+            set {lg::dyingCapitaine} to player
+            set {lg::capitaine} to arg-1
+            broadcast "&9Dans son testament, &6&l%{lg::dyingCapitaine}% &9avais nommé &6&l%{lg::capitaine}%&9 comme successeur au poste de &a&lCapitaine&9."
+            set {lg::capitaineSuccession} to false
+            advanceTimer()
+            stop
+
+function finishCapitaineSuccessor():
+    if {lg::dyingCapitaine} is not set:
+        # out of all the alive players, choose a random one
+        set {_randompick::*} to {lg::joueursEnVie::*}
+        set {lg::dyingCapitaine} to {lg::capitaine}
+        remove {lg::capitaine} from {_randompick::*}
+        set {lg::capitaine} to a random element out of {_randompick::*}
+        broadcast "&6&l%{lg::dyingCapitaine}% &9avais décidé dans son testament de nommer le nouveau Capitaine au hasard, &6&l%{lg::capitaine}%&9 a été tiré au sort."
+    if {lg::dyingCapitaine} is {lg::chasseur}:
+        ActionQueue("pocketNext", "doChasseur")
+    else:
+        killPlayer({lg::dyingCapitaine}, {lg::%{lg::dyingCapitaine}%.deathReason})
+
+function finishChasseur():
+    if {lg::chasseurTarget} is not set:
+        teleport {lg::chasseur} to {lg::chasseurOldPos}
+        killPlayer({lg::chasseur})
+        advanceTimer()
+        set block at {campfireLocation} to eastward lit campfire
+        stop
+    if {lg::chasseurTarget} is set:
+        teleport {lg::chasseur} to {lg::chasseurOldPos}
+        set {lg::InterceptChasseur} to true
+        set slot 4 of {lg::chasseur}'s inventory to air
+
+        # fix a bug, if the right clicked player were to be loup garou, remove him from the bad guys
+        if {lg::loupGarou::*} contains {lg::chasseurTarget}:
+            remove {lg::chasseurTarget} from {lg::loupGarou::*}
+            remove 1 from {lg::badGuysCount}
+
+        killPlayer({lg::chasseur}, {lg::%{lg::chasseur}%.deathReason})
+        killPlayer({lg::chasseurTarget}, "chasseur")
+        advanceTimer()
+        set block at {campfireLocation} to eastward lit campfire
+        stop
+
+function finishVoyante():
+    apply blindness without any particles to {lg::voyante} for 9999 days
+    hide {lg::joueursEnVie::*} from {lg::voyante}
+    if {lg::voyante.sondage} is not set:
+        send "&9Vous n'avez sondé personne." to {lg::voyante}
+        advanceTimer()
+        stop
+    stop
+
+function finishLoupGarou():
+    loop {lg::loupGarou::*}:
+        apply blindness without any particles to loop-value for 9999 days
+        hide {lg::joueursEnVie::*} from loop-value
+
+    apply blindness without any particles to {lg::petiteFille} for 9999 days
+    hide {lg::joueursEnVie::*} from {lg::petiteFille}
+
+    if {lg::designationCount} is not set:
+        send "&9Vous n'avez désigné personne." to {lg::loupGarou::*}
+        stop
+    if {lg::designationCount} = 1:
+        send "&9Vous avez désigné &7&l%{lg::designatedPlayers::1}%&9." to {lg::loupGarou::*}
+        set {_player} to {lg::designatedPlayers::1}
+        set {lg::nextLGTarget} to {_player}
+        waitList("add", "%{_player}%", "loupGarou")
+        stop
+    if {lg::designationCount} > 1:
+        # Loop a travers, si il y a un joueur qui a été désigné par tout les loups garous, alors c'est lui qui est désigné
+        set {_found} to false
+        loop {lg::designatedPlayers::*}:
+            set {_numLG} to 0
+            loop {lg::loupGarou::*}:
+                if {lg::%loop-value-2%.didDesignation} is true:
+                    add 1 to {_numLG}
+            if {lg::%loop-value%.designated} = {_numLG}:
+                set {_found} to true
+                send "&9Vous avez désigné &7&l%{lg::designatedPlayers::%loop-index%}%&9." to {lg::loupGarou::*}
+                waitList("add", {lg::designatedPlayers::%loop-index%}, "loupGarou")
+                stop
+        if {_found} is false:
+            send "&9Vous n'avez pas su vous mettre d'accord." to {lg::loupGarou::*}
+            stop
+    
+function finishCapitaine():
+    if {lg::capitaineVoteInProg} is not set:
+        stop
+    if {lg::capitaineVoteInProg} is true:
+        set {lg::capitaineVoteInProg} to false
+
+        set {lg::mostVoted} to ""
+        set {lg::mostVotedNum} to 0
+
+        set {lg::capitaineVoteInProg} to false
+
+        loop {lg::joueursEnVie::*}:
+            broadcast "%loop-value% : %{lg::voteCapitaine::%loop-value%}%"
+            set {_numOfVote} to {lg::voteCapitaine::%loop-value%}
+            if {_numOfVote} > {lg::mostVotedNum}:
+                set {lg::mostVoted} to loop-value
+                set {lg::mostVotedNum} to {_numOfVote}
+        
+        
+        
+        set {_allPlayers::*} to {lg::joueursEnVie::*}
+        remove {lg::mostVoted} from {_allPlayers::*}
+
+        broadcast "Most voted : %{mostVoted}%"
+
+        set {lg::doubleMostVoted} to ""
+        set {lg::doubleMostVotedNum} to 0
+
+        loop {_allPlayers::*}:
+            set {_numOfVote} to {lg::voteCapitaine::%loop-value%}
+            if {_numOfVote} > {lg::doubleMostVotedNum}:
+                set {lg::doubleMostVoted} to loop-value
+                set {lg::doubleMostVotedNum} to {_numOfVote}
+
+        if {mostVotedNum} is {doubleMostVotedNum}:
+            # Egalité, choosen randomly
+            add {lg::mostVoted} to {_randompick::*}
+            add {lg::doubleMostVoted} to {_randompick::*}
+            set {lg::capitaine} to a random element out of {_randompick::*}
+        else:
+            set {lg::capitaine} to {lg::mostVoted}
+        
+        broadcast "Capitaine : %{lg::capitaine}%"
+        broadcast "Double most voted : %{lg::doubleMostVoted}%"
+
+        loop {lg::playingPlayers::*}:
+            send "&9Le village a élu un nouveau Capitaine, &6&l%{lg::capitaine}%&9." to loop-value
+
+        set {lg::capitaine}'s helmet to blue dye
+                
+function finishVote():
+    set {lg::votewasMade} to true
+    set {lg::mostVoted} to ""
+    set {lg::mostVotedNum} to 0
+
+    set {lg::trackerVote} to true
+
+    set {lg::voteInProg} to false
+
+    loop {lg::joueursEnVie::*}:
+        set {_numOfVote} to {lg::voteCount::%loop-value%}
+        if {_numOfVote} > {lg::mostVotedNum}:   
+            set {lg::mostVoted} to loop-value
+            set {lg::mostVotedNum} to {_numOfVote}
+        set slot 4 of loop-value's inventory to air
+    
+    if "%{lg::mostVoted}%" is "<none>":
+        broadcast "&9Personne n'a été éliminé car le village n'a pas voté."
+        stop
+    if {lg::mostVotedNum} is 0:
+        broadcast "&9Personne n'a été éliminé car le village n'a pas voté."
+        stop
+
+    set {_allPlayers::*} to {lg::joueursEnVie::*}
+    remove {lg::mostVoted} from {_allPlayers::*}
+
+    set {lg::doubleMostVoted} to ""
+    set {lg::doubleMostVotedNum} to 0
+
+    loop {_allPlayers::*}:
+        set {_numOfVote} to {lg::voteCount::%loop-value%}
+        if {_numOfVote} > {lg::doubleMostVotedNum}:
+            set {lg::doubleMostVoted} to loop-value
+            set {lg::doubleMostVotedNum} to {_numOfVote}
+
+    broadcast "Most voted : %{lg::mostVoted}%"
+    broadcast "Double most voted : %{lg::doubleMostVoted}%"
+    
+    loop all players:
+        clear {lg::voteCount::%loop-value%}
+        clear {lg::%loop-value%.didVote}
+    
+    if {lg::doubleMostVotedNum} is not set:
+        broadcast "No double most voted"
+        killPlayer({lg::mostVoted}, "vote")
+        stop
+    if {lg::mostVotedNum} is {lg::doubleMostVotedNum}:
+        broadcast "Egalité"
+        # Egalité, let the capitaine choose
+        set {lg::capitaineTieBreakerInProg} to true
+        add {lg::mostVoted} to {lg::capitaineTieBreaker::*}
+        add {lg::doubleMostVoted} to {lg::capitaineTieBreaker::*}
+        ActionQueue("add", "doCapitaineTieBreaker")
+        DoCapitaineTieBreaker("%{lg::mostVoted}%", "%{lg::doubleMostVoted}%")
+        stop
+    else:
+        killPlayer({lg::mostVoted}, "vote")
+        stop
+
+function finishTieBreaker():
+    clear {lg::capitaineTieBreakerInProg}
+
+function defineTimer(timerName: text, timerTime: number):
+    clearTimer()
+    wait 20 ticks
+    set {timerBar} to boss bar with id "TimerBar" with title "%{_timerName}%" with color red with style solid bar
+    set bossbar visibility of {timerBar} to true
+    set bossbar progress of {timerBar} to 100
+    add all players to bossbar players of {timerBar}
+    set {timerMax} to {_timerTime}
+    set {timerTime} to {_timerTime}
+
+function clearTimer():
+    loop 20 times:
+        delete bossbar named "TimerBar"
+    clear {timerBar}
+    clear {timerMax}
+    clear {timerTime}
+
+function StartGame():
+    GameReset(false)
+    set {_i} to 10
+    loop 10 times:
+        send action bar "&eLa partie commence dans &c&l%{_i}% seconde(s)" to all players
+
+        if {_i} is 3:
+            play sound "entity.experience_orb.pickup" with volume 1 and pitch 0.8 for all players at all players
+        if {_i} is 2:
+            play sound "entity.experience_orb.pickup" with volume 1 and pitch 0.9 for all players at all players
+        if {_i} is 1:
+            play sound "entity.experience_orb.pickup" with volume 1 and pitch 1 for all players at all players
+
+        set {_i} to {_i} - 1
+        wait 1 second
+    set {lg::InGame} to true
+    send action bar "&eC'est parti !" to all players
+    roleDistribution()
+
+function advanceTimer():
+    if {timerTime} is 0:
+        clearTimer()
+        stop
+    if {timerTime} is less than 5:
+        stop
+    else:
+        set {timerTime} to 5
+
+function roleDistribution():
+    set {lg::InGame} to true
+
+    set {_allPlayers::*} to all players
+    set {_playerNumber} to number of players
+    set {_playerNumberNonGiven} to number of players
+
+    set {_trueAllPlayers::*} to all players
+    
+    set {_loupGarouOne} to a random element out of {_allPlayers::*}
+    remove {_loupGarouOne} from {_allPlayers::*}
+    add {_loupGarouOne} to {lg::loupGarou::*}
+
+    # ##############################################################
+    if {_playerNumberNonGiven} > 0:
+        if {_playerNumber} >= 9:
+            set {_loupGarouTwo} to a random element out of {_allPlayers::*}
+            remove {_loupGarouTwo} from {_allPlayers::*}
+            add {_loupGarouTwo} to {lg::loupGarou::*}
+            remove 1 from {_playerNumberNonGiven}
+    # ##############################################################
+    
+
+    # ##############################################################
+    if {_playerNumberNonGiven} > 0:
+        if {_playerNumber} >= 9:
+            set {_cupidon} to a random element out of {_allPlayers::*}
+            remove {_cupidon} from {_allPlayers::*}
+            set {lg::cupidon} to {_cupidon}
+            remove 1 from {_playerNumberNonGiven}
+    # #############################################################
+
+
+    # ##############################################################
+    if {_playerNumberNonGiven} > 0:
+        set {_petiteFille} to a random element out of {_allPlayers::*}
+        remove {_petiteFille} from {_allPlayers::*}
+        set {lg::petiteFille} to {_petiteFille}
+        remove 1 from {_playerNumberNonGiven}
+    # ##############################################################
+
+
+    # ##############################################################
+    if {_playerNumberNonGiven} > 0:
+        set {_chasseur} to a random element out of {_allPlayers::*}
+        remove {_chasseur} from {_allPlayers::*}
+        set {lg::chasseur} to {_chasseur}
+        remove 1 from {_playerNumberNonGiven}
+    # ##############################################################
+
+
+    # ##############################################################
+    if {_playerNumberNonGiven} > 0:
+        set {_sorciere} to a random element out of {_allPlayers::*}
+        remove {_sorciere} from {_allPlayers::*}
+        set {lg::sorciere} to {_sorciere}
+        remove 1 from {_playerNumberNonGiven}
+    # ##############################################################
+    
+
+    # ##############################################################
+    if {_playerNumberNonGiven} > 0:
+        set {_voyante} to a random element out of {_allPlayers::*}
+        remove {_voyante} from {_allPlayers::*}
+        set {lg::voyante} to {_voyante}
+        remove 1 from {_playerNumberNonGiven}
+    # ##############################################################
+
+    loop {_allPlayers::*}:
+        add loop-value to {lg::villageois::*}
+
+
+    loop {lg::loupGarou::*}:
+        send title "&6Tu es &c&lLoup Garou" with subtitle "&6Tu gagnes avec les &c&lLoups Garous" to loop-value
+        set the off hand item of loop-value to red dye
+        set {lg::%loop-value%.role} to "loupGarou"
+    
+    
+    
+    # set item in player offhand to a red dye
+
+    #set {lg::%{_loupGarou}%.role} to "loupGarou"
+
+    set the off hand item of {_loupGarou} to red dye 
+
+    loop {lg::villageois::*}:
+        send title "&6Tu es &a&lVillageois" with subtitle "&6Tu gagnes avec le &a&lVillage" to loop-value
+        set the off hand item of loop-value to green dye
+        set {lg::%loop-value%.role} to "villageois"
+
+    
+    # ##############################################################
+    send title "&6Tu es &a&lPetite Fille" with subtitle "&6Tu gagnes avec le &a&lVillage" to {_petiteFille}
+
+    set the off hand item of {_petiteFille} to purple dye
+    set {lg::%{_petiteFille}%.role} to "petiteFille"
+    # ##############################################################
+
+
+    # ##############################################################
+    send title "&6Tu es &a&lCupidon" with subtitle "&6Tu gagnes avec le &a&lVillage" to {_cupidon}
+    set the off hand item of {_cupidon} to light gray dye
+    set {lg::%{_cupidon}%.role} to "cupidon"
+    # ##############################################################
+
+
+    # ##############################################################
+    send title "&6Tu es &a&lChasseur" with subtitle "&6Tu gagnes avec le &a&lVillage" to {_chasseur}
+    set the off hand item of {_chasseur} to cyan dye
+    set {lg::%{_chasseur}%.role} to "chasseur"
+    # ##############################################################
+
+
+    # ##############################################################
+    send title "&6Tu es &a&lSorcière" with subtitle "&6Tu gagnes avec le &a&lVillage" to {_sorciere}
+    set the off hand item of {_sorciere} to gray dye
+    set {lg::%{_sorciere}%.role} to "sorciere"
+    # ##############################################################
+
+
+    # ##############################################################
+    send title "&6Tu es &a&lVoyante" with subtitle "&6Tu gagnes avec le &a&lVillage" to {_voyante}
+    set the off hand item of {_voyante} to pink dye
+    set {lg::%{_voyante}%.role} to "voyante"
+    # ##############################################################
+
+
+
+    
+    add all players to {lg::joueursEnVie::*}
+    add all players to {lg::playingPlayers::*}
+    loop {_trueAllPlayers::*}:
+        add 1 to {playingPlayersCount}
+        add 1 to {lg::goodGuysCount}
+
+    add all players to {lg::goodGuys::*}
+
+    loop {lg::loupGarou::*}:
+        remove loop-value from {lg::goodGuys::*}
+        add loop-value to {lg::badGuys::*}
+        remove 1 from {lg::goodGuysCount}
+        add 1 to {lg::badGuysCount}
+    
+    loop 100 times:
+        broadcast " "
+
+    loop {_trueAllPlayers::*}:
+        teleport loop-value to {tploc.%loop-index%}
+        set loop-value's health to 20
+        set loop-value's food level to 20
+        set loop-value's saturation to 20
+        set loop-value's game mode to adventure
+
+    set {freezeall} to true
+    NightAction()
+
+function getPlayerRoleName(player: player):: text:
+    if {lg::%{_player}%.role} is "loupGarou":
+        return "&c&lLoup Garou"
+    if {lg::%{_player}%.role} is "villageois":
+        return "&a&lVillageois"
+    if {lg::%{_player}%.role} is "petiteFille":
+        return "&a&lPetite Fille"
+    if {lg::%{_player}%.role} is "voyante":
+        return "&a&lVoyante"
+    if {lg::%{_player}%.role} is "sorciere":
+        return "&a&lSorcière"
+    if {lg::%{_player}%.role} is "cupidon":
+        return "&a&lCupidon"
+    if {lg::%{_player}%.role} is "chasseur":
+        return "&a&lChasseur"
+    if {lg::%{_player}%.role} is "dead":
+        # Cette ligne de code ne devrait jamais être renvoyé.
+        return "&7&ldécédé(e)"
+    if {lg::%{_player}%.role} is "notingame":
+        # Cette ligne de code ne devrait jamais être renvoyé.
+        return "&7&lPas dans la partie"
+
+function openVoyanteChest(player: player):
+    loop {lg::joueursEnVie::*}:
+        add loop-value to {_players::*}
+    
+    set {_rows} to 1
+
+    if number of players is greater than 8:
+        set {_rows} to 2
+
+    set {_num} to 0
+    create a gui with virtual chest inventory with {_rows} rows named "&5Choisir un joueur a sonder":
+        loop {_players::*}:
+
+            set {_p} to loop-value
+
+            make gui slot {_num} with skull of loop-value named "%loop-value%":
+                send "&9Vous avez sondé &7&l%{_p}%&9, il est &5&l%getPlayerRoleName({_p})%"
+                advanceTimer()
+                set {lg::voyante.sondage} to true
+                close player's inventory
+            set {_num} to {_num} + 1
+        
+        make gui slot {_num} with barrier named "&c&lNe rien faire":
+            send "&9Vous n'avez sondé personne." to {_player}
+            advanceTimer()
+            set {lg::voyante.sondage} to true
+            close player's inventory
+            stop
+
+        run on gui close:
+            if {lg::voyante.sondage} is false:
+                send "&9Vous n'avez sondé personne." to {_player}
+                advanceTimer()
+                set {lg::voyante.sondage} to true
+                stop
+    open last gui to {_player}
+
+function openLGChest(player: player):
+    loop {lg::joueursEnVie::*}:
+        add loop-value to {_players::*}
+    
+    set {_rows} to 1
+
+    if number of players is greater than 8:
+        set {_rows} to 2
+
+    set {_num} to 0
+    set {designationCount} to 0
+
+    create a gui with virtual chest inventory with {_rows} rows named "&4&lChoisir une cible":
+        loop {_players::*}:
+
+            set {_p} to loop-value
+
+            make gui slot {_num} with skull of loop-value named "%loop-value%":
+                send "&9Vous avez désigné &7&l%{_p}%&9."
+                add {_p} to {lg::designatedPlayers::*}
+                add 1 to {lg::designationCount}
+                set {_numLG} to 0
+                loop {lg::loupGarou::*}:
+                    add 1 to {_numLG}
+                if {_numLG} = {lg::designationCount}:
+                    advanceTimer()
+                set {lg::%{_player}%.didDesignation} to true
+                add 1 to {lg::%{_p}%.designated}
+                close player's inventory
+            set {_num} to {_num} + 1
+
+        make gui slot {_num} with barrier named "&c&lNe rien faire":
+            set {_numLG} to 0
+            loop {lg::loupGarou::*}:
+                add 1 to {_numLG}
+            if {_numLG} = {lg::designationCount} + 1:
+                advanceTimer()
+            set {lg::%{_player}%.didDesignation} to false
+            close player's inventory
+            stop
+
+        run on gui close:
+            if {lg::%{_player}%.didDesignation} is false:
+                send "&9Vous n'avez désigné personne." to {_player}
+                set {_numLG} to 0
+                loop {lg::loupGarou::*}:
+                    add 1 to {_numLG}
+                if {_numLG} = {lg::designationCount} + 1:
+                    advanceTimer()
+                set {lg::%{_player}%.didDesignation} to false
+                stop
+
+    open last gui to {_player}
+
+function openSorciereChest(player: player):
+    set {lg::sorciere.action} to false
+    set {openSecond} to false
+    set {_p} to {lg::nextLGTarget}
+    set {_text} to "&6&l%{_p}%&e est pris pour cible"
+
+    if {lg::nextLGTarget} is not set:
+        set {_text} to "&eChoisissez une action à effectuer"
+
+    create a gui with virtual brewing stand inventory named {_text}:
+        if {lg::potionVie} is not set:
+            make gui slot 0 with sugar named "&a&lPotion de vie" with lore "&9Sauver la vie de %{_p}%.":
+                if {lg::nextLGTarget} is set:
+                    send "&9Vous avez décidé de sauvé &7&l%{_p}%&9." to {_player}
+                    clear {lg::nextLGTarget}
+                    set {lg::sorciere.action} to true
+                    waitList("remove", "%{_p}%")
+                    set {lg::potionVie} to true
+                else:
+                    set {lg::sorciere.action} to true
+                    send "&9Vous n'avez rien fait." to {_player}
+                    advanceTimer()
+                advanceTimer()
+                close player's inventory
+        make gui slot 1 with barrier named "&7&lNe rien faire":
+            set {lg::sorciere.action} to false
+            close player's inventory
+
+        if {lg::potionMort} is not set:
+            make gui slot 2 with gunpowder named "&c&lPotion de mort" with lore "&9Empoisonner quelqu'un.":
+                set {lg::sorciere.action} to true
+                set {openSecond} to true
+                openSorcierePoisonChest({_player})
+        run on gui close:
+            if {lg::sorciere.action} is false:
+                send "&9Vous n'avez rien fait." to {_player}
+            if {openSecond} is false:
+                advanceTimer()
+    open last gui to {_player}
+
+function openSorcierePoisonChest(player: player):
+    loop {lg::joueursEnVie::*}:
+        add loop-value to {_players::*}
+
+    remove {lg::nextLGTarget} from {_players::*}
+    
+    set {_rows} to 1
+
+    if number of players is greater than 8:
+        set {_rows} to 2
+
+    set {_num} to 0
+    create a gui with virtual chest inventory with {_rows} rows named "&4&lChoisir une cible":
+        loop {_players::*}:
+
+            set {_p} to loop-value
+
+            make gui slot {_num} with skull of loop-value named "%loop-value%":
+                send "&9Vous avez empoisonné &7&l%{_p}%&9."
+                waitList("add", "%{_p}%", "sorciere")
+                set {lg::potionMort} to true
+                set {lg::sorciere.action} to true
+                advanceTimer()
+                close player's inventory
+            set {_num} to {_num} + 1
+
+        make gui slot {_num} with barrier named "&c&lNe rien faire":
+            set {lg::sorciere.action} to false
+            close player's inventory
+            stop
+
+        run on gui close:
+            if {lg::sorciere.action} is false:
+                send "&9Vous n'avez empoisonné personne." to {_player}
+            advanceTimer()
+            stop
+    set {lg::sorciere.action} to false
+    open last gui to {_player}
+
+function openCapitaineChest(player: player):
+    loop {lg::joueursEnVie::*}:
+        add loop-value to {_players::*}
+    
+    set {_rows} to 1
+
+    if number of players is greater than 8:
+        set {_rows} to 2
+    
+    set {_num} to 0
+
+    create a gui with virtual chest inventory with {_rows} rows named "&4&lChoisir un nouveau Capitaine":
+        loop {_players::*}:
+
+            set {_p} to loop-value
+
+            make gui slot {_num} with skull of loop-value named "%loop-value%":
+                send "&9Vous avez voté pour &7&l%{_p}%&9."
+                if {lg::voteCapitaine::%{_p}%} is not set:
+                    set {lg::voteCapitaine::%{_p}%} to 0
+                set {lg::voteCapitaine::%{_p}%} to {lg::voteCapitaine::%{_p}%} + 1
+                set {lg::%{_player}%.didVoteForCapitaine} to true
+                close player's inventory
+            set {_num} to {_num} + 1
+
+        make gui slot {_num} with barrier named "&c&lNe rien faire":
+            send "&9Vous n'avez voté pour personne." to {_player}
+            set {lg::%{_player}%.didVoteForCapitaine} to true
+            close player's inventory
+            stop
+
+        run on gui close:
+            if {lg::%{_player}%.didVoteForCapitaine} is false:
+                send "&9Vous n'avez voté pour personne." to {_player}
+                set {lg::%{_player}%.didVoteForCapitaine} to true
+                stop
+    open last gui to {_player}
+
+function openVoteChest(player: player):
+    loop {lg::joueursEnVie::*}:
+        add loop-value to {_players::*}
+    
+    set {_rows} to 1
+
+    if number of players is greater than 8:
+        set {_rows} to 2
+    
+    set {_num} to 0
+
+    create a gui with virtual chest inventory with {_rows} rows named "&4&lChoisir un coupable à éliminer":
+        loop {_players::*}:
+
+            set {_p} to loop-value
+
+            make gui slot {_num} with skull of loop-value named "%loop-value%":
+                send "&9Vous avez voté pour &7&l%{_p}%&9."
+                add 1 to {lg::voteCount::%{_p}%}
+                set {lg::%{_player}%.didVote} to true
+                close player's inventory
+            set {_num} to {_num} + 1
+
+        make gui slot {_num} with barrier named "&c&lNe rien faire":
+            send "&9Vous n'avez voté pour personne." to {_player}
+            set {lg::%{_player}%.didVote} to true
+            close player's inventory
+            stop
+
+        run on gui close:
+            if {lg::%{_player}%.didVote} is false:
+                send "&9Vous n'avez voté pour personne." to {_player}
+                set {lg::%{_player}%.didVote} to true
+                stop
+    open last gui to {_player}
+
+on right click with wooden hoe:
+    if player is {lg::chasseur}:
+        if target entity is a player:
+            loop {lg::joueursMorts::*}:
+                if loop-value is target entity:
+                    cancel event
+                    stop
+            set {lg::chasseurTarget} to target player
+            send "&9Vous avez choisi &7&l%target player%&9." to {lg::chasseur}
+            make 100 of poof at player with offset vector(2, 2, 2) with extra 0.5
+            play sound "custom:gun" with volume 0.4 to all players
+            loop blocks between location of player and location of target player:
+                draw 20 of dust using dustOption(white, 5) at location above loop-block
+            NextStep()
+            stop
+    else if {lg::InGame} is not set:
+        if target is an entity:
+            make 100 of poof at player with offset vector(2, 2, 2) with extra 0.5
+            play sound "custom:gun" with volume 0.1 to all players
+            loop blocks between location of player and location of target player:
+                draw 20 of dust using dustOption(white, 5) at location above loop-block
+            kill target entity
+            stop
+        else:
+            make 100 of poof at player with offset vector(2, 2, 2) with extra 0.5
+            play sound "custom:gun" with volume 0.1 to all players
+            loop blocks between location of player and location of target block:
+                draw 20 of dust using dustOption(white, 5) at location above loop-block
+            stop
+on right click with paper:
+    if {lg::GameStep} is "doCapitaine":
+        if {lg::%player%.didVoteForCapitaine} is true:
+            send "&cVous avez déjà voté pour un nouveau Capitaine." to player
+        else:
+            openCapitaineChest(player)
+    else if {lg::GameStep} is "doVote":
+        if {lg::%player%.didVote} is true:
+            send "&cVous avez déjà voté." to player
+        else:
+            openVoteChest(player)
+    else:
+        send "&cVous ne pouvez pas voter maintenant." to player
+
+on right click with player skull:
+    if player is {lg::capitaine}:
+        if {lg::capitaineTieBreakerInProg} is set:
+            set {_player} to uncolored item's name
+            if {_player} is "%{lg::mostVoted}%":
+                killPlayer({lg::mostVoted}, "vote")
+            if {_player} is "%{lg::doubleMostVoted}%":
+                killPlayer({lg::doubleMostVoted}, "vote")
+            set {lg::capitaineTieBreakerInProg} to false
+            advanceTimer()
+            set slot 3 of {lg::capitaine}'s inventory to air
+            set slot 5 of {lg::capitaine}'s inventory to air
+
+every 7 second:
+    if {lg::capitaineVoteInProg} is true:
+        set {_didEveryoneVote} to true
+        loop {lg::joueursEnVie::*}:
+            if {lg::%loop-value%.didVoteForCapitaine} is false:
+                set {_didEveryoneVote} to false
+            if {lg::%loop-value%.didVoteForCapitaine} is not set:
+                set {_didEveryoneVote} to false
+            if "%{lg::%loop-value%.didVoteForCapitaine}%" is "<none>":
+                set {_didEveryoneVote} to false
+        if {_didEveryoneVote} is true:
+            advanceTimer()
+            broadcast "7 - The timer has been advanced because everyone voted for a capitaine."
+    if {lg::voteInProg} is true:
+        set {_didEveryoneVote} to true
+        loop {lg::joueursEnVie::*}:
+            if {lg::%loop-value%.didVote} is false:
+                set {_didEveryoneVote} to false
+            if {lg::%loop-value%.didVote} is not set:
+                set {_didEveryoneVote} to false
+            if "%{lg::%loop-value%.didVote}%" is "<none>":
+                set {_didEveryoneVote} to false
+        if {_didEveryoneVote} is true:
+            broadcast "7 - Advance timer because everyone voted."
+            advanceTimer()
+
+function checkforWinCondition():
+    if {lg::InGame} is false:
+        stop
+    if {lg::chasseurDidLastKill} is true:
+        send title "&7&lÉgalité !" with subtitle "&8Personne n'a gagné !" to all players
+        wait 5 ticks
+        GameReset(false)
+        stop
+    set {_numLG} to 0
+    loop {lg::loupGarou::*}:
+        add 1 to {_numLG}
+    if {_numLG} is 0:
+        # broadcast "Trigger at 1281, numLG: %{_numLG}%, goodGuysCount: %{lg::goodGuysCount}%"
+        
+        send title "&a&lVictoire !" with subtitle "&eLe &aVillage&e a gagné !" to {lg::goodGuys::*}
+        send title "&c&lDéfaite !" with subtitle "&eLe &aVillage&e a gagné !" to {lg::badGuys::*}
+        GameReset(false)
+        stop
+    if {_numLG} is greater than or equal to {lg::goodGuysCount}:
+        # broadcast "Trigger at 1292, numLG: %{_numLG}%, goodGuysCount: %{lg::goodGuysCount}%"
+        if {lg::chasseur} is set:
+            if {lg::InterceptChasseur} is false:
+                stop
+            else:
+                send title "&8&lÉgalité !" with subtitle "&9Personne n'a gagné !" to all players
+                wait 5 ticks
+                GameReset(false)
+                stop
+        send title "&c&lDéfaite !" with subtitle "&eLes &cLoups Garous&e ont gagné !" to {lg::goodGuys::*}
+        send title "&a&lVictoire !" with subtitle "&eLes &cLoups Garous&e ont gagné !" to {lg::badGuys::*}
+        GameReset(false)
+        stop
+command /goodGuys:
+    trigger:
+        send "&9Good guys : %{lg::goodGuysCount}%" to player
