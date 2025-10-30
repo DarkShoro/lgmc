@@ -330,16 +330,6 @@ gradlew.bat shadowJar      # Windows
 
 The project uses the Shadow plugin to automatically include all dependencies in the final JAR.
 
----
-
-## 📊 Project Statistics
-
-- **Files**: 24 Java files
-- **Lines of Code**: ~3500+ lines
-- **Development Time**: Complete and tested project
-- **Status**: Production Ready ✅
-
----
 
 ## 🤝 Contributions
 
