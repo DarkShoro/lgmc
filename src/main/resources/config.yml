@@ -4,7 +4,7 @@
 # ============================================
 
 # Ne modifiez pas cette valeur - elle permet la mise à jour automatique de la config
-config-version: 2
+config-version: 3
 
 # Langue du plugin (fr, en)
 language: en
@@ -136,3 +136,8 @@ messages:
   game-start: "&eLa partie commence !"
   game-stop: "&cLa partie a été arrêtée."
 
+websocket:
+  url: "ws://localhost:8080"
+  enabled: false
+  reconnect-interval: 10
+  secret: "MY_SUPER_SECRET_KEY_123"

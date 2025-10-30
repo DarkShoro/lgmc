@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'fr.lightshoro'
-version = '3.0-BETA'
+version = '3.1-BETA'
 
 repositories {
     mavenCentral()
@@ -18,11 +18,14 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     implementation 'com.github.stefvanschie.inventoryframework:IF:0.11.5'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 shadowJar {
     archiveClassifier.set('')
     relocate 'com.github.stefvanschie.inventoryframework', 'fr.lightshoro.lgmc.inventoryframework'
+    relocate 'org.java_websocket', 'fr.lightshoro.lgmc.java_websocket'
 }
 
 build {

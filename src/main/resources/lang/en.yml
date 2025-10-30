@@ -267,6 +267,11 @@ commands:
     player: "&a- {player}"
   opengui:
     usage: "&cUsage: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"
+  linkDiscord:
+    usage: "&cUsage: /linkDiscord <uuid>"
+    uuid-invalid: "&c❌ The provided UUID is invalid!"
+    linked: "&a✔ Your Minecraft account has been linked to Discord!"
+    websocket-error: "&c❌ Unable to connect to the Discord bot!"
 
 # Errors
 errors:

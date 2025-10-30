@@ -175,6 +175,7 @@ public class GameManager {
         }
 
         freezeAll = false;
+        plugin.getWebsocketManager().sendGameOver();
 
         if (isAdmin) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -571,6 +572,7 @@ public class GameManager {
                 }
 
                 roleDistribution();
+                plugin.getWebsocketManager().sendGameStart();
                 isStarting = false;
             }
         }, 0L, 20L); // 0 tick delay, 20 ticks (1 second) interval
@@ -772,6 +774,9 @@ public class GameManager {
         nightCount++;
         queueMode = "night";
 
+        // Muting all players during the night
+        plugin.getWebsocketManager().sendMuteAll();
+
         // Hide all players from each other and apply blindness
         for (Player player : playersAlive) {
             for (Player other : playersAlive) {
@@ -817,6 +822,9 @@ public class GameManager {
         dayCount++;
         voteWasMade = false;
         queueMode = "day";
+
+        // Unmuting all players during the day
+        plugin.getWebsocketManager().sendDemuteAll();
 
         // Reveal all players and remove blindness
         for (Player player : playersAlive) {

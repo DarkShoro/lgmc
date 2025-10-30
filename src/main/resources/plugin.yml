@@ -1,5 +1,5 @@
 name: lgmc
-version: '3.0-BETA'
+version: '3.1-BETA'
 main: fr.lightshoro.lgmc.Lgmc
 api-version: '1.21'
 description: Plugin de jeu Loup-Garou pour Minecraft (4-12 joueurs)
@@ -38,6 +38,13 @@ commands:
     usage: /lgopengui
     permission: lgmc.debug
     aliases: [openlggui]
+  wsaction:
+    description: Commande interne pour les actions WebSocket
+    usage: /wsaction <action>
+    permission: lgmc.debug
+  linkDiscord:
+    description: Affiche le lien vers le serveur Discord du plugin
+    usage: /linkDiscord
 
 permissions:
   lgmc.start:

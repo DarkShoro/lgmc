@@ -35,6 +35,7 @@ public final class Lgmc extends JavaPlugin {
     private LocationManager locationManager;
     private ResourcePackManager resourcePackManager;
     private MotdManager motdManager;
+    private WebsocketManager websocketManager;
     public CachedServerIcon serverIcon;
 
     private static final String ASCII_ART =
@@ -63,6 +64,7 @@ public final class Lgmc extends JavaPlugin {
         this.timerManager = new TimerManager(this);
         this.resourcePackManager = new ResourcePackManager(this);
         this.motdManager = new MotdManager(this);
+        this.websocketManager = new WebsocketManager(this.configManager.getWebsocketUrl(), this.configManager.getWebsocketSecret(), this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
@@ -90,6 +92,12 @@ public final class Lgmc extends JavaPlugin {
         }
         if (getCommand("lgopengui") != null) {
             Objects.requireNonNull(getCommand("lgopengui")).setExecutor(new OpenGuiCommand(this));
+        }
+        if (getCommand("wsaction") != null) {
+            Objects.requireNonNull(getCommand("wsaction")).setExecutor(new WSAction(this));
+        }
+        if (getCommand("linkDiscord") != null) {
+            Objects.requireNonNull(getCommand("linkDiscord")).setExecutor(new DiscordLinkCommand(this));
         }
         // Démarrer la tâche périodique de vérification des votes (toutes les 7 secondes)
         new VoteCheckTask(this).runTaskTimer(this, 140L, 140L);
@@ -197,5 +205,13 @@ public final class Lgmc extends JavaPlugin {
      */
     public MotdManager getMotdManager() {
         return motdManager;
+    }
+
+    /**
+     * Récupère le gestionnaire de WebSocket
+     * @return WebsocketManager instance
+     */
+    public WebsocketManager getWebsocketManager() {
+        return websocketManager;
     }
 }

@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ConfigManager {
     private final Lgmc plugin;
     private FileConfiguration config;
-    private final int CURRENT_CONFIG_VERSION = 2;
+    private final int CURRENT_CONFIG_VERSION = 3;
 
     public ConfigManager(Lgmc plugin) {
         this.plugin = plugin;
@@ -249,6 +249,17 @@ public class ConfigManager {
 
     public FileConfiguration getConfig() {
         return config;
+    }
+
+    public String getWebsocketUrl() {
+        return config.getString("websocket.url", "");
+    }
+    public String getWebsocketSecret() {
+        return config.getString("websocket.secret", "");
+    }
+
+    public int getWebsocketReconnectInterval() {
+        return config.getInt("websocket.reconnect-interval", 10);
     }
 }
 
