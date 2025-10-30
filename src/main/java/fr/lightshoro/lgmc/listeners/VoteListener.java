@@ -208,6 +208,15 @@ public class VoteListener implements Listener {
         // Get the direction the player is looking at
         Vector direction = start.getDirection();
 
+        // Play sound "custom:gun"
+        player.getWorld().playSound(
+                player.getLocation(),
+                "custom:gun",
+                SoundCategory.PLAYERS,
+                1.0f,
+                1.0f
+        );
+
         // Perform the ray trace in the world
         RayTraceResult result = player.getWorld().rayTrace(
                 start,

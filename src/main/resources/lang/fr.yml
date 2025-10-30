@@ -273,3 +273,5 @@ errors:
   not-in-game: "&cVous n'êtes pas dans la partie."
   cannot-vote-now: "&cVous ne pouvez pas voter maintenant."
   config-error: "&c❌ Erreur lors du rechargement de la configuration !"
+  ressource-pack-needed: "&c❌ Le pack de ressources est requis pour jouer"
+  ressource-pack-failed: "&c❌ Échec du téléchargement du pack de ressources"

@@ -180,14 +180,14 @@ public class ResourcePackManager implements Listener {
                 break;
             case FAILED_DOWNLOAD:
                 plugin.getLogger().warning("Échec du téléchargement du pack de ressources pour le joueur " + player.getName());
-                kickPlayer(player, "Impossible de télécharger le pack de ressources requis.");
+                kickPlayer(player, plugin.getLanguageManager().getMessage("errors.ressource-pack-failed"));
                 break;
             case ACCEPTED:
                 plugin.getLogger().info("Le joueur " + player.getName() + " a accepté le pack de ressources");
                 break;
             case DECLINED:
                 plugin.getLogger().info("Le joueur " + player.getName() + " a décliné le pack de ressources - Expulsion en cours...");
-                kickPlayer(player, "Le pack de ressources est obligatoire pour rejoindre ce serveur.");
+                kickPlayer(player, plugin.getLanguageManager().getMessage("errors.ressource-pack-declined"));
                 break;
         }
     }

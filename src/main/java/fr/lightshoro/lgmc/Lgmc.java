@@ -42,15 +42,15 @@ public final class Lgmc extends JavaPlugin {
 
     private static final String ASCII_ART =
             """
-                       ⠀⠀⠀⠀⠀⣀⣠⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⠀*
+                       ⠀⠀⠀⠀⠀⣀⣠⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⠀
                        ⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀
-                       ⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢿⣿⣷⡀⠀  ██       ██████  ███    ███  ██████*
-                       ⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⣴⢿⣿⣧⠀  ██      ██       ████  ████ ██    *
-                       ⣿⣿⣿⣿⣿⡿⠛⣩⠍⠀⠀⠀⠐⠉⢠⣿⣿⡇  ██      ██   ███ ██ ████ ██ ██    *
-                       ⣿⡿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿  ██      ██    ██ ██  ██  ██ ██     *
-                       ⢹⣿⣤⠄⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⡏  ███████  ██████  ██      ██  ██████*
-                       ⠀⠻⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⠟⠀*
-                          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⠟⠁⠀⠀*
+                       ⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢿⣿⣷⡀⠀  ██       ██████  ███    ███  ██████
+                       ⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⣴⢿⣿⣧⠀  ██      ██       ████  ████ ██    
+                       ⣿⣿⣿⣿⣿⡿⠛⣩⠍⠀⠀⠀⠐⠉⢠⣿⣿⡇  ██      ██   ███ ██ ████ ██ ██    
+                       ⣿⡿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿  ██      ██    ██ ██  ██  ██ ██     
+                       ⢹⣿⣤⠄⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⡏  ███████  ██████  ██      ██  ██████
+                       ⠀⠻⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⠟⠀
+                          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⠟⠁⠀⠀
                     """;
 
 
@@ -97,7 +97,7 @@ public final class Lgmc extends JavaPlugin {
         // Démarrer la tâche périodique de gestion de visibilité (toutes les secondes)
         new VisibilityTask(this).runTaskTimer(this, 20L, 20L);
 
-        // Affiche notre magnifique ASCII art dans la console; ligne par ligne pour éviter les problèmes d'encodage
+        // Affiche notre magnifique ASCII art dans la console ; ligne par ligne pour éviter les problèmes d'encodage
         for (String line : ASCII_ART.split("\n")) {
             getLogger().info(line);
         }
