@@ -1,0 +1,33 @@
+name: Draft Release on Version Change
+
+on:
+  push:
+    paths:
+      - 'build.gradle'
+
+jobs:
+  draft-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract version from build.gradle
+        id: extract_version
+        run: |
+          version=$(grep -oP 'version\s*=\s*\"\K[^"]+' build.gradle)
+          echo "::set-output name=version::$version"
+
+      - name: Create draft release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ steps.extract_version.outputs.version }}
+          release_name: Release v${{ steps.extract_version.outputs.version }}
+          draft: true
+          prerelease: false
+          body: |
+            ## Changes
+            - Automatically drafted release for version v${{ steps.extract_version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
