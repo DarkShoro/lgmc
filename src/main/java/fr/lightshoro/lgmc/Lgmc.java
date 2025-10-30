@@ -19,6 +19,8 @@ import fr.lightshoro.lgmc.tasks.VoteCheckTask;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 /**
  * Lgmc - Loup-Garou Minecraft Plugin
  * Recréation du script lg.sk en Java
@@ -39,16 +41,17 @@ public final class Lgmc extends JavaPlugin {
     private ResourcePackManager resourcePackManager;
 
     private static final String ASCII_ART =
-
-            "   ⠀⠀⠀⠀⠀⣀⣠⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⠀ " + "\n" +
-            "   ⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀" + "\n" +
-            "   ⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢿⣿⣷⡀⠀  ██       ██████  ███    ███  ██████ " + "\n" +
-            "   ⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⣴⢿⣿⣧⠀  ██      ██       ████  ████ ██     " + "\n" +
-            "   ⣿⣿⣿⣿⣿⡿⠛⣩⠍⠀⠀⠀⠐⠉⢠⣿⣿⡇  ██      ██   ███ ██ ████ ██ ██     " + "\n" +
-            "   ⣿⡿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿  ██      ██    ██ ██  ██  ██ ██      " + "\n" +
-            "   ⢹⣿⣤⠄⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⡏  ███████  ██████  ██      ██  ██████ " + "\n" +
-            "   ⠀⠻⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⠟⠀" + "\n" +
-            "      ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⠟⠁⠀⠀";
+            """
+                       ⠀⠀⠀⠀⠀⣀⣠⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⠀*
+                       ⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀
+                       ⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢿⣿⣷⡀⠀  ██       ██████  ███    ███  ██████*
+                       ⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⣴⢿⣿⣧⠀  ██      ██       ████  ████ ██    *
+                       ⣿⣿⣿⣿⣿⡿⠛⣩⠍⠀⠀⠀⠐⠉⢠⣿⣿⡇  ██      ██   ███ ██ ████ ██ ██    *
+                       ⣿⡿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿  ██      ██    ██ ██  ██  ██ ██     *
+                       ⢹⣿⣤⠄⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⡏  ███████  ██████  ██      ██  ██████*
+                       ⠀⠻⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⠟⠀*
+                          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⠟⠁⠀⠀*
+                    """;
 
 
     @Override
@@ -70,22 +73,22 @@ public final class Lgmc extends JavaPlugin {
 
         // Enregistrement des commandes
         if (getCommand("testament") != null) {
-            getCommand("testament").setExecutor(new TestamentCommand(this));
+            Objects.requireNonNull(getCommand("testament")).setExecutor(new TestamentCommand(this));
         }
         if (getCommand("goodGuys") != null) {
-            getCommand("goodGuys").setExecutor(new GoodGuysCommand(this));
+            Objects.requireNonNull(getCommand("goodGuys")).setExecutor(new GoodGuysCommand(this));
         }
         if (getCommand("lgstart") != null) {
-            getCommand("lgstart").setExecutor(new LGStartCommand(this));
+            Objects.requireNonNull(getCommand("lgstart")).setExecutor(new LGStartCommand(this));
         }
         if (getCommand("lgstop") != null) {
-            getCommand("lgstop").setExecutor(new LGStopCommand(this));
+            Objects.requireNonNull(getCommand("lgstop")).setExecutor(new LGStopCommand(this));
         }
         if (getCommand("lgsetup") != null) {
-            getCommand("lgsetup").setExecutor(new LGSetupCommand(this));
+            Objects.requireNonNull(getCommand("lgsetup")).setExecutor(new LGSetupCommand(this));
         }
         if (getCommand("lgreload") != null) {
-            getCommand("lgreload").setExecutor(new LGReloadCommand(this));
+            Objects.requireNonNull(getCommand("lgreload")).setExecutor(new LGReloadCommand(this));
         }
 
         // Démarrer la tâche périodique de vérification des votes (toutes les 7 secondes)
