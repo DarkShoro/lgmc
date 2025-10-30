@@ -67,7 +67,7 @@ public class WebsocketManager {
                                 logger.info("🔗 Discord account linked successfully for Minecraft user: " + username);
                                 Player linkedPlayer = plugin.getServer().getPlayerExact(username);
                                 if (linkedPlayer != null && linkedPlayer.isOnline()) {
-                                    linkedPlayer.sendMessage(plugin.getLanguageManager().getMessage("commands.linkDiscord.success"));
+                                    linkedPlayer.sendMessage(plugin.getLanguageManager().getMessage("commands.linkDiscord.linked"));
                                 }
                                 break;
                             case "link_failed_unknown":
