@@ -17,7 +17,7 @@ jobs:
       - name: Extract version from build.gradle
         id: extract_version
         run: |
-          version=$(grep -Eo 'version\s*["=]\s*"[^"]+"' build.gradle | sed 's/[^"]*"\([^"]*\)"/\1/')
+          version=$(grep -Eo "version\s*=\s*['\"][^'\"]+['\"]" build.gradle | sed "s/version\s*=\s*['\"]\([^'\"]*\)['\"]/\1/")
           echo "version=$version" >> $GITHUB_ENV
           echo "Detected version: $version"
 
