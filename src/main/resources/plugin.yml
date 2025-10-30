@@ -33,6 +33,11 @@ commands:
     description: Affiche le nombre de bons joueurs restants (debug)
     usage: /goodGuys
     permission: lgmc.debug
+  lgopengui:
+    description: Ouvre le menu de débogage (debug)
+    usage: /lgopengui
+    permission: lgmc.debug
+    aliases: [openlggui]
 
 permissions:
   lgmc.start:

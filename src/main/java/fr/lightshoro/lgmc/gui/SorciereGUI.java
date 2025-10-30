@@ -1,11 +1,10 @@
 package fr.lightshoro.lgmc.gui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.gui.type.BrewingStandGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.managers.GameManager;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,12 +33,15 @@ public class SorciereGUI {
             title = plugin.getLanguageManager().getMessage("gui.sorciere");
         }
 
-        ChestGui gui = new ChestGui(1, title);
-        StaticPane pane = new StaticPane(0, 0, 9, 1);
+        BrewingStandGui gui = new BrewingStandGui(title);
+        StaticPane pane1 = new StaticPane(0, 0, 1, 1);
+        StaticPane pane2 = new StaticPane(0, 0, 1, 1);
+        StaticPane pane3 = new StaticPane(0, 0, 1, 1);
+
 
         gm.setSorciereAction(false);
 
-        int slot = 3; // Start at position 3 (centered)
+        //int slot = 3; // Start at position 3 (centered)
 
         // Potion de vie
         if (!gm.isPotionVie()) {
@@ -72,11 +74,10 @@ public class SorciereGUI {
                 sorciere.closeInventory();
             });
 
-            pane.addItem(vieItem, slot, 0);
+            pane1.addItem(vieItem, 0, 0);
+            //gui.getFirstBottleComponent().setItem(vieItem, 0, 0);
+            gui.getFirstBottleComponent().addPane(pane1);
         }
-
-        // Avance d'un slot pour le centre
-        slot++;
 
         // Ne rien faire
         ItemStack barrier = new ItemStack(Material.BARRIER);
@@ -92,10 +93,9 @@ public class SorciereGUI {
             sorciere.closeInventory();
         });
 
-        pane.addItem(skipItem, slot, 0);
-
-        // Avance d'un slot pour le côté droit
-        slot++;
+        pane2.addItem(skipItem, 0, 0);
+        //gui.getSecondBottleComponent().setItem(skipItem, 0, 0);
+        gui.getSecondBottleComponent().addPane(pane2);
 
         // Potion de mort
         if (!gm.isPotionMort()) {
@@ -115,10 +115,10 @@ public class SorciereGUI {
                 openPoisonGUI(sorciere);
             });
 
-            pane.addItem(mortItem, slot, 0);
+            pane3.addItem(mortItem, 0, 0);
+            //gui.getThirdBottleComponent().setItem(mortItem, 0, 0);
+            gui.getThirdBottleComponent().addPane(pane3);
         }
-
-        gui.addPane(pane);
 
         gui.setOnClose(event -> {
             if (!gm.isSorciereAction()) {

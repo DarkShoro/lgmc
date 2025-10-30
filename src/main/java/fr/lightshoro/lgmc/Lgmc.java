@@ -1,11 +1,6 @@
 package fr.lightshoro.lgmc;
 
-import fr.lightshoro.lgmc.commands.GoodGuysCommand;
-import fr.lightshoro.lgmc.commands.LGReloadCommand;
-import fr.lightshoro.lgmc.commands.LGSetupCommand;
-import fr.lightshoro.lgmc.commands.LGStartCommand;
-import fr.lightshoro.lgmc.commands.LGStopCommand;
-import fr.lightshoro.lgmc.commands.TestamentCommand;
+import fr.lightshoro.lgmc.commands.*;
 import fr.lightshoro.lgmc.listeners.GameListener;
 import fr.lightshoro.lgmc.listeners.VoteListener;
 import fr.lightshoro.lgmc.managers.ConfigManager;
@@ -90,7 +85,9 @@ public final class Lgmc extends JavaPlugin {
         if (getCommand("lgreload") != null) {
             Objects.requireNonNull(getCommand("lgreload")).setExecutor(new LGReloadCommand(this));
         }
-
+        if (getCommand("lgopengui") != null) {
+            Objects.requireNonNull(getCommand("lgopengui")).setExecutor(new OpenGuiCommand(this));
+        }
         // Démarrer la tâche périodique de vérification des votes (toutes les 7 secondes)
         new VoteCheckTask(this).runTaskTimer(this, 140L, 140L);
 
