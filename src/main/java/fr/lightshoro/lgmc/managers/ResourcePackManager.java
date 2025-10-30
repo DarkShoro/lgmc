@@ -89,7 +89,36 @@ public class ResourcePackManager implements Listener {
         Object craftPlayer = craftPlayerClass.cast(player);
         Object entityPlayer = craftPlayerClass.getMethod("getHandle").invoke(craftPlayer);
         Object playerConnection = entityPlayer.getClass().getField("c").get(entityPlayer);
-        return (int) playerConnection.getClass().getField("b").get(playerConnection);
+
+        // Essayer différents noms de champ pour la version du protocole
+        Class<?> playerConnectionClass = playerConnection.getClass();
+
+        // Essayer les différents noms de champ possibles
+        String[] fieldNames = {"b", "protocolVersion", "version", "a"};
+        for (String fieldName : fieldNames) {
+            try {
+                int protocolVersion = (int) playerConnectionClass.getField(fieldName).get(playerConnection);
+                plugin.getLogger().info("Version de protocole trouvée via le champ '" + fieldName + "': " + protocolVersion);
+                return protocolVersion;
+            } catch (NoSuchFieldException ignored) {
+                // Continuer au champ suivant
+            }
+        }
+
+        // Si aucun champ n'a été trouvé, essayer via getDeclaredField (accès aux champs privés)
+        for (String fieldName : fieldNames) {
+            try {
+                java.lang.reflect.Field field = playerConnectionClass.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                int protocolVersion = (int) field.get(playerConnection);
+                plugin.getLogger().info("Version de protocole trouvée via getDeclaredField '" + fieldName + "': " + protocolVersion);
+                return protocolVersion;
+            } catch (NoSuchFieldException ignored) {
+                // Continuer au champ suivant
+            }
+        }
+
+        throw new Exception("Impossible de trouver le champ de version de protocole sur PlayerConnection");
     }
 
     /**
