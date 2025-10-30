@@ -50,6 +50,7 @@ public class ResourcePackManager implements Listener {
 
     /**
      * Configure le pack de ressources pour un joueur
+     * En cas d'erreur, utilise le pack par défaut 1.21
      */
     public void applyResourcePack(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -60,25 +61,44 @@ public class ResourcePackManager implements Listener {
 
                 String sha1Hash = downloadHash(hashUrl);
                 if (sha1Hash == null || sha1Hash.isEmpty()) {
-                    plugin.getLogger().warning("Impossible de récupérer le hash SHA1 pour la version " + minecraftVersion);
-                    return;
+                    plugin.getLogger().warning("Impossible de récupérer le hash SHA1 pour la version " + minecraftVersion + ", utilisation du pack par défaut 1.21");
+                    // Fallback sur 1.21
+                    minecraftVersion = "1.21";
+                    packUrl = String.format(RESOURCE_PACK_URL_TEMPLATE, minecraftVersion);
+                    hashUrl = String.format(RESOURCE_PACK_HASH_URL_TEMPLATE, minecraftVersion);
+                    sha1Hash = downloadHash(hashUrl);
+
+                    if (sha1Hash == null || sha1Hash.isEmpty()) {
+                        plugin.getLogger().warning("Impossible de récupérer le hash SHA1 pour le pack par défaut 1.21 pour le joueur " + player.getName());
+                        return;
+                    }
                 }
 
+                // Créer des variables final pour la lambda
+                final String finalPackUrl = packUrl;
+                final String finalSha1Hash = sha1Hash;
+
                 // Appliquer le pack sur le thread principal
-                Bukkit.getScheduler().runTask(plugin, () -> player.setResourcePack(packUrl, sha1Hash));
+                Bukkit.getScheduler().runTask(plugin, () -> player.setResourcePack(finalPackUrl, finalSha1Hash));
                 plugin.getLogger().info("Pack de ressources appliqué au joueur " + player.getName() + " (version " + minecraftVersion + ")");
             } catch (Exception e) {
-                plugin.getLogger().warning("Impossible de configurer le pack de ressources pour le joueur " + player.getName() + ": " + e.getMessage());
+                plugin.getLogger().warning("Erreur lors de la configuration du pack de ressources pour le joueur " + player.getName() + ": " + e.getMessage());
             }
         });
     }
 
     /**
      * Récupère la version Minecraft du joueur en fonction de sa version de protocole
+     * En cas d'erreur, retourne par défaut la version 1.21
      */
-    private String getPlayerMinecraftVersion(Player player) throws Exception {
-        int protocolVersion = getProtocolVersion(player);
-        return protocolVersionMap.getOrDefault(protocolVersion, "1.21");
+    private String getPlayerMinecraftVersion(Player player) {
+        try {
+            int protocolVersion = getProtocolVersion(player);
+            return protocolVersionMap.getOrDefault(protocolVersion, "1.21");
+        } catch (Exception e) {
+            plugin.getLogger().warning("Impossible de déterminer la version du joueur " + player.getName() + ", utilisation du pack par défaut 1.21: " + e.getMessage());
+            return "1.21";
+        }
     }
 
     /**
