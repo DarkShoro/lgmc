@@ -73,6 +73,7 @@ public class GameManager {
     private int mostVotedNum;
     private Player doubleMostVoted;
     private int doubleMostVotedNum;
+    private boolean isStarting;
 
     public GameManager(Lgmc plugin) {
         this.plugin = plugin;
@@ -548,6 +549,7 @@ public class GameManager {
 
     public void startGame() {
         gameReset(false);
+        isStarting = true;
 
         // Countdown using scheduler instead of Thread.sleep
         final int[] countdown = {10};
@@ -569,6 +571,7 @@ public class GameManager {
                 }
 
                 roleDistribution();
+                isStarting = false;
             }
         }, 0L, 20L); // 0 tick delay, 20 ticks (1 second) interval
     }
@@ -1296,5 +1299,6 @@ public class GameManager {
     public void setDoubleMostVoted(Player player) { this.doubleMostVoted = player; }
     public Player getMostVoted() { return mostVoted; }
     public Player getDoubleMostVoted() { return doubleMostVoted; }
+    public boolean getIsStarting() { return isStarting; }
 }
 

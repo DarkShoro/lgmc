@@ -277,3 +277,9 @@ errors:
   config-error: "&c❌ Error reloading configuration!"
   ressource-pack-needed: "&c❌ Resource pack is required to play!"
   ressource-pack-failed: "&c❌ Failed to download resource pack!"
+
+motd:
+  waiting: "&e{players}&9/&e12 &9players &9| Waiting for players..."
+  in-progress: "&cGame in progress &9| You can spectate!"
+  starting: "Starting soon! &9| Join quickly!"
+  full: "&cServer full &9| Try again later!"

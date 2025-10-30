@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 
 public class GameListener implements Listener {
@@ -16,6 +17,13 @@ public class GameListener implements Listener {
 
     public GameListener(Lgmc plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onServerListPing(ServerListPingEvent event) {
+        event.setServerIcon(plugin.serverIcon);
+        event.setMaxPlayers(12);
+        event.motd(plugin.getMotdManager().getCurrentMotd());
     }
 
     @EventHandler

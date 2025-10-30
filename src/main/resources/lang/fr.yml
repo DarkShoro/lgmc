@@ -278,3 +278,9 @@ errors:
   config-error: "&c❌ Erreur lors du rechargement de la configuration !"
   ressource-pack-needed: "&c❌ Le pack de ressources est requis pour jouer"
   ressource-pack-failed: "&c❌ Échec du téléchargement du pack de ressources"
+
+motd:
+  waiting: "&e{players}&9/&e12 &9joueurs | En attente de démarrage..."
+  in-progress: "&cPartie en cours &9| Vous pouvez observer!"
+  starting: "&aDémarrage imminent &9| Rejoignez vite!"
+  full: "&cServeur plein | Réessayez plus tard!"
