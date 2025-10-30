@@ -187,7 +187,7 @@ public class ResourcePackManager implements Listener {
                 break;
             case DECLINED:
                 plugin.getLogger().info("Le joueur " + player.getName() + " a décliné le pack de ressources - Expulsion en cours...");
-                kickPlayer(player, plugin.getLanguageManager().getMessage("errors.ressource-pack-declined"));
+                kickPlayer(player, plugin.getLanguageManager().getMessage("errors.ressource-pack-needed"));
                 break;
         }
     }
