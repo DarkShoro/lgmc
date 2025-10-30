@@ -19,7 +19,23 @@ jobs:
           version=$(grep -oP 'version\s*=\s*\"\K[^"]+' build.gradle)
           echo "::set-output name=version::$version"
 
-      - name: Create draft release
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build JAR file
+        run: |
+          ./gradlew shadowJar
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lgmc-jar
+          path: build/libs/lgmc-*.jar
+
+      - name: Create draft release with JAR
         uses: actions/create-release@v1
         with:
           tag_name: v${{ steps.extract_version.outputs.version }}
@@ -29,5 +45,6 @@ jobs:
           body: |
             ## Changes
             - Automatically drafted release for version v${{ steps.extract_version.outputs.version }}
+          files: build/libs/lgmc-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
