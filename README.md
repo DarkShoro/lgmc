@@ -1,6 +1,6 @@
 # 🐺 LGMC - Werewolf Minecraft Plugin
 
-[![Version](https://img.shields.io/badge/version-2.7.1--SNAPSHOT-blue.svg)](https://github.com/lightshoro/lgmc)
+[![Version](https://img.shields.io/badge/version-2.8.6--SNAPSHOT-blue.svg)](https://github.com/lightshoro/lgmc)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg)](https://www.minecraft.net/)
 [![Paper](https://img.shields.io/badge/paper-required-orange.svg)](https://papermc.io/)
 
@@ -87,7 +87,7 @@ The plugin itself is hardcoded in French in its variables and comments, but it s
 ### Steps
 
 1. Download the JAR file from [Releases](https://github.com/DarkShoro/lgmc/releases) or compile it yourself
-2. Place the `lgmc-2.7.1-SNAPSHOT.jar` file in your server's `plugins/` folder
+2. Place the `lgmc-2.8.6-SNAPSHOT.jar` file in your server's `plugins/` folder
 3. Start or restart the server
 4. Configuration files will be automatically generated in `plugins/lgmc/`
 
@@ -323,7 +323,7 @@ cd lgmc
 gradlew.bat shadowJar      # Windows
 
 # The JAR will be generated in:
-# build/libs/lgmc-2.7.1-SNAPSHOT.jar
+# build/libs/lgmc-2.8.6-SNAPSHOT.jar
 ```
 
 ### Automatic Build
