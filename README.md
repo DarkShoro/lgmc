@@ -1,308 +1,309 @@
-# 🐺 LGMC - Loup-Garou Minecraft Plugin
+# 🐺 LGMC - Werewolf Minecraft Plugin
 
 [![Version](https://img.shields.io/badge/version-2.7.1--SNAPSHOT-blue.svg)](https://github.com/lightshoro/lgmc)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg)](https://www.minecraft.net/)
 [![Paper](https://img.shields.io/badge/paper-required-orange.svg)](https://papermc.io/)
 
-Un plugin Minecraft complet qui recrée le jeu du Loup-Garou avec une expérience immersive et automatisée.
+A complete Minecraft plugin that recreates the Werewolf game with an immersive and automated experience.
 
 ---
 
-## 📋 Table des matières
+## 📋 Table of Contents
 
-- [À propos](#-à-propos)
-- [Fonctionnalités](#-fonctionnalités)
+- [About](#-about)
+- [Features](#-features)
 - [Installation](#-installation)
-- [Guide de démarrage rapide](#-guide-de-démarrage-rapide)
-- [Commandes](#-commandes)
+- [Quick Start Guide](#-quick-start-guide)
+- [Commands](#-commands)
 - [Configuration](#-configuration)
-- [Rôles disponibles](#-rôles-disponibles)
-- [Architecture du plugin](#-architecture-du-plugin)
+- [Available Roles](#-available-roles)
+- [Plugin Architecture](#-plugin-architecture)
 - [Compilation](#-compilation)
-- [Licence](#-licence)
+- [License](#-license)
 
 ---
 
-## 🎮 À propos
+## 🎮 About
 
-**LGMC** est une recréation complète en Java du jeu social Loup-Garou pour Minecraft. Le plugin gère automatiquement l'intégralité d'une partie, de la distribution des rôles aux conditions de victoire, en passant par les phases jour/nuit et les votes.
+**LGMC** is a complete Java recreation of the social game Werewolf for Minecraft. The plugin automatically manages the entire game, from role distribution to victory conditions, including day/night phases and voting.
 
-### Caractéristiques principales
+### Key Features
 
-- ✅ **Support de 4 à 12 joueurs** pour des parties équilibrées
-- ✅ **7 rôles** implémentés avec leurs pouvoirs uniques
-- ✅ **Interface graphique** intuitive pour toutes les actions
-- ✅ **Gestion automatique** des phases de jeu
-- ✅ **Système de vote** avec départage par le capitaine
-- ✅ **Multilingue** (Français et Anglais) avec mise à jour automatique des traductions
-- ✅ **Configuration flexible** avec migration automatique
-- ✅ **Production ready** - Testé et stable
+- ✅ **Supports 4 to 12 players** for balanced games
+- ✅ **7 roles** implemented with unique powers
+- ✅ **Intuitive graphical interface** for all actions
+- ✅ **Automatic management** of game phases
+- ✅ **Voting system** with tie-breaking by the captain
+- ✅ **Multilingual** (French and English) with automatic translation updates
+- ✅ **Flexible configuration** with automatic migration
+- ❌ **Production ready** - The project is still under active development
 
 ---
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-### Core du jeu
+### Core Gameplay
 
-- **Distribution automatique des rôles** selon le nombre de joueurs
-- **Phases jour/nuit** avec alternance automatique et gestion du temps Minecraft
-- **Timer avec barre de boss** affichant le temps restant
-- **File d'attente d'actions** séquencées pour chaque phase
-- **3 conditions de victoire** : Village, Loups-Garous, ou Amoureux
-- **Système de mort** avec 6 raisons différentes (vote, loups, chasseur, poison, amour, famine)
-- **Gestion de la visibilité** et effets de cécité pendant la nuit
-- **Spectateur automatique** pour les joueurs éliminés
+- **Automatic role distribution** based on the number of players
+- **Day/night phases** with automatic alternation and Minecraft time management
+- **Timer with boss bar** displaying remaining time
+- **Action queue** sequenced for each phase
+- **3 victory conditions**: Village, Werewolves, or Lovers
+- **Death system** with 6 different reasons (vote, wolves, hunter, poison, love, famine)
+- **Visibility management** and blindness effects during the night
+- **Automatic spectator mode** for eliminated players
 
-### Mécaniques spéciales
+### Special Mechanics
 
-- **Système d'amoureux** : mort conjointe si l'un meurt
-- **Capitaine** : casque bleu, départage les votes, peut nommer un successeur
-- **Testament** : le capitaine peut choisir son successeur avant de mourir
-- **Départage automatique** en cas d'égalité lors des votes
-- **Vérification automatique** quand tous les joueurs ont voté
-- **Messages personnalisés** pour chaque type de mort
+- **Lovers system**: joint death if one dies
+- **Captain**: blue helmet, breaks voting ties, can appoint a successor
+- **Will**: the captain can choose their successor before dying
+- **Automatic tie-breaking** in case of voting ties
+- **Automatic check** when all players have voted
+- **Custom messages** for each type of death
 
-### Interfaces graphiques (GUIs)
+### Graphical Interfaces (GUIs)
 
-- 🔮 **VoyanteGUI** - Sonder un joueur pour connaître son rôle
-- 🐺 **LoupGarouGUI** - Choisir une victime (vote unanime requis)
-- 🧪 **SorciereGUI** - Utiliser les potions de vie ou de mort
-- ☠️ **SorcierePoisonGUI** - Empoisonner un joueur
-- 👑 **CapitaineVoteGUI** - Élire le capitaine du village
-- 🗳️ **VoteGUI** - Voter pour éliminer un joueur
-- 💕 **CupidonGUI** - Choisir deux amoureux
+- 🔮 **SeerGUI** - Probe a player to know their role
+- 🐺 **WerewolfGUI** - Choose a victim (unanimous vote required)
+- 🧪 **WitchGUI** - Use life or death potions
+- ☠️ **WitchPoisonGUI** - Poison a player
+- 👑 **CaptainVoteGUI** - Elect the village captain
+- 🗳️ **VoteGUI** - Vote to eliminate a player
+- 💕 **CupidGUI** - Choose two lovers
+- 🔜 **WillGUI** - Appoint a successor before dying with a dedicated menu instead of a command.
 
 ---
 
 ## 📦 Installation
 
-### Prérequis
+### Prerequisites
 
-- **Serveur Minecraft** : Paper ou Spigot 1.21+
-- **Java** : Version 21 ou supérieure
+- **Minecraft Server**: Paper or Spigot 1.21+
+- **Java**: Version 21 or higher
 
-### Étapes
+### Steps
 
-1. Téléchargez le fichier JAR depuis [Releases](https://github.com/lightshoro/lgmc/releases) ou compilez-le vous-même
-2. Placez le fichier `lgmc-2.7.1-SNAPSHOT.jar` dans le dossier `plugins/` de votre serveur
-3. Démarrez ou redémarrez le serveur
-4. Les fichiers de configuration seront générés automatiquement dans `plugins/lgmc/`
+1. Download the JAR file from [Releases](https://github.com/lightshoro/lgmc/releases) or compile it yourself
+2. Place the `lgmc-2.7.1-SNAPSHOT.jar` file in your server's `plugins/` folder
+3. Start or restart the server
+4. Configuration files will be automatically generated in `plugins/lgmc/`
 
 ---
 
-## 🚀 Guide de démarrage rapide
+## 🚀 Quick Start Guide
 
-### 1. Configuration des emplacements
+### 1. Configure Locations
 
-Avant de pouvoir jouer, vous devez définir les emplacements nécessaires :
+Before playing, you need to set the required locations:
 
 ```
-/lgsetup campfire          # Définit le centre du jeu (feu de camp)
-/lgsetup chasseurtp        # Définit où le chasseur est téléporté pour tirer
-/lgsetup spawn 1           # Premier point d'apparition
-/lgsetup spawn 2           # Deuxième point d'apparition
-/lgsetup spawn 3           # Etc. (un pour chaque joueur maximum)
+/lgsetup campfire          # Sets the game center (campfire)
+/lgsetup chasseurtp        # Sets where the hunter is teleported to shoot
+/lgsetup spawn 1           # First spawn point
+/lgsetup spawn 2           # Second spawn point
+/lgsetup spawn 3           # Etc. (one for each maximum player)
 ...
 ```
 
-**Astuce** : Positionnez-vous à l'endroit désiré avant d'exécuter la commande.
+**Tip**: Position yourself at the desired location before executing the command.
 
-### 2. Vérifier la configuration
+### 2. Verify Configuration
 
 ```
-/lgsetup info              # Affiche tous les emplacements configurés
+/lgsetup info              # Displays all configured locations
 ```
 
-### 3. Démarrer une partie
+### 3. Start a Game
 
 ```
 /lgstart
 ```
 
-**Prérequis pour démarrer** :
-- Entre **4 et 12 joueurs** connectés
-- Emplacements configurés (campfire, chasseurtp, et assez de spawns)
-- Aucune partie en cours
+**Requirements to Start**:
+- Between **4 and 12 players** connected
+- Configured locations (campfire, chasseurtp, and enough spawns)
+- No ongoing game
 
-Le jeu démarre avec :
-- Un compte à rebours de 10 secondes
-- Distribution automatique des rôles
-- Début de la première nuit
+The game starts with:
+- A 10-second countdown
+- Automatic role distribution
+- Beginning of the first night
 
-### 4. Pendant la partie
+### 4. During the Game
 
-**Pour tous les joueurs** :
-- Suivez les instructions affichées dans le chat
-- Les GUIs s'ouvrent automatiquement quand c'est votre tour d'agir
-- Les votes se font via des interfaces cliquables
+**For all players**:
+- Follow the instructions displayed in the chat
+- GUIs open automatically when it's your turn to act
+- Voting is done via clickable interfaces
 
-**Pour le capitaine** :
-Si vous êtes en danger de mort et souhaitez nommer un successeur :
+**For the captain**:
+If you are in danger of dying and wish to appoint a successor:
 ```
-/testament <nom_du_joueur>
+/testament <player_name>
 ```
 
-### 5. Arrêter une partie
+### 5. Stop a Game
 
 ```
-/lgstop                    # Arrête la partie et reset tous les paramètres
+/lgstop                    # Stops the game and resets all settings
 ```
 
 ---
 
-## 📜 Commandes
+## 📜 Commands
 
-| Commande | Aliases | Description | Permission |
+| Command | Aliases | Description | Permission |
 |----------|---------|-------------|------------|
-| `/lgstart` | `/lggo`, `/startlg` | Démarre une partie de Loup-Garou | `lgmc.start` |
-| `/lgstop` | `/stoplg` | Arrête la partie en cours | `lgmc.stop` |
-| `/lgreload` | `/lgrl`, `/reloadlg` | Recharge la configuration | `lgmc.reload` |
-| `/lgsetup <type> [numéro]` | - | Configure les emplacements | `lgmc.setup` |
-| `/testament <joueur>` | - | Le capitaine nomme son successeur | `lgmc.testament` |
-| `/goodGuys` | - | Affiche le nombre de bons joueurs (debug) | `lgmc.debug` |
+| `/lgstart` | `/lggo`, `/startlg` | Starts a Werewolf game | `lgmc.start` |
+| `/lgstop` | `/stoplg` | Stops the ongoing game | `lgmc.stop` |
+| `/lgreload` | `/lgrl`, `/reloadlg` | Reloads the configuration | `lgmc.reload` |
+| `/lgsetup <type> [number]` | - | Configures locations | `lgmc.setup` |
+| `/testament <player>` | - | The captain appoints their successor | `lgmc.testament` |
+| `/goodGuys` | - | Displays the number of good players (debug) | `lgmc.debug` |
 
-### Types pour /lgsetup
+### Types for /lgsetup
 
-- `campfire` - Centre du jeu
-- `chasseurtp` - Emplacement du tir du chasseur
-- `spawn <numéro>` - Points d'apparition des joueurs (1, 2, 3, etc.)
-- `info` - Affiche tous les emplacements configurés
+- `campfire` - Game center
+- `chasseurtp` - Hunter's shooting location
+- `spawn <number>` - Player spawn points (1, 2, 3, etc.)
+- `info` - Displays all configured locations
 
 ---
 
 ## ⚙️ Configuration
 
-### Fichier config.yml
+### config.yml File
 
-Le fichier principal se trouve dans `plugins/lgmc/config.yml` :
+The main file is located in `plugins/lgmc/config.yml`:
 
 ```yaml
-config-version: 2      # Version de configuration (ne pas modifier)
-language: fr           # Langue : 'fr' ou 'en'
+config-version: 2      # Configuration version (do not modify)
+language: en           # Language: 'fr' or 'en'
 
-# Timers (en secondes)
+# Timers (in seconds)
 timers:
-  day: 300            # Durée du jour (5 minutes)
-  night: 180          # Durée de la nuit (3 minutes)
-  vote: 180           # Durée du vote (3 minutes)
+  day: 300            # Day duration (5 minutes)
+  night: 180          # Night duration (3 minutes)
+  vote: 180           # Voting duration (3 minutes)
   
-# Nombre de joueurs par rôle
+# Number of players per role
 roles:
-  villageois: 2       # Villageois de base
-  loupgarou: 1        # Loups-Garous
-  voyante: 1          # Voyantes
-  sorciere: 1         # Sorcières
-  chasseur: 1         # Chasseurs
-  cupidon: 1          # Cupidons
-  petitefille: 1      # Petites Filles
+  villager: 2         # Basic villagers
+  werewolf: 1         # Werewolves
+  seer: 1             # Seers
+  witch: 1            # Witches
+  hunter: 1           # Hunters
+  cupid: 1            # Cupids
+  little_girl: 1      # Little Girls
 ```
 
-### Système multilingue
+### Multilingual System
 
-Les fichiers de langue se trouvent dans `plugins/lgmc/lang/` :
+Language files are located in `plugins/lgmc/lang/`:
 
-- `fr.yml` - Français 🇫🇷
+- `fr.yml` - French 🇫🇷
 - `en.yml` - English 🇬🇧
 
-**Pour changer de langue** :
-1. Modifiez `language: fr` en `language: en` dans `config.yml`
-2. Exécutez `/lgreload`
+**To change the language**:
+1. Change `language: fr` to `language: en` in `config.yml`
+2. Execute `/lgreload`
 
-**Pour personnaliser les messages** :
-Éditez directement les fichiers `.yml` dans le dossier `lang/`.
+**To customize messages**:
+Edit the `.yml` files directly in the `lang/` folder.
 
-**Mise à jour automatique des traductions** :
-Lors d'une mise à jour du plugin, si de nouvelles clés de traduction sont ajoutées :
-- ✅ Vos personnalisations sont **automatiquement préservées**
-- ✅ Les nouvelles clés manquantes sont **ajoutées automatiquement** depuis le fichier par défaut
-- ✅ Un message dans les logs indique chaque clé ajoutée
+**Automatic Translation Updates**:
+When updating the plugin, if new translation keys are added:
+- ✅ Your customizations are **automatically preserved**
+- ✅ Missing new keys are **automatically added** from the default file
+- ✅ A log message indicates each added key
 
-Plus besoin de supprimer vos fichiers de langue lors des mises à jour !
+No need to delete your language files during updates!
 
-### Migration automatique
+### Automatic Migration
 
-Lors d'une mise à jour du plugin :
-- ✅ Vos valeurs personnalisées sont **automatiquement préservées**
-- ✅ Les nouvelles options sont ajoutées avec leurs valeurs par défaut
-- ✅ Une sauvegarde est créée : `config_backup_vX.yml`
+When updating the plugin:
+- ✅ Your custom values are **automatically preserved**
+- ✅ New options are added with default values
+- ✅ A backup is created: `config_backup_vX.yml`
 
-Rechargez simplement avec `/lgreload` après la mise à jour !
-
----
-
-## 🎭 Rôles disponibles
-
-### 🐺 Loup-Garou
-- **Camp** : Loups-Garous
-- **Pouvoir** : Choisit une victime chaque nuit (vote unanime requis)
-- **Objectif** : Éliminer tous les villageois
-
-### 👤 Villageois
-- **Camp** : Village
-- **Pouvoir** : Aucun pouvoir spécial
-- **Objectif** : Éliminer tous les loups-garous
-
-### 🔮 Voyante
-- **Camp** : Village
-- **Pouvoir** : Peut sonder un joueur chaque nuit pour connaître son rôle
-- **Objectif** : Aider le village à trouver les loups
-
-### 🧪 Sorcière
-- **Camp** : Village
-- **Pouvoir** : Possède deux potions (utilisables une fois chacune)
-  - Potion de vie : Ressuscite la victime des loups
-  - Potion de mort : Empoisonne un joueur
-- **Objectif** : Protéger le village
-
-### 🎯 Chasseur
-- **Camp** : Village
-- **Pouvoir** : Peut tuer un joueur en mourant
-- **Objectif** : Utiliser stratégiquement son dernier tir
-
-### 💘 Cupidon
-- **Camp** : Variable (dépend de ses amoureux)
-- **Pouvoir** : Choisit deux amoureux en début de partie
-- **Note** : Si les amoureux meurent tous les deux, Cupidon gagne seul
-
-### 👧 Petite Fille
-- **Camp** : Village
-- **Pouvoir** : Peut espionner les loups-garous la nuit (voir leurs actions)
-- **Objectif** : Glaner des informations pour le village
-
-### 👑 Capitaine (Rôle additionnel)
-- **Obtention** : Élu par vote au début de la partie
-- **Privilège** : Porte un casque bleu, départage les votes en cas d'égalité
-- **Testament** : Peut nommer son successeur avec `/testament`
+Simply reload with `/lgreload` after the update!
 
 ---
 
-## 🏗️ Architecture du plugin
+## 🎭 Available Roles
 
-Le plugin utilise une architecture modulaire et propre :
+### 🐺 Werewolf
+- **Team**: Werewolves
+- **Power**: Chooses a victim each night (unanimous vote required)
+- **Objective**: Eliminate all villagers
+
+### 👤 Villager
+- **Team**: Village
+- **Power**: No special power
+- **Objective**: Eliminate all werewolves
+
+### 🔮 Seer
+- **Team**: Village
+- **Power**: Can probe a player each night to know their role
+- **Objective**: Help the village find the werewolves
+
+### 🧪 Witch
+- **Team**: Village
+- **Power**: Has two potions (usable once each)
+  - Life Potion: Resurrects the wolves' victim
+  - Death Potion: Poisons a player
+- **Objective**: Protect the village
+
+### 🎯 Hunter
+- **Team**: Village
+- **Power**: Can kill a player upon dying
+- **Objective**: Strategically use their last shot
+
+### 💘 Cupid
+- **Team**: Variable (depends on their lovers)
+- **Power**: Chooses two lovers at the start of the game
+- **Note**: If the lovers die, Cupid wins alone
+
+### 👧 Little Girl
+- **Team**: Village
+- **Power**: Can spy on the werewolves at night (see their actions)
+- **Objective**: Gather information for the village
+
+### 👑 Captain (Additional Role)
+- **Acquisition**: Elected by vote at the start of the game
+- **Privilege**: Wears a blue helmet, breaks voting ties
+- **Will**: Can appoint a successor with `/testament`
+
+---
+
+## 🏗️ Plugin Architecture
+
+The plugin uses a modular and clean architecture:
 
 ```
 src/main/java/fr/lightshoro/lgmc/
-├── Lgmc.java                          # Classe principale
+├── Lgmc.java                          # Main class
 ├── models/
-│   ├── Role.java                      # Énumération des rôles
-│   └── GamePlayer.java                # Représente un joueur en partie
+│   ├── Role.java                      # Role enumeration
+│   └── GamePlayer.java                # Represents a player in the game
 ├── managers/
-│   ├── GameManager.java               # Logique principale du jeu
-│   ├── TimerManager.java              # Gestion des timers et phases
-│   ├── LocationManager.java           # Gestion des emplacements
-│   ├── LanguageManager.java           # Système multilingue avec mise à jour auto
-│   └── RoleFinishers.java             # Traitement des actions de rôles
+│   ├── GameManager.java               # Main game logic
+│   ├── TimerManager.java              # Timer and phase management
+│   ├── LocationManager.java           # Location management
+│   ├── LanguageManager.java           # Multilingual system with auto-update
+│   └── RoleFinishers.java             # Role action processing
 ├── gui/
-│   ├── VoyanteGUI.java
-│   ├── LoupGarouGUI.java
-│   ├── SorciereGUI.java
-│   ├── SorcierePoisonGUI.java
-│   ├── CapitaineVoteGUI.java
+│   ├── SeerGUI.java
+│   ├── WerewolfGUI.java
+│   ├── WitchGUI.java
+│   ├── WitchPoisonGUI.java
+│   ├── CaptainVoteGUI.java
 │   ├── VoteGUI.java
-│   └── CupidonGUI.java
+│   └── CupidGUI.java
 ├── listeners/
-│   ├── GameListener.java              # Événements de jeu
-│   └── VoteListener.java              # Événements de vote
+│   ├── GameListener.java              # Game events
+│   └── VoteListener.java              # Voting events
 ├── commands/
 │   ├── LGStartCommand.java
 │   ├── LGStopCommand.java
@@ -311,10 +312,10 @@ src/main/java/fr/lightshoro/lgmc/
 │   ├── TestamentCommand.java
 │   └── GoodGuysCommand.java
 └── tasks/
-    └── VoteCheckTask.java             # Vérification automatique des votes
+    └── VoteCheckTask.java             # Automatic vote checking
 ```
 
-### Technologies utilisées
+### Technologies Used
 
 - **Spigot/Paper API** 1.21
 - **InventoryFramework** 0.11.5 (GUIs)
@@ -325,68 +326,67 @@ src/main/java/fr/lightshoro/lgmc/
 
 ## 🔨 Compilation
 
-### Prérequis
+### Prerequisites
 - JDK 21+
-- Git (optionnel)
+- Git (optional)
 
-### Commandes
+### Commands
 
 ```bash
-# Cloner le projet (ou télécharger le ZIP)
+# Clone the project (or download the ZIP)
 git clone https://github.com/lightshoro/lgmc.git
 cd lgmc
 
-# Compiler avec Gradle
+# Compile with Gradle
 ./gradlew shadowJar        # Linux/Mac
 gradlew.bat shadowJar      # Windows
 
-# Le JAR sera généré dans :
+# The JAR will be generated in:
 # build/libs/lgmc-2.7.1-SNAPSHOT.jar
 ```
 
-### Build automatique
+### Automatic Build
 
-Le projet utilise le plugin Shadow pour inclure automatiquement toutes les dépendances dans le JAR final.
+The project uses the Shadow plugin to automatically include all dependencies in the final JAR.
 
 ---
 
-## 📊 Statistiques du projet
+## 📊 Project Statistics
 
-- **Fichiers** : 24 fichiers Java
-- **Lignes de code** : ~3500+ lignes
-- **Temps de développement** : Projet complet et testé
-- **Status** : Production Ready ✅
+- **Files**: 24 Java files
+- **Lines of Code**: ~3500+ lines
+- **Development Time**: Complete and tested project
+- **Status**: Production Ready ✅
 
 ---
 
 ## 🤝 Contributions
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
-- Ouvrir une issue pour signaler un bug
-- Proposer de nouvelles fonctionnalités
-- Soumettre une pull request
+Contributions are welcome! Feel free to:
+- Open an issue to report a bug
+- Suggest new features
+- Submit a pull request
 
 ---
 
-## 📝 Licence
+## 📝 License
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👤 Auteur
+## 👤 Author
 
 **LightShoro**
 
 ---
 
-## 🙏 Remerciements
+## 🙏 Acknowledgments
 
-- La communauté Minecraft pour l'inspiration
-- Les créateurs du jeu Loup-Garou original
-- Tous les contributeurs et testeurs
+- The Minecraft community for inspiration
+- The creators of the original Werewolf game
+- All contributors and testers
 
 ---
 
-**Bon jeu ! 🐺🌙**
-
+**Enjoy the game! 🐺🌙**

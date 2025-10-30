@@ -7,7 +7,7 @@
 config-version: 2
 
 # Langue du plugin (fr, en)
-language: fr
+language: en
 
 # Emplacements pour le jeu
 locations:
