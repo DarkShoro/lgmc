@@ -27,6 +27,11 @@ public class DiscordLinkCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getWebsocketManager().isDisabled()) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.linkDiscord.websocket-disabled"));
+            return true;
+        }
+
         // Check if UUID argument is provided
         if (args.length != 1) {
             sender.sendMessage(plugin.getLanguageManager().getMessage("commands.linkDiscord.usage"));

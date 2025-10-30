@@ -272,6 +272,24 @@ commands:
     uuid-invalid: "&c❌ The provided UUID is invalid!"
     linked: "&a✔ Your Minecraft account has been linked to Discord!"
     websocket-error: "&c❌ Unable to connect to the Discord bot!"
+    websocket-disabled: "&c❌ Unable to link accounts as WebSocket actions are disabled in the configuration."
+  wsaction:
+    invalid-action: "&cInvalid action. Valid options: gamestart, gameover, player_died <player>, muteall, demuteall."
+    websocket-error: "&c❌ Communication error with the Discord bot. Please try again later."
+    websocket-disabled: "&c❌ WebSocket actions are disabled in the configuration."
+    gamestart:
+      sent: "&a✔ 'gamestart' action sent to Discord bot."
+    gameover:
+      sent: "&a✔ 'gameover' action sent to Discord bot."
+    player_died:
+      usage: "&cUsage: /wsaction player_died <player>"
+      sent: "&a✔ 'player_dead' action for player '{player}' sent to Discord bot."
+    muteall:
+      sent: "&a✔ 'muteall' action sent to Discord bot."
+    demuteall:
+      sent: "&a✔ 'demuteall' action sent to Discord bot."
+    usage: "&cUsage: /wsaction <gamestart|gameover|player_died <player>|muteall|demuteall>"
+
 
 # Errors
 errors:

@@ -32,6 +32,7 @@ public class WebsocketManager {
         this.secret = null;
         this.plugin = plugin;
         this.logger = this.plugin.getLogger();
+        this.socket = null;
         logger.info("Not connecting to WebSocket as it is disabled in config.");
     }
 
@@ -162,5 +163,9 @@ public class WebsocketManager {
 
     public void close() {
         if (socket != null) socket.close();
+    }
+
+    public boolean isDisabled() {
+        return socket == null;
     }
 }

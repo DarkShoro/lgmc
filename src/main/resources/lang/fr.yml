@@ -273,6 +273,24 @@ commands:
     uuid-invalid: "&c❌ L'UUID fourni est invalide."
     linked: "&a✔ Votre compte Minecraft a été lié avec succès a votre Discord !"
     websocket-error: "&c❌ Erreur de communication avec le bot Discord. Veuillez réessayer plus tard."
+    websocket-disabled: "&c❌ Impossible de lier le compte, les actions WebSocket sont désactivées dans la configuration."
+  wsaction:
+    invalid-action: "&cAction invalide. Options valides : gamestart, gameover, player_died <player>, muteall, demuteall."
+    websocket-error: "&c❌ Erreur de communication avec le bot Discord. Veuillez réessayer plus tard."
+    websocket-disabled: "&c❌ Les actions WebSocket sont désactivées dans la configuration."
+    gamestart:
+      sent: "&a✔ Action 'gamestart' envoyée au bot Discord."
+    gameover:
+      sent: "&a✔ Action 'gameover' envoyée au bot Discord."
+    player_died:
+      usage: "&cUtilisation: /wsaction player_died <player>"
+      sent: "&a✔ Action 'player_dead' pour le joueur '{player}' envoyée au bot Discord."
+    muteall:
+      sent: "&a✔ Action 'muteall' envoyée au bot Discord."
+    demuteall:
+      sent: "&a✔ Action 'demuteall' envoyée au bot Discord."
+    usage: "&cUtilisation: /wsaction <gamestart|gameover|player_died <player>|muteall|demuteall>"
+
 
 
 # Erreurs

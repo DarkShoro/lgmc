@@ -93,7 +93,7 @@ public final class Lgmc extends JavaPlugin {
             Objects.requireNonNull(getCommand("lgopengui")).setExecutor(new OpenGuiCommand(this));
         }
         if (getCommand("wsaction") != null) {
-            Objects.requireNonNull(getCommand("wsaction")).setExecutor(new WSAction(this));
+            Objects.requireNonNull(getCommand("wsaction")).setExecutor(new WSActionCommand(this));
         }
         if (getCommand("linkDiscord") != null) {
             Objects.requireNonNull(getCommand("linkDiscord")).setExecutor(new DiscordLinkCommand(this));

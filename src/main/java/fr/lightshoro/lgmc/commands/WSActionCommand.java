@@ -4,20 +4,17 @@ import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.managers.WebsocketManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
 
-public class WSAction implements CommandExecutor {
+public class WSActionCommand implements CommandExecutor {
 
     private final Lgmc plugin;
     private final WebsocketManager websocketManager;
 
-    public WSAction(Lgmc plugin) {
+    public WSActionCommand(Lgmc plugin) {
         this.plugin = plugin;
         this.websocketManager = plugin.getWebsocketManager();
     }
@@ -39,6 +36,11 @@ public class WSAction implements CommandExecutor {
         // Only players can run this command
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.getLanguageManager().getMessage("commands.player-only"));
+            return true;
+        }
+
+        if (plugin.getWebsocketManager().isDisabled()) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.wsaction.websocket-disabled"));
             return true;
         }
 
