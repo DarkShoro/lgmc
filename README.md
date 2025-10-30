@@ -26,6 +26,7 @@ A complete Minecraft plugin that recreates the Werewolf game with an immersive a
 ## 🎮 About
 
 **LGMC** is a complete Java recreation of the social game Werewolf for Minecraft. The plugin automatically manages the entire game, from role distribution to victory conditions, including day/night phases and voting.
+The plugin itself is hardcoded in French in its variables and comments, but it supports both French and English for in-game messages.
 
 ### Key Features
 
