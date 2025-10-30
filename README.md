@@ -37,6 +37,7 @@ A complete Minecraft plugin that recreates the Werewolf game with an immersive a
 - ✅ **Multilingual** (French and English) with automatic translation updates
 - ✅ **Flexible configuration** with automatic migration
 - ❌ **Production ready** - The project is still under active development
+- ❌ **Customizable** - Some configuration currently have no effects
 
 ---
 
@@ -176,27 +177,6 @@ If you are in danger of dying and wish to appoint a successor:
 ### config.yml File
 
 The main file is located in `plugins/lgmc/config.yml`:
-
-```yaml
-config-version: 2      # Configuration version (do not modify)
-language: en           # Language: 'fr' or 'en'
-
-# Timers (in seconds)
-timers:
-  day: 300            # Day duration (5 minutes)
-  night: 180          # Night duration (3 minutes)
-  vote: 180           # Voting duration (3 minutes)
-  
-# Number of players per role
-roles:
-  villager: 2         # Basic villagers
-  werewolf: 1         # Werewolves
-  seer: 1             # Seers
-  witch: 1            # Witches
-  hunter: 1           # Hunters
-  cupid: 1            # Cupids
-  little_girl: 1      # Little Girls
-```
 
 ### Multilingual System
 
