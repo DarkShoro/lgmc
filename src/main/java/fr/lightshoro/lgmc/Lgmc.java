@@ -66,6 +66,7 @@ public final class Lgmc extends JavaPlugin {
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
         Bukkit.getPluginManager().registerEvents(new VoteListener(this), this);
+        Bukkit.getPluginManager().registerEvents(resourcePackManager, this);
 
         // Enregistrement des commandes
         if (getCommand("testament") != null) {

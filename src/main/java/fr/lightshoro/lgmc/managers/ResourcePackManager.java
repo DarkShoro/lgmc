@@ -1,8 +1,12 @@
 package fr.lightshoro.lgmc.managers;
 
 import fr.lightshoro.lgmc.Lgmc;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -14,7 +18,7 @@ import java.util.Map;
  * Gestionnaire centralisé pour les packs de ressources
  * Gère le téléchargement et l'application des packs en fonction de la version du client
  */
-public class ResourcePackManager {
+public class ResourcePackManager implements Listener {
     private final Lgmc plugin;
     private final Map<Integer, String> protocolVersionMap;
     private static final String RESOURCE_PACK_URL_TEMPLATE = "https://cdn.eradium.fr/lgrsp/public/%s.zip";
@@ -115,5 +119,37 @@ public class ResourcePackManager {
             return null;
         }
     }
-}
 
+    @EventHandler
+    public void onPlayerResourcePackStatus(PlayerResourcePackStatusEvent event) {
+        Player player = event.getPlayer();
+        PlayerResourcePackStatusEvent.Status status = event.getStatus();
+
+        switch (status) {
+            case SUCCESSFULLY_LOADED:
+                plugin.getLogger().info("Le pack de ressources a été appliqué avec succès pour le joueur " + player.getName());
+                break;
+            case FAILED_DOWNLOAD:
+                plugin.getLogger().warning("Échec du téléchargement du pack de ressources pour le joueur " + player.getName());
+                kickPlayer(player, "Impossible de télécharger le pack de ressources requis.");
+                break;
+            case ACCEPTED:
+                plugin.getLogger().info("Le joueur " + player.getName() + " a accepté le pack de ressources");
+                break;
+            case DECLINED:
+                plugin.getLogger().info("Le joueur " + player.getName() + " a décliné le pack de ressources - Expulsion en cours...");
+                kickPlayer(player, "Le pack de ressources est obligatoire pour rejoindre ce serveur.");
+                break;
+        }
+    }
+
+    /**
+     * Expulse un joueur du serveur avec un message personnalisé
+     */
+    private void kickPlayer(Player player, String reason) {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            player.kick(Component.text(reason));
+            plugin.getLogger().warning("Le joueur " + player.getName() + " a été expulsé : " + reason);
+        });
+    }
+}
