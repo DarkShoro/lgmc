@@ -155,6 +155,7 @@ public class GameManager {
         }
 
         plugin.getTimerManager().clearTimer();
+        plugin.getWebsocketManager().sendDemuteAll();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
