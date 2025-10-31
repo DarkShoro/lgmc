@@ -339,6 +339,7 @@ public class GameManager {
 
         removePlayerFromRole(player);
         checkForWinCondition();
+        plugin.getWebsocketManager().sendPlayerDied(player.getName());
     }
 
     private String getDeathMessage(Player player, String deathType, Role role) {
