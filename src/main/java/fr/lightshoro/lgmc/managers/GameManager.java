@@ -1065,6 +1065,12 @@ public class GameManager {
             for (Player lg : loupGarous) {
                 // new fr.lightshoro.lgmc.gui.LoupGarouGUI(plugin).open(lg);
                 // Give loup-garou a iron hoe to open GUI
+                ItemStack item = new ItemStack(Material.IRON_HOE);
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null) {
+                    meta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.werewolf-attack"));
+                    item.setItemMeta(meta);
+                }
                 lg.getInventory().setItem(4, new ItemStack(Material.IRON_HOE));
             }
         }, 20L);

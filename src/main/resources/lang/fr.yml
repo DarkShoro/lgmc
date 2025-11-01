@@ -206,6 +206,7 @@ gui:
   cupidon-second: "&dChoisir le second amoureux"
 
   items:
+    werewolf-attack: "&4&lDésigner une victime"
     vote-paper: "&a&lVoter pour le nouveau {roles.capitaine.name}"
     vote-day: "&a&lVoter"
     skip: "&c&lNe rien faire"
