@@ -219,6 +219,7 @@ gui:
 commands:
   no-permission: "&cYou don't have permission to use this command."
   player-only: "&cThis command must be executed by a player."
+  blocked-during-game: "&cThis command is disabled during a game to prevent cheating."
 
   lg:
     unknown-subcommand: "&cUnknown subcommand: {subcommand}. Use /lg help for more information."

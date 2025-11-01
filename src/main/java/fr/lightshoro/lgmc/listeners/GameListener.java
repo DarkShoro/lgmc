@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -93,6 +94,40 @@ public class GameListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (plugin.getGameManager().isFreezeAll()) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        // Only block commands during an active game
+        if (!plugin.getGameManager().isInGame()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        String message = event.getMessage().toLowerCase();
+
+        // Extract command without the leading slash
+        String[] parts = message.substring(1).split(" ");
+        String command = parts[0];
+
+        // List of blocked vanilla messaging commands
+        String[] blockedCommands = {
+            "tell", "msg", "w", "whisper",           // Private messages
+            "me",                                     // Action messages
+            "teammsg", "tm",                          // Team messages
+            "minecraft:tell", "minecraft:msg",        // Namespaced versions
+            "minecraft:w", "minecraft:me",
+            "minecraft:teammsg", "minecraft:tm"
+        };
+
+        // Check if command is in blocked list
+        for (String blocked : blockedCommands) {
+            if (command.equals(blocked)) {
+                event.setCancelled(true);
+                player.sendMessage(plugin.getLanguageManager().getMessage("commands.blocked-during-game"));
+                return;
+            }
         }
     }
 }
