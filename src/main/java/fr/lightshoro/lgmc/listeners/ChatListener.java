@@ -26,6 +26,9 @@ public class ChatListener implements Listener {
                 event.setCancelled(true);
                 player.sendMessage(plugin.getLanguageManager().getMessage("chat.cannot-chat"));
             }
+        } else if (plugin.getGameManager().isNight()) {
+            event.setCancelled(true);
+            player.sendMessage(plugin.getLanguageManager().getMessage("chat.cannot-chat"));
         }
     }
 }

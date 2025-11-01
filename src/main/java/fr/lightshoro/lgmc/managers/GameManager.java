@@ -1340,5 +1340,8 @@ public class GameManager {
     public Player getMostVoted() { return mostVoted; }
     public Player getDoubleMostVoted() { return doubleMostVoted; }
     public boolean getIsStarting() { return isStarting; }
-}
 
+    public boolean isNight() {
+        return "night".equals(queueMode);
+    }
+}
