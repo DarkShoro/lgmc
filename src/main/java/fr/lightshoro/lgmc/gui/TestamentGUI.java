@@ -46,6 +46,9 @@ public class TestamentGUI {
             GuiItem item = new GuiItem(skull, event -> {
                 event.setCancelled(true);
 
+                // Marquer qu'un choix a été fait dans le GameManager
+                gm.setSuccessorChosen(true);
+
                 // Nommer le successeur
                 gm.setCapitaine(target);
 
@@ -72,34 +75,6 @@ public class TestamentGUI {
 
         gui.addPane(pane);
         gui.show(capitaine);
-
-        // Skip timer on gui close, randomly choose successor if none chosen
-        gui.setOnClose(event -> {
-            if (gm.isCapitaineSuccession()) {
-                // Aucun successeur n'a été choisi, choisir au hasard
-                List<Player> availablePlayers = new ArrayList<>(gm.getPlayersAlive());
-                availablePlayers.remove(capitaine);
-
-                if (!availablePlayers.isEmpty()) {
-                    Player newCapitaine = availablePlayers.get((int)(Math.random() * availablePlayers.size()));
-                    gm.setCapitaine(newCapitaine);
-
-                    // Donner un casque bleu au nouveau capitaine
-                    newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
-                    // Retirer le casque du capitaine mourant
-                    capitaine.getInventory().setHelmet(null);
-                    // Retirer le livre Testament
-                    capitaine.getInventory().setItem(4, new ItemStack(Material.AIR));
-
-                    Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("succession.testament-random")
-                            .replace("{dying}", capitaine.getName())
-                            .replace("{new}", newCapitaine.getName()));
-                }
-
-                gm.setCapitaineSuccession(false);
-                plugin.getTimerManager().advanceTimer();
-            }
-        });
     }
 
 

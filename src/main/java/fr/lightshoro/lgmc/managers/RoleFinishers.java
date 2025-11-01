@@ -464,7 +464,29 @@ public class RoleFinishers {
     }
 
     public void finishCapitaineSuccessor() {
-        // Le successeur a déjà été choisi (soit par le GUI, soit aléatoirement)
+        // Vérifier si un successeur a été choisi manuellement
+        if (!gm.isSuccessorChosen() && gm.getDyingCapitaine() != null) {
+            // Aucun successeur n'a été choisi, choisir au hasard
+            List<Player> availablePlayers = new ArrayList<>(gm.getPlayersAlive());
+            availablePlayers.remove(gm.getDyingCapitaine());
+
+            if (!availablePlayers.isEmpty()) {
+                Player newCapitaine = availablePlayers.get((int)(Math.random() * availablePlayers.size()));
+                gm.setCapitaine(newCapitaine);
+
+                // Donner un casque bleu au nouveau capitaine
+                newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
+                // Retirer le casque du capitaine mourant
+                gm.getDyingCapitaine().getInventory().setHelmet(null);
+                // Retirer le livre Testament
+                gm.getDyingCapitaine().getInventory().setItem(4, new ItemStack(Material.AIR));
+
+                Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("succession.testament-random")
+                        .replace("{dying}", gm.getDyingCapitaine().getName())
+                        .replace("{new}", newCapitaine.getName()));
+            }
+        }
+
         // On tue maintenant le capitaine mourant
 
         if (gm.getDyingCapitaine() != null) {

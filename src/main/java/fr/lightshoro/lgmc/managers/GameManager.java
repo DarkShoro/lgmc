@@ -56,6 +56,7 @@ public class GameManager {
     private boolean capitaineVoteInProg;
     private boolean capitaineTieBreakerInProg;
     private boolean capitaineSuccession;
+    private boolean successorChosen;
     private boolean voteInProg;
     private boolean voteWasMade;
     private boolean chasseurDidLastKill;
@@ -138,6 +139,7 @@ public class GameManager {
         capitaineVoteInProg = false;
         capitaineTieBreakerInProg = false;
         capitaineSuccession = false;
+        successorChosen = false;
         voteInProg = false;
         voteWasMade = false;
         chasseurDidLastKill = false;
@@ -1210,6 +1212,7 @@ public class GameManager {
         dyingCapitaine = capitaine;
 
         capitaineSuccession = true;
+        successorChosen = false; // Réinitialiser le flag
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("succession.timer"), 30);
 
         // Donner un livre "Testament" au capitaine pour qu'il ouvre le GUI lui-même
@@ -1382,6 +1385,8 @@ public class GameManager {
     public void setChasseurTarget(Player target) { this.chasseurTarget = target; }
     public Location getChasseurOldPos() { return chasseurOldPos; }
     public void setChasseurOldPos(Location loc) { this.chasseurOldPos = loc; }
+    public boolean isSuccessorChosen() { return successorChosen; }
+    public void setSuccessorChosen(boolean successorChosen) { this.successorChosen = successorChosen; }
     public void setInterceptChasseur(boolean val) { this.interceptChasseur = val; }
     public void decrementBadGuysCount() { this.badGuysCount--; }
     public void setVoteWasMade(boolean val) { this.voteWasMade = val; }
