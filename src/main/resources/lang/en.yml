@@ -58,6 +58,8 @@ roles:
     subtitle: "&6You win with the {general.village}"
   capitaine:
     name: "&6&lCaptain"
+  spectator:
+    name: "Spectator"
 
 # Role actions
 actions:
@@ -218,6 +220,9 @@ commands:
   no-permission: "&cYou don't have permission to use this command."
   player-only: "&cThis command must be executed by a player."
 
+  lg:
+    unknown-subcommand: "&cUnknown subcommand: {subcommand}. Use /lg help for more information."
+
   lgstart:
     usage: "&cUsage: /lgstart"
     started: "&aStarting Werewolf game..."
@@ -265,6 +270,10 @@ commands:
     usage: "&cUsage: /goodGuys"
     header: "&9=== Good Guys Alive ==="
     player: "&a- {player}"
+
+  love:
+    usage: "&cUsage: /love <message>"
+    not-lover: "&cYou are not a lover or your love is unrequited."
   opengui:
     usage: "&cUsage: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"
   linkDiscord:

@@ -75,26 +75,22 @@ public final class Lgmc extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(resourcePackManager, this);
 
         // Enregistrement des commandes
+        if (getCommand("lg") != null) {
+            LGCommand lgCommand = new LGCommand(this);
+            Objects.requireNonNull(getCommand("lg")).setExecutor(lgCommand);
+            Objects.requireNonNull(getCommand("lg")).setTabCompleter(lgCommand);
+        }
         if (getCommand("testament") != null) {
             Objects.requireNonNull(getCommand("testament")).setExecutor(new TestamentCommand(this));
         }
         if (getCommand("goodGuys") != null) {
             Objects.requireNonNull(getCommand("goodGuys")).setExecutor(new GoodGuysCommand(this));
         }
-        if (getCommand("lgstart") != null) {
-            Objects.requireNonNull(getCommand("lgstart")).setExecutor(new LGStartCommand(this));
-        }
-        if (getCommand("lgstop") != null) {
-            Objects.requireNonNull(getCommand("lgstop")).setExecutor(new LGStopCommand(this));
-        }
-        if (getCommand("lgsetup") != null) {
-            Objects.requireNonNull(getCommand("lgsetup")).setExecutor(new LGSetupCommand(this));
-        }
-        if (getCommand("lgreload") != null) {
-            Objects.requireNonNull(getCommand("lgreload")).setExecutor(new LGReloadCommand(this));
-        }
         if (getCommand("lgopengui") != null) {
             Objects.requireNonNull(getCommand("lgopengui")).setExecutor(new OpenGuiCommand(this));
+        }
+        if (getCommand("love") != null) {
+            Objects.requireNonNull(getCommand("love")).setExecutor(new LoveCommand(this));
         }
 
         // Démarrer la tâche périodique de vérification des votes (toutes les 7 secondes)

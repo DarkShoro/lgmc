@@ -251,6 +251,14 @@ public class ConfigManager {
         return config;
     }
 
+    /**
+     * Recharge la configuration depuis le fichier
+     */
+    public void reloadConfig() {
+        plugin.reloadConfig();
+        config = plugin.getConfig();
+    }
+
     public String getWebsocketUrl() {
         return config.getString("websocket.url", "");
     }

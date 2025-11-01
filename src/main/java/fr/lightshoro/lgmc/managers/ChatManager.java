@@ -1,12 +1,12 @@
 package fr.lightshoro.lgmc.managers;
 
 import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.models.GamePlayer;
+import fr.lightshoro.lgmc.models.Role;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ChatManager {
@@ -52,6 +52,60 @@ public class ChatManager {
             if (canPlayerSeeLGChat(player)) {
                 player.sendMessage(formattedMessage);
             }
+        }
+    }
+
+    public boolean isSpectator(Player player) {
+        if (!plugin.getGameManager().isInGame()) {
+            return false;
+        }
+
+        GamePlayer gamePlayer = plugin.getGameManager().getGamePlayer(player);
+        if (gamePlayer == null) {
+            return false;
+        }
+
+        Role role = gamePlayer.getRole();
+        return role == Role.DEAD || role == Role.NOT_IN_GAME;
+    }
+
+    public void sendSpectatorChatMessage(Player sender, String message) {
+        Style spectatorStyle = Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC, TextDecoration.BOLD);
+        Component formattedMessage = Component.text()
+                .append(Component.text("[" + plugin.getLanguageManager().getMessage("roles.spectator.name") + "] ", spectatorStyle))
+                .append(Component.text(sender.getName(), Style.style(NamedTextColor.GRAY, TextDecoration.BOLD)))
+                .append(Component.text(" >> ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(message, NamedTextColor.GRAY))
+                .build();
+
+        for (Player player : plugin.getGameManager().getPlayingPlayers()) {
+            if (isSpectator(player)) {
+                player.sendMessage(formattedMessage);
+            }
+        }
+    }
+
+    public boolean isLover(Player player) {
+        if (!plugin.getGameManager().isInGame()) {
+            return false;
+        }
+
+        return plugin.getGameManager().getLesAmoureux().contains(player) &&
+               plugin.getGameManager().getLesAmoureux().size() == 2;
+    }
+
+    public void sendLoverChatMessage(Player sender, String message) {
+        Style loverStyle = Style.style(NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD);
+        Component formattedMessage = Component.text()
+                .append(Component.text("♥ ", NamedTextColor.LIGHT_PURPLE))
+                .append(Component.text(sender.getName(), loverStyle))
+                .append(Component.text(" >> ", NamedTextColor.DARK_PURPLE))
+                .append(Component.text(message, NamedTextColor.LIGHT_PURPLE))
+                .append(Component.text(" ♥", NamedTextColor.LIGHT_PURPLE))
+                .build();
+
+        for (Player lover : plugin.getGameManager().getLesAmoureux()) {
+            lover.sendMessage(formattedMessage);
         }
     }
 }

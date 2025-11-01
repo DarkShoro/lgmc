@@ -17,6 +17,13 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
+        // Check if player is a spectator (dead or not in game)
+        if (plugin.getChatManager().isSpectator(player)) {
+            event.setCancelled(true);
+            plugin.getChatManager().sendSpectatorChatMessage(player, event.getMessage());
+            return;
+        }
+
         if (plugin.getChatManager().isLoupGarouChatActive()) {
             if (plugin.getChatManager().canPlayerSeeLGChat(player)) {
                 event.setCancelled(true);

@@ -58,6 +58,8 @@ roles:
     subtitle: "&6Tu gagnes avec le {general.village}"
   capitaine:
     name: "&6&lCapitaine"
+  spectator:
+    name: "Spectateur"
 
 # Actions des rôles
 actions:
@@ -218,6 +220,9 @@ commands:
   no-permission: "&cVous n'avez pas la permission d'utiliser cette commande."
   player-only: "&cCette commande doit être exécutée par un joueur."
 
+  lg:
+    unknown-subcommand: "&cSous-commande inconnue: {subcommand}. Utilisez /lg help pour plus d'informations."
+
   lgstart:
     usage: "&cUtilisation: /lgstart"
     started: "&aDémarrage de la partie de Loup-Garou..."
@@ -265,6 +270,10 @@ commands:
     usage: "&cUtilisation: /goodGuys"
     header: "&9=== Gentils en vie ==="
     player: "&a- {player}"
+
+  love:
+    usage: "&cUtilisation: /love <message>"
+    not-lover: "&cVous n'êtes pas amoureux ou votre amour n'est pas partagé."
 
   opengui:
     usage: "&cUtilisation: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"

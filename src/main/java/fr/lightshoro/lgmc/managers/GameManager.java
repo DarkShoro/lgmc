@@ -1344,4 +1344,8 @@ public class GameManager {
     public boolean isNight() {
         return "night".equals(queueMode);
     }
+
+    public List<Player> getLesAmoureux() {
+        return lesAmoureux;
+    }
 }
