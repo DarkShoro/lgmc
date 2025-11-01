@@ -168,7 +168,10 @@ public class GameManager {
             }
 
             ItemStack slot4 = player.getInventory().getItem(4);
-            if (slot4 != null && (slot4.getType() == Material.PAPER || slot4.getType() == Material.WOODEN_HOE)) {
+            if (slot4 != null && (slot4.getType() == Material.PAPER ||
+                    slot4.getType() == Material.WOODEN_HOE ||
+                    slot4.getType() == Material.BOOK ||
+                    slot4.getType() == Material.IRON_HOE)) {
                 player.getInventory().setItem(4, new ItemStack(Material.AIR));
             }
 
@@ -858,7 +861,8 @@ public class GameManager {
             if (slot4 != null && (
                     slot4.getType() == Material.PAPER ||
                     slot4.getType() == Material.WOODEN_HOE ||
-                    slot4.getType() == Material.IRON_HOE)) {
+                    slot4.getType() == Material.IRON_HOE ||
+                    slot4.getType() == Material.BOOK)) {
                 player.getInventory().setItem(4, new ItemStack(Material.AIR));
             }
         }
@@ -912,7 +916,8 @@ public class GameManager {
             if (slot4 != null && (
                     slot4.getType() == Material.PAPER ||
                             slot4.getType() == Material.WOODEN_HOE ||
-                            slot4.getType() == Material.IRON_HOE)) {
+                            slot4.getType() == Material.IRON_HOE ||
+                    slot4.getType() == Material.BOOK)) {
                 player.getInventory().setItem(4, new ItemStack(Material.AIR));
             }
         }
