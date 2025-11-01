@@ -8,7 +8,7 @@ author: LightShoro
 commands:
   lg:
     description: Commande principale du Loup-Garou
-    usage: /lg <start|stop|reload|setup|help> [args]
+    usage: /lg <start|stop|reload|setup|gui|help> [args]
     aliases: [loupgarou, werewolf]
   testament:
     description: Permet au capitaine de nommer son successeur
@@ -18,11 +18,6 @@ commands:
     description: Affiche le nombre de bons joueurs restants (debug)
     usage: /goodGuys
     permission: lgmc.debug
-  lgopengui:
-    description: Ouvre le menu de débogage (debug)
-    usage: /lgopengui
-    permission: lgmc.debug
-    aliases: [openlggui]
   wsaction:
     description: Commande interne pour les actions WebSocket
     usage: /wsaction <action>

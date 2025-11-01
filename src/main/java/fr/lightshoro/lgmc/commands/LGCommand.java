@@ -1,6 +1,7 @@
 package fr.lightshoro.lgmc.commands;
 
 import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.gui.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +24,17 @@ import java.util.stream.Collectors;
  */
 public class LGCommand implements CommandExecutor, TabCompleter {
     private final Lgmc plugin;
+
+    // Valid GUI types for /lg gui command
+    private static final Map<String, String> VALID_GUIS = Map.of(
+            "sorciere", "SorciereGUI",
+            "capitaine", "CapitaineVoteGUI",
+            "loupgarou", "LoupGarouGUI",
+            "vote", "VoteGUI",
+            "voyante", "VoyanteGUI",
+            "sorcierepoison", "SorcierePoisonGUI",
+            "cupidon", "CupidonGUI"
+    );
 
     public LGCommand(Lgmc plugin) {
         this.plugin = plugin;
@@ -48,6 +61,9 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             }
             case "setup" -> {
                 return handleSetup(sender, args);
+            }
+            case "gui" -> {
+                return handleGui(sender, args);
             }
             case "help" -> {
                 sendHelp(sender);
@@ -193,12 +209,61 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         }
     }
 
+    private boolean handleGui(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("lgmc.debug")) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
+            return true;
+        }
+
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.player-only"));
+            return true;
+        }
+
+        if (args.length < 2 || !VALID_GUIS.containsKey(args[1].toLowerCase())) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("commands.opengui.usage")
+                    .replace("{guis}", String.join(", ", VALID_GUIS.keySet())));
+            return true;
+        }
+
+        String guiName = VALID_GUIS.get(args[1].toLowerCase());
+
+        switch (guiName) {
+            case "SorciereGUI" -> {
+                new SorciereGUI(plugin).open(player);
+            }
+            case "CapitaineVoteGUI" -> {
+                new CapitaineVoteGUI(plugin).open(player);
+            }
+            case "LoupGarouGUI" -> {
+                new LoupGarouGUI(plugin).open(player);
+            }
+            case "VoteGUI" -> {
+                new VoteGUI(plugin).open(player);
+            }
+            case "VoyanteGUI" -> {
+                new VoyanteGUI(plugin).open(player);
+            }
+            case "SorcierePoisonGUI" -> {
+                new SorcierePoisonGUI(plugin).open(player);
+            }
+            case "CupidonGUI" -> {
+                new CupidonGUI(plugin).open(player);
+            }
+            default -> player.sendMessage(plugin.getLanguageManager().getMessage("commands.opengui.usage")
+                    .replace("{guis}", String.join(", ", VALID_GUIS.keySet())));
+        }
+
+        return true;
+    }
+
     private void sendHelp(CommandSender sender) {
         sender.sendMessage("§6=== Commandes Loup-Garou ===");
         sender.sendMessage("§e/lg start §f- Démarrer une partie");
         sender.sendMessage("§e/lg stop §f- Arrêter la partie en cours");
         sender.sendMessage("§e/lg reload §f- Recharger la configuration");
         sender.sendMessage("§e/lg setup <type> [args] §f- Configuration du jeu");
+        sender.sendMessage("§e/lg gui <type> §f- Ouvrir un GUI (debug)");
         sender.sendMessage("§e/lg help §f- Afficher cette aide");
     }
 
@@ -239,7 +304,7 @@ public class LGCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             // Sous-commandes principales
-            List<String> subCommands = Arrays.asList("start", "stop", "reload", "setup", "help");
+            List<String> subCommands = Arrays.asList("start", "stop", "reload", "setup", "gui", "help");
             return subCommands.stream()
                     .filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
@@ -249,6 +314,13 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             // Arguments pour /lg setup
             List<String> setupArgs = Arrays.asList("campfire", "chasseurtp", "spawn", "info");
             return setupArgs.stream()
+                    .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("gui")) {
+            // Arguments pour /lg gui
+            return VALID_GUIS.keySet().stream()
                     .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
         }
