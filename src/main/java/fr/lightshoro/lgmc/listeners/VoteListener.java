@@ -3,6 +3,7 @@ package fr.lightshoro.lgmc.listeners;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.gui.CapitaineVoteGUI;
 import fr.lightshoro.lgmc.gui.LoupGarouGUI;
+import fr.lightshoro.lgmc.gui.TestamentGUI;
 import fr.lightshoro.lgmc.gui.VoteGUI;
 import fr.lightshoro.lgmc.managers.GameManager;
 import fr.lightshoro.lgmc.models.GamePlayer;
@@ -33,12 +34,34 @@ public class VoteListener implements Listener {
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
-        if (item == null || item.getType() != Material.PAPER) {
+        if (item == null) {
             return;
         }
 
         GameManager gm = plugin.getGameManager();
         String gameStep = gm.getGameStep();
+
+        // Gestion du livre Testament pour la succession du capitaine
+        if (item.getType() == Material.WRITTEN_BOOK) {
+            if (!gm.isInGame() || !gm.isCapitaineSuccession()) {
+                return;
+            }
+
+            // Vérifier que c'est bien le capitaine mourant
+            if (!player.equals(gm.getDyingCapitaine())) {
+                return;
+            }
+
+            // Ouvrir le GUI de testament
+            new TestamentGUI(plugin).open(player);
+            event.setCancelled(true);
+            return;
+        }
+
+        // Gestion du papier pour les votes
+        if (item.getType() != Material.PAPER) {
+            return;
+        }
 
         // If either dead or not in game, cannot vote
         if (!gm.isInGame() || !gm.getPlayersAlive().contains(player)) {

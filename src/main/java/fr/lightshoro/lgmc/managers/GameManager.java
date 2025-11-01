@@ -1201,15 +1201,23 @@ public class GameManager {
             return;
         }
 
-        // Sauvegarder le capitaine mourant AVANT d'ouvrir le GUI
+        // Sauvegarder le capitaine mourant AVANT de donner le livre
         dyingCapitaine = capitaine;
 
         capitaineSuccession = true;
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("succession.timer"), 30);
 
-        // Ouvrir le GUI pour choisir le successeur
-        TestamentGUI selectionGUI = new TestamentGUI(plugin);
-        selectionGUI.open(capitaine);
+        // Donner un livre "Testament" au capitaine pour qu'il ouvre le GUI lui-même
+        ItemStack testament = new ItemStack(Material.WRITTEN_BOOK);
+        ItemMeta meta = testament.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.testament"));
+            testament.setItemMeta(meta);
+        }
+        capitaine.getInventory().setItem(4, testament);
+
+        // Informer le capitaine
+        capitaine.sendMessage(plugin.getLanguageManager().getMessage("succession.book-received"));
     }
 
     public GamePlayer getGamePlayer(Player player) {

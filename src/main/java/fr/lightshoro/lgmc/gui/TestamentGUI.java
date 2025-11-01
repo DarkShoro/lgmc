@@ -53,6 +53,8 @@ public class TestamentGUI {
                 target.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
                 // Retire le casque au capitaine mourant
                 capitaine.getInventory().setHelmet(null);
+                // Retire le livre Testament
+                capitaine.getInventory().setItem(4, new ItemStack(Material.AIR));
 
                 Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("succession.testament-chosen")
                         .replace("{dying}", capitaine.getName())
@@ -86,6 +88,8 @@ public class TestamentGUI {
                     newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
                     // Retirer le casque du capitaine mourant
                     capitaine.getInventory().setHelmet(null);
+                    // Retirer le livre Testament
+                    capitaine.getInventory().setItem(4, new ItemStack(Material.AIR));
 
                     Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("succession.testament-random")
                             .replace("{dying}", capitaine.getName())

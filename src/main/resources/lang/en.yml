@@ -140,6 +140,7 @@ succession:
   testament-chosen: "&9In their will, &6&l{dying}&9 named &6&l{new}&9 as successor to {roles.capitaine.name}&9."
   dying-message: "&9The village targets you, you are about to die."
   instruction: "&7Please name your successor with the command (/testament <player>)"
+  book-received: "&9You received your &6&lTestament&9. Right-click with it to choose your successor."
   timer: "&aThe {roles.capitaine.name} &awill name their successor"
 
 # Death messages
@@ -212,6 +213,7 @@ gui:
     werewolf-attack: "&4&lDesignate victim"
     vote-paper: "&a&lVote for the new {roles.capitaine.name}"
     vote-day: "&a&lVote"
+    testament: "&6&lTestament"
     skip: "&c&lDo nothing"
     skip-gray: "&7&lDo nothing"
     life-potion: "&a&lLife Potion"

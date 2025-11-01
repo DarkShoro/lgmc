@@ -140,6 +140,7 @@ succession:
   testament-chosen: "&9Dans son testament, &6&l{dying}&9 avait nommé &6&l{new}&9 comme successeur au poste de {roles.capitaine.name}&9."
   dying-message: "&9Le village vous prend pour cible, vous êtes sur le point de mourir."
   instruction: "&7Veuillez nommer votre successeur avec la commande (/testament <joueur>)"
+  book-received: "&9Vous avez reçu votre &6&lTestament&9. Faites clic-droit avec pour choisir votre successeur."
   timer: "&aLe {roles.capitaine.name} &ava nommer son successeur"
 
 # Messages de mort
@@ -212,6 +213,7 @@ gui:
     werewolf-attack: "&4&lDésigner une victime"
     vote-paper: "&a&lVoter pour le nouveau {roles.capitaine.name}"
     vote-day: "&a&lVoter"
+    testament: "&6&lTestament"
     skip: "&c&lNe rien faire"
     skip-gray: "&7&lNe rien faire"
     life-potion: "&a&lPotion de vie"
