@@ -66,6 +66,9 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             case "gui" -> {
                 return handleGui(sender, args);
             }
+            case "neighbors", "voisins" -> {
+                return handleNeighbors(sender, args);
+            }
             case "help" -> {
                 sendHelp(sender);
                 return true;
@@ -261,6 +264,52 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean handleNeighbors(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("lgmc.debug")) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
+            return true;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage("§cUsage: /lg neighbors <player>");
+            return true;
+        }
+
+        Player target = Bukkit.getPlayer(args[1]);
+        if (target == null) {
+            sender.sendMessage("§cJoueur introuvable: " + args[1]);
+            return true;
+        }
+
+        List<Player> playingPlayers = plugin.getGameManager().getPlayingPlayers();
+        if (!playingPlayers.contains(target)) {
+            sender.sendMessage("§c" + target.getName() + " ne participe pas à la partie.");
+            return true;
+        }
+
+        int playerIndex = playingPlayers.indexOf(target);
+        int totalPlayers = playingPlayers.size();
+
+        if (totalPlayers < 3) {
+            sender.sendMessage("§cIl n'y a pas assez de joueurs pour déterminer les voisins.");
+            return true;
+        }
+
+        // Calcul des voisins (joueur précédent et suivant dans la liste)
+        int leftIndex = (playerIndex - 1 + totalPlayers) % totalPlayers;
+        int rightIndex = (playerIndex + 1) % totalPlayers;
+
+        Player leftNeighbor = playingPlayers.get(leftIndex);
+        Player rightNeighbor = playingPlayers.get(rightIndex);
+
+        sender.sendMessage("§6=== Voisins de " + target.getName() + " ===");
+        sender.sendMessage("§eVoisin gauche: §f" + leftNeighbor.getName());
+        sender.sendMessage("§eVoisin droit: §f" + rightNeighbor.getName());
+        sender.sendMessage("§7(Position: " + (playerIndex + 1) + "/" + totalPlayers + ")");
+
+        return true;
+    }
+
     private void sendHelp(CommandSender sender) {
         sender.sendMessage("§6=== Commandes Loup-Garou ===");
         sender.sendMessage("§e/lg start §f- Démarrer une partie");
@@ -268,6 +317,7 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("§e/lg reload §f- Recharger la configuration");
         sender.sendMessage("§e/lg setup <type> [args] §f- Configuration du jeu");
         sender.sendMessage("§e/lg gui <type> §f- Ouvrir un GUI (debug)");
+        sender.sendMessage("§e/lg neighbors <player> §f- Afficher les voisins d'un joueur (debug)");
         sender.sendMessage("§e/lg help §f- Afficher cette aide");
     }
 
@@ -308,7 +358,7 @@ public class LGCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             // Sous-commandes principales
-            List<String> subCommands = Arrays.asList("start", "stop", "reload", "setup", "gui", "help");
+            List<String> subCommands = Arrays.asList("start", "stop", "reload", "setup", "gui", "neighbors", "voisins", "help");
             return subCommands.stream()
                     .filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
@@ -337,6 +387,14 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             }
             return numbers.stream()
                     .filter(s -> s.startsWith(args[2]))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2 && (args[0].equalsIgnoreCase("neighbors") || args[0].equalsIgnoreCase("voisins"))) {
+            // Liste des joueurs en ligne pour la commande neighbors
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
         }
 

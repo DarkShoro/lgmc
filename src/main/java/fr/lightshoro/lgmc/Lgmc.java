@@ -5,6 +5,7 @@ import fr.lightshoro.lgmc.listeners.GameListener;
 import fr.lightshoro.lgmc.listeners.VoteListener;
 import fr.lightshoro.lgmc.listeners.ChatListener;
 import fr.lightshoro.lgmc.managers.*;
+import fr.lightshoro.lgmc.tasks.DeadPlayerActionBarTask;
 import fr.lightshoro.lgmc.tasks.VisibilityTask;
 import fr.lightshoro.lgmc.tasks.VoteCheckTask;
 import org.bukkit.Bukkit;
@@ -92,6 +93,9 @@ public final class Lgmc extends JavaPlugin {
 
         // Démarrer la tâche périodique de gestion de visibilité (toutes les secondes)
         new VisibilityTask(this).runTaskTimer(this, 20L, 20L);
+        // Démarrer la tâche périodique d'affichage de l'action bar pour les joueurs morts (toutes les secondes)
+        new DeadPlayerActionBarTask(this).runTaskTimer(this, 20L, 20L);
+
 
         // Affiche notre magnifique ASCII art dans la console ; ligne par ligne pour éviter les problèmes d'encodage
         for (String line : ASCII_ART.split("\n")) {

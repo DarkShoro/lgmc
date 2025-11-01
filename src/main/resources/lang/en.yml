@@ -20,6 +20,7 @@ general:
   timer-advanced-vote: "&9Timer advanced as everyone voted."
   player-disconnect: "&c{player} disconnected during the game!"
   new-capitaine-random: "&9A new {roles.capitaine.name} &9has been randomly chosen: &6&l{player}&9."
+  you-are-dead: "&c&lYou are dead"
 
 # Game phases
 phases:

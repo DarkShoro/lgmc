@@ -369,6 +369,13 @@ public class GameManager {
             }
         }
 
+        // Clear the offhand, and hotbar slot 0-8 items
+        for (int i = 0; i <= 8; i++) {
+            player.getInventory().setItem(i, new ItemStack(Material.AIR));
+        }
+        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+        player.getInventory().setHelmet(new ItemStack(Material.CARVED_PUMPKIN));
+
         checkForWinCondition();
         plugin.getWebsocketManager().sendPlayerDied(player.getName());
     }
@@ -1202,6 +1209,8 @@ public class GameManager {
         chasseurOldPos = chasseur.getLocation();
         chasseurTarget = null;
 
+        unlightCampfire();
+
         // Teleport chasseur to chasseur-tp location
         Location chasseurTpLoc = plugin.getLocationManager().getChasseurTpLocation();
         if (chasseurTpLoc != null) {
@@ -1249,7 +1258,7 @@ public class GameManager {
     /**
      * Allume le feu de camp (pendant la journée)
      */
-    private void lightCampfire() {
+    public void lightCampfire() {
         Location campfire = plugin.getLocationManager().getCampfireLocation();
         if (campfire != null) {
             Block block = campfire.getBlock();
@@ -1266,7 +1275,7 @@ public class GameManager {
     /**
      * Éteint le feu de camp (pendant la nuit)
      */
-    private void unlightCampfire() {
+    public void unlightCampfire() {
         Location campfire = plugin.getLocationManager().getCampfireLocation();
         if (campfire != null) {
             Block block = campfire.getBlock();

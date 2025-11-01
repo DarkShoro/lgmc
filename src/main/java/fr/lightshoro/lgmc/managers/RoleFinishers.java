@@ -396,6 +396,7 @@ public class RoleFinishers {
         gm.getChasseur().teleport(gm.getChasseurOldPos());
         gm.setInterceptChasseur(true);
         gm.getChasseur().getInventory().setItem(4, new ItemStack(Material.AIR));
+        gm.lightCampfire();
 
         // Vérifier si c'est un stalemate (chasseur et loup-garou sont les deux derniers)
         boolean isStalemate = false;
