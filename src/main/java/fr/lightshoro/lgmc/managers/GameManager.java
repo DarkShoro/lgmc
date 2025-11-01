@@ -260,7 +260,10 @@ public class GameManager {
     public void killPlayer(Player player, String deathType) {
         if (player == null) return;
 
-        if (player.equals(capitaine) && !interceptCapitaine) {
+        // Si c'est une déconnexion, pas d'interception spéciale
+        boolean isDisconnect = "disconnect".equals(deathType);
+
+        if (!isDisconnect && player.equals(capitaine) && !interceptCapitaine) {
             if (goodGuysCount > 1) {
                 interceptCapitaine = true;
                 GamePlayer gp = getGamePlayer(player);
@@ -280,7 +283,7 @@ public class GameManager {
             }
         }
 
-        if (player.equals(chasseur) && !interceptChasseur) {
+        if (!isDisconnect && player.equals(chasseur) && !interceptChasseur) {
             interceptChasseur = true;
             GamePlayer gp = getGamePlayer(player);
             if (gp != null) {
@@ -341,6 +344,26 @@ public class GameManager {
         }
 
         removePlayerFromRole(player);
+
+        // Si le joueur déconnecté était le capitaine, choisir un nouveau capitaine aléatoirement
+        if (isDisconnect && player.equals(capitaine)) {
+            List<Player> availablePlayers = new ArrayList<>(playersAlive);
+            if (!availablePlayers.isEmpty()) {
+                Player newCapitaine = availablePlayers.get((int)(Math.random() * availablePlayers.size()));
+                capitaine = newCapitaine;
+
+                // Donner le casque de capitaine
+                newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
+
+                Bukkit.broadcastMessage(
+                    plugin.getLanguageManager().getMessage("general.new-capitaine-random")
+                        .replace("{player}", newCapitaine.getName())
+                );
+            } else {
+                capitaine = null;
+            }
+        }
+
         checkForWinCondition();
         plugin.getWebsocketManager().sendPlayerDied(player.getName());
     }

@@ -155,19 +155,12 @@ public class GameListener implements Listener {
                 .replace("{player}", quittingPlayer.getName())
         );
 
-        // Gérer le cas spécial du capitaine qui se déconnecte
-        if (plugin.getGameManager().getCapitaine() != null &&
-            plugin.getGameManager().getCapitaine().equals(quittingPlayer)) {
-            plugin.getServer().broadcastMessage(
-                plugin.getLanguageManager().getMessage("general.capitaine-disconnect")
-            );
-        }
-
         // Utiliser la méthode killPlayer existante qui gère tout :
         // - Retrait des rôles spéciaux
         // - Gestion des amoureux
         // - Décrémentation des compteurs
         // - Vérification des conditions de victoire
+        // - Attribution aléatoire du capitaine si le joueur déconnecté était capitaine
         plugin.getGameManager().killPlayer(quittingPlayer, "disconnect");
     }
 }
