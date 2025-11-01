@@ -178,6 +178,7 @@ public class GameManager {
 
         freezeAll = false;
         plugin.getWebsocketManager().sendReset();
+        lightCampfire();
 
         if (isAdmin) {
             for (Player player : Bukkit.getOnlinePlayers()) {
