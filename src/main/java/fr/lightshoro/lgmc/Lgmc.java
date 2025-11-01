@@ -3,6 +3,7 @@ package fr.lightshoro.lgmc;
 import fr.lightshoro.lgmc.commands.*;
 import fr.lightshoro.lgmc.listeners.GameListener;
 import fr.lightshoro.lgmc.listeners.VoteListener;
+import fr.lightshoro.lgmc.listeners.ChatListener;
 import fr.lightshoro.lgmc.managers.*;
 import fr.lightshoro.lgmc.tasks.VisibilityTask;
 import fr.lightshoro.lgmc.tasks.VoteCheckTask;
@@ -36,6 +37,7 @@ public final class Lgmc extends JavaPlugin {
     private ResourcePackManager resourcePackManager;
     private MotdManager motdManager;
     private WebsocketManager websocketManager;
+    private ChatManager chatManager;
     public CachedServerIcon serverIcon;
 
     private static final String ASCII_ART =
@@ -64,10 +66,12 @@ public final class Lgmc extends JavaPlugin {
         this.timerManager = new TimerManager(this);
         this.resourcePackManager = new ResourcePackManager(this);
         this.motdManager = new MotdManager(this);
+        this.chatManager = new ChatManager(this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
         Bukkit.getPluginManager().registerEvents(new VoteListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ChatListener(this), this);
         Bukkit.getPluginManager().registerEvents(resourcePackManager, this);
 
         // Enregistrement des commandes
@@ -224,5 +228,13 @@ public final class Lgmc extends JavaPlugin {
      */
     public WebsocketManager getWebsocketManager() {
         return websocketManager;
+    }
+
+    /**
+     * Récupère le gestionnaire de chat
+     * @return ChatManager instance
+     */
+    public ChatManager getChatManager() {
+        return chatManager;
     }
 }

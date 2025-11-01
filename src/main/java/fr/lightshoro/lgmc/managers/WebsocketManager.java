@@ -154,6 +154,10 @@ public class WebsocketManager {
         sendAction("gameover");
     }
 
+    public void sendReset() {
+        sendAction("reset");
+    }
+
     public void sendLink(String uuid, String username) {
         if (this.isDisabled()) return;
         if (socket != null && socket.isOpen()) {

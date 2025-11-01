@@ -29,7 +29,11 @@ public class LoupGarouGUI {
     public void open(Player loupGarou) {
         List<Player> alivePlayers = new ArrayList<>(gm.getPlayersAlive());
         // Retirer tous les loups-garous de la liste
-        alivePlayers.removeAll(gm.getLoupGarous());
+        // En fait, si, les loups-garous peuvent se désigner entre eux
+        // Permet le bluff et les stratégies
+
+
+        // alivePlayers.removeAll(gm.getLoupGarous());
 
         int rows = alivePlayers.size() > 9 ? 2 : 1;
         ChestGui gui = new ChestGui(rows, plugin.getLanguageManager().getMessage("gui.loup-garou"));
@@ -98,7 +102,8 @@ public class LoupGarouGUI {
 
         gui.addPane(pane);
 
-        gui.setOnClose(event -> {
+        // Deprecated! : Deux loup-garous peuvent fermer le menu pour discuté dans le chat
+        /*gui.setOnClose(event -> {
             GamePlayer lgGp = gm.getGamePlayer(loupGarou);
             if (!lgGp.isDidDesignation()) {
                 loupGarou.sendMessage(plugin.getLanguageManager().getMessage("actions.loups-garous.no-target"));
@@ -109,7 +114,7 @@ public class LoupGarouGUI {
                     plugin.getTimerManager().advanceTimer();
                 }
             }
-        });
+        });*/
 
         gui.show(loupGarou);
     }

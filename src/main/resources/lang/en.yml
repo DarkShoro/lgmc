@@ -291,6 +291,10 @@ commands:
     usage: "&cUsage: /wsaction <gamestart|gameover|player_died <player>|muteall|demuteall>"
 
 
+# Chat
+chat:
+  cannot-chat: "&cYou cannot speak while the Werewolves are discussing."
+
 # Errors
 errors:
   game-not-started: "&cNo game is currently running."

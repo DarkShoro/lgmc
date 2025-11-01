@@ -1,6 +1,6 @@
 # 🐺 LGMC - Werewolf Minecraft Plugin
 
-[![Version](https://img.shields.io/badge/version-3.0--BETA-blue.svg)](https://github.com/DarkShoro/lgmc/releases)
+[![Version](https://img.shields.io/badge/version-3.3--BETA-blue.svg)](https://github.com/DarkShoro/lgmc/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg)](https://www.minecraft.net/)
 [![Paper](https://img.shields.io/badge/paper-required-orange.svg)](https://papermc.io/)
 
@@ -63,6 +63,7 @@ The plugin itself is hardcoded in French in its variables and comments, but it s
 - **Automatic tie-breaking** in case of voting ties
 - **Automatic check** when all players have voted
 - **Custom messages** for each type of death
+- **Werewolf Chat**: During the werewolf turn, only werewolves and the little girl can chat. Werewolves see messages as `<player> >> text`, the little girl sees `Loup-Garou >> text`. Other players attempting to chat receive a "cannot chat" message.
 
 ### Graphical Interfaces (GUIs)
 
@@ -87,7 +88,7 @@ The plugin itself is hardcoded in French in its variables and comments, but it s
 ### Steps
 
 1. Download the JAR file from [Releases](https://github.com/DarkShoro/lgmc/releases) or compile it yourself
-2. Place the `lgmc-3.2-BETA.jar` file in your server's `plugins/` folder
+2. Place the `lgmc-3.3-BETA.jar` file in your server's `plugins/` folder
 3. Start or restart the server
 4. Configuration files will be automatically generated in `plugins/lgmc/`
 
@@ -273,7 +274,8 @@ src/main/java/fr/lightshoro/lgmc/
 │   ├── TimerManager.java              # Timer and phase management
 │   ├── LocationManager.java           # Location management
 │   ├── LanguageManager.java           # Multilingual system with auto-update
-│   └── RoleFinishers.java             # Role action processing
+│   ├── RoleFinishers.java             # Role action processing
+│   └── ChatManager.java               # Chat system management
 ├── gui/
 │   ├── SeerGUI.java
 │   ├── WerewolfGUI.java
@@ -284,15 +286,20 @@ src/main/java/fr/lightshoro/lgmc/
 │   └── CupidGUI.java
 ├── listeners/
 │   ├── GameListener.java              # Game events
-│   └── VoteListener.java              # Voting events
+│   ├── VoteListener.java              # Voting events
+│   └── ChatListener.java              # Chat events
 ├── commands/
+│   ├── DiscordLinkCommand.java
 │   ├── LGStartCommand.java
 │   ├── LGStopCommand.java
 │   ├── LGSetupCommand.java
 │   ├── LGReloadCommand.java
 │   ├── TestamentCommand.java
+│   ├── WSActionCommand.java
+│   ├── OpenGuiCommand.java
 │   └── GoodGuysCommand.java
 └── tasks/
+    ├── VisibilityTask.java
     └── VoteCheckTask.java             # Automatic vote checking
 ```
 
@@ -323,7 +330,7 @@ cd lgmc
 gradlew.bat shadowJar      # Windows
 
 # The JAR will be generated in:
-# build/libs/lgmc-3.2-BETA.jar
+# build/libs/lgmc-3.3-BETA.jar
 ```
 
 ### Automatic Build

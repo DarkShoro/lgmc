@@ -2,6 +2,7 @@ package fr.lightshoro.lgmc.listeners;
 
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.gui.CapitaineVoteGUI;
+import fr.lightshoro.lgmc.gui.LoupGarouGUI;
 import fr.lightshoro.lgmc.gui.VoteGUI;
 import fr.lightshoro.lgmc.managers.GameManager;
 import fr.lightshoro.lgmc.models.GamePlayer;
@@ -39,6 +40,12 @@ public class VoteListener implements Listener {
         GameManager gm = plugin.getGameManager();
         String gameStep = gm.getGameStep();
 
+        // If either dead or not in game, cannot vote
+        if (!gm.isInGame() || !gm.getPlayersAlive().contains(player)) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("errors.cannot-vote-now"));
+            return;
+        }
+
         if ("doCapitaine".equals(gameStep)) {
             GamePlayer gp = gm.getGamePlayer(player);
             if (gp.isDidVoteForCapitaine()) {
@@ -72,16 +79,10 @@ public class VoteListener implements Listener {
 
     }
 
-    @EventHandler
-    public void onRightClickWithHoe(PlayerInteractEvent event) {
+    public void handleWoodenHoe(PlayerInteractEvent event) {
+        GameManager gm = plugin.getGameManager();
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
-
-        if (item == null || item.getType() != Material.WOODEN_HOE) {
-            return;
-        }
-
-        GameManager gm = plugin.getGameManager();
 
         if (!gm.isInGame()) {
             // Le jeu n'est pas en cours, permettre de tirer librement
@@ -112,11 +113,56 @@ public class VoteListener implements Listener {
             gm.setChasseurTarget(target);
 
             player.sendMessage(plugin.getLanguageManager().getMessage("actions.chasseur.aim")
-                .replace("{player}", target.getName()));
+                    .replace("{player}", target.getName()));
 
             // Execute the kill immediately with visual effects
             gm.getFinishers().finishChasseur();
         }
+    }
+
+    public void handleIronHoe(PlayerInteractEvent event) {
+        GameManager gm = plugin.getGameManager();
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if (!gm.isInGame()) {
+            // Le jeu n'est pas en cours, le vote n'a pas lieu d'être
+            player.sendMessage(plugin.getLanguageManager().getMessage("errors.cannot-vote-now"));
+            return;
+        }
+
+        // Iron hoe is used as the vote item for werewolves
+        if (!gm.getLoupGarous().contains(player)) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("errors.cannot-vote-now"));
+            return;
+        }
+
+        GamePlayer gp = gm.getGamePlayer(player);
+        if (gp.isDidVote()) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.already-voted"));
+        }
+
+        new LoupGarouGUI(plugin).open(player);
+    }
+
+    @EventHandler
+    public void onRightClickWithHoe(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if (item == null) {
+            return;
+        }
+
+        switch (item.getType()) {
+            case WOODEN_HOE -> handleWoodenHoe(event);
+            case IRON_HOE -> handleIronHoe(event);
+            default -> {
+                // Do nothing
+            }
+        }
+
+
     }
 
     @EventHandler

@@ -103,6 +103,12 @@ public class RoleFinishers {
             }
         }
 
+        // Retire leur ironhoe aux loups-garous
+        for (Player lg : gm.getLoupGarous()) {
+            lg.getInventory().removeItem(new ItemStack(Material.IRON_HOE));
+        }
+
+        plugin.getChatManager().setLoupGarouChatActive(false);
         plugin.getTimerManager().advanceTimer();
     }
 
@@ -328,6 +334,12 @@ public class RoleFinishers {
     }
 
     public void finishChasseur() {
+        // Si le chasseur est déjà mort, ne rien faire
+        if (gm.getChasseur() == null || !gm.getPlayersAlive().contains(gm.getChasseur())) {
+            plugin.getTimerManager().advanceTimer();
+            return;
+        }
+
         if (gm.getChasseurTarget() == null) {
             gm.getChasseur().teleport(gm.getChasseurOldPos());
             gm.killPlayer(gm.getChasseur(), null);
@@ -393,6 +405,12 @@ public class RoleFinishers {
         if (gm.getLoupGarous().contains(gm.getChasseurTarget())) {
             gm.getLoupGarous().remove(gm.getChasseurTarget());
             gm.decrementBadGuysCount();
+        }
+
+        // Vérifier que le chasseur et la cible sont toujours vivants
+        if (!gm.getPlayersAlive().contains(gm.getChasseur()) || !gm.getPlayersAlive().contains(gm.getChasseurTarget())) {
+            plugin.getTimerManager().advanceTimer();
+            return;
         }
 
         gm.killPlayer(gm.getChasseur(), gm.getGamePlayer(gm.getChasseur()).getDeathReason());

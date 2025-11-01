@@ -293,6 +293,10 @@ commands:
 
 
 
+# Chat
+chat:
+  cannot-chat: "&cVous ne pouvez pas parler pendant que les Loups-Garous discutent."
+
 # Erreurs
 errors:
   game-not-started: "&cAucune partie n'est en cours."

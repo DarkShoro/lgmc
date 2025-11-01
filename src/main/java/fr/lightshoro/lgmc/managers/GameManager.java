@@ -176,6 +176,7 @@ public class GameManager {
         }
 
         freezeAll = false;
+        plugin.getWebsocketManager().sendReset();
 
         if (isAdmin) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -821,6 +822,17 @@ public class GameManager {
 
         // Start the night sequence after a delay
         Bukkit.getScheduler().runTaskLater(plugin, this::nextStep, 60L);
+
+        // Clear every player's slot 4 inventory
+        for (Player player : playersAlive) {
+            ItemStack slot4 = player.getInventory().getItem(4);
+            if (slot4 != null && (
+                    slot4.getType() == Material.PAPER ||
+                    slot4.getType() == Material.WOODEN_HOE ||
+                    slot4.getType() == Material.IRON_HOE)) {
+                player.getInventory().setItem(4, new ItemStack(Material.AIR));
+            }
+        }
     }
 
     public void dayAction() {
@@ -864,6 +876,17 @@ public class GameManager {
         }
         actionQueueAdd("doVote");
         actionQueueAdd("endDay");
+
+        // Clear every player's slot 4 inventory
+        for (Player player : playersAlive) {
+            ItemStack slot4 = player.getInventory().getItem(4);
+            if (slot4 != null && (
+                    slot4.getType() == Material.PAPER ||
+                            slot4.getType() == Material.WOODEN_HOE ||
+                            slot4.getType() == Material.IRON_HOE)) {
+                player.getInventory().setItem(4, new ItemStack(Material.AIR));
+            }
+        }
 
         // Start the day sequence after a delay
         Bukkit.getScheduler().runTaskLater(plugin, this::nextStep, 60L);
@@ -1033,10 +1056,14 @@ public class GameManager {
             }
         }
 
+        plugin.getChatManager().setLoupGarouChatActive(true);
+
         // Ouvrir le GUI pour chaque loup-garou après un délai
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             for (Player lg : loupGarous) {
-                new fr.lightshoro.lgmc.gui.LoupGarouGUI(plugin).open(lg);
+                // new fr.lightshoro.lgmc.gui.LoupGarouGUI(plugin).open(lg);
+                // Give loup-garou a iron hoe to open GUI
+                lg.getInventory().setItem(4, new ItemStack(Material.IRON_HOE));
             }
         }, 20L);
     }
