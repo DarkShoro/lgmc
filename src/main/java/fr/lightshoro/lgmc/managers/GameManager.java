@@ -373,6 +373,10 @@ public class GameManager {
             return plugin.getLanguageManager().getMessage("death.vote")
                 .replace("{player}", playerName)
                 .replace("{role}", roleName);
+        } else if (deathType.equals("disconnect")) {
+            return plugin.getLanguageManager().getMessage("death.disconnect")
+                .replace("{player}", playerName)
+                .replace("{role}", roleName);
         } else if (deathType.equals("silent")) {
             return null;
         }

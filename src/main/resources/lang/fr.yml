@@ -18,6 +18,8 @@ general:
   amoureux: "&dAmoureux"
   timer-advanced-capitaine: "&9Le timer a été avancé car tout le monde a voté pour le {roles.capitaine.name}&9."
   timer-advanced-vote: "&9Le timer a été avancé car tout le monde a voté."
+  player-disconnect: "&c{player} s'est déconnecté pendant la partie !"
+  capitaine-disconnect: "&cLe {roles.capitaine.name} &cs'est déconnecté ! Il n'y a plus de {roles.capitaine.name}&c."
 
 # Phases du jeu
 phases:
@@ -146,6 +148,7 @@ death:
   love: "&9Par chagrin d'amour, {player}&9 s'est suicidé, il était {role}"
   werewolf: "{player} &9a été dévoré par les {roles.loup-garou.name}&c&ls&9, il était {role}"
   witch: "{player} &9a été empoisonné par la {roles.sorciere.name}&9, il était {role}"
+  disconnect: "{player} &9s'est déconnecté pendant la partie, il était {role}"
   hunter: "{player} &9s'est pris la dernière balle du {roles.chasseur.name}&9, il était {role}"
   vote: "&9Le {general.village} &9a décidé d'éliminer {player}, &9il était {role}"
   no-deaths: "&9Aucun joueur n'est en attente de mort."

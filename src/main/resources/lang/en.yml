@@ -18,6 +18,8 @@ general:
   lovers: "&dLovers"
   timer-advanced-capitaine: "&9Timer advanced as everyone voted for the {roles.capitaine.name}&9."
   timer-advanced-vote: "&9Timer advanced as everyone voted."
+  player-disconnect: "&c{player} disconnected during the game!"
+  capitaine-disconnect: "&cThe {roles.capitaine.name} &cdisconnected! There is no more {roles.capitaine.name}&c."
 
 # Game phases
 phases:
@@ -148,6 +150,7 @@ death:
   witch: "{player} &9was poisoned by the {roles.sorciere.name}&9, they were {role}"
   hunter: "{player} &9took the {roles.chasseur.name}&9's last bullet, they were {role}"
   vote: "&9The {general.village} &9decided to eliminate {player}, &9they were {role}"
+  disconnect: "{player} &9disconnected during the game, they were {role}"
   no-deaths: "&9No players are waiting to die."
 
 # Victories

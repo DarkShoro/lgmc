@@ -183,6 +183,17 @@ public class RoleFinishers {
         assert mostVoted != null;
         mostVoted.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
 
+        // Nettoyer les votes et réinitialiser les flags
+        gm.getVoteCapitaine().clear();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            GamePlayer gp = gm.getGamePlayer(player);
+            if (gp != null) {
+                gp.setDidVoteForCapitaine(false);
+            }
+            // Retirer le papier de vote
+            player.getInventory().setItem(4, new ItemStack(Material.AIR));
+        }
+
         plugin.getTimerManager().advanceTimer();
     }
 

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
 
@@ -129,5 +130,44 @@ public class GameListener implements Listener {
                 return;
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // Si une partie n'est pas en cours, ne rien faire
+        if (!plugin.getGameManager().isInGame()) {
+            return;
+        }
+
+        Player quittingPlayer = event.getPlayer();
+        GamePlayer gamePlayer = plugin.getGameManager().getGamePlayer(quittingPlayer);
+
+        // Si le joueur n'a pas de GamePlayer ou est déjà mort/spectateur, ne rien faire
+        if (gamePlayer == null || gamePlayer.getRole() == Role.DEAD || gamePlayer.getRole() == Role.NOT_IN_GAME) {
+            return;
+        }
+
+        // Le joueur est vivant et quitte la partie - le traiter comme une mort
+
+        // Annoncer la déconnexion
+        plugin.getServer().broadcastMessage(
+            plugin.getLanguageManager().getMessage("general.player-disconnect")
+                .replace("{player}", quittingPlayer.getName())
+        );
+
+        // Gérer le cas spécial du capitaine qui se déconnecte
+        if (plugin.getGameManager().getCapitaine() != null &&
+            plugin.getGameManager().getCapitaine().equals(quittingPlayer)) {
+            plugin.getServer().broadcastMessage(
+                plugin.getLanguageManager().getMessage("general.capitaine-disconnect")
+            );
+        }
+
+        // Utiliser la méthode killPlayer existante qui gère tout :
+        // - Retrait des rôles spéciaux
+        // - Gestion des amoureux
+        // - Décrémentation des compteurs
+        // - Vérification des conditions de victoire
+        plugin.getGameManager().killPlayer(quittingPlayer, "disconnect");
     }
 }

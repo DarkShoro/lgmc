@@ -28,7 +28,9 @@ public class CapitaineVoteGUI {
     public void open(Player voter) {
         List<Player> alivePlayers = new ArrayList<>(gm.getPlayersAlive());
 
-        int rows = alivePlayers.size() > 9 ? 2 : 1;
+        // Calculer le nombre de lignes nécessaires (incluant la barrière)
+        int totalSlots = alivePlayers.size() + 1; // +1 pour la barrière
+        int rows = totalSlots > 9 ? 2 : 1;
         ChestGui gui = new ChestGui(rows, plugin.getLanguageManager().getMessage("gui.vote-capitaine"));
 
         StaticPane pane = new StaticPane(0, 0, 9, rows);
@@ -62,7 +64,7 @@ public class CapitaineVoteGUI {
             slot++;
         }
 
-        // Option "Ne rien faire"
+        // Option "Ne rien faire" - toujours en dernière position
         ItemStack barrier = new ItemStack(Material.BARRIER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
@@ -80,7 +82,9 @@ public class CapitaineVoteGUI {
             voter.closeInventory();
         });
 
-        pane.addItem(skipItem, slot % 9, slot / 9);
+        // Placer la barrière au dernier slot (slot 8 pour 1 ligne, slot 17 pour 2 lignes)
+        int barrierSlot = (rows * 9) - 1;
+        pane.addItem(skipItem, barrierSlot % 9, barrierSlot / 9);
 
         gui.addPane(pane);
 

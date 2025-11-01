@@ -36,7 +36,9 @@ public class LoupGarouGUI {
 
         // alivePlayers.removeAll(gm.getLoupGarous());
 
-        int rows = alivePlayers.size() > 9 ? 2 : 1;
+        // Calculer le nombre de lignes nécessaires (incluant la barrière)
+        int totalSlots = alivePlayers.size() + 1; // +1 pour la barrière
+        int rows = totalSlots > 9 ? 2 : 1;
         ChestGui gui = new ChestGui(rows, plugin.getLanguageManager().getMessage("gui.loup-garou"));
 
         StaticPane pane = new StaticPane(0, 0, 9, rows);
@@ -80,7 +82,7 @@ public class LoupGarouGUI {
             slot++;
         }
 
-        // Option "Ne rien faire"
+        // Option "Ne rien faire" - toujours en dernière position
         ItemStack barrier = new ItemStack(Material.BARRIER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
@@ -92,18 +94,28 @@ public class LoupGarouGUI {
             event.setCancelled(true);
 
             GamePlayer lgGp = gm.getGamePlayer(loupGarou);
-            lgGp.setDidDesignation(false);
+            lgGp.setDidDesignation(true); // Le loup a agi (même en skippant)
 
-            // Vérifier si tous les loups ont fait leur choix (ou passé)
-            int numLG = gm.getLoupGarous().size();
-            if (gm.getDesignationCount() + 1 == numLG) {
+            // Vérifier si tous les loups ont fait leur action
+            boolean allActed = true;
+            for (Player lg : gm.getLoupGarous()) {
+                GamePlayer lgPlayer = gm.getGamePlayer(lg);
+                if (lgPlayer != null && !lgPlayer.isDidDesignation()) {
+                    allActed = false;
+                    break;
+                }
+            }
+
+            if (allActed) {
                 plugin.getTimerManager().advanceTimer();
             }
 
             loupGarou.closeInventory();
         });
 
-        pane.addItem(skipItem, slot % 9, slot / 9);
+        // Placer la barrière au dernier slot (slot 8 pour 1 ligne, slot 17 pour 2 lignes)
+        int barrierSlot = (rows * 9) - 1;
+        pane.addItem(skipItem, barrierSlot % 9, barrierSlot / 9);
 
         gui.addPane(pane);
 
