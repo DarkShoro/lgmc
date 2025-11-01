@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'fr.lightshoro'
-version = '3.4.1-BETA'
+version = '3.4.2-BETA'
 
 repositories {
     mavenCentral()

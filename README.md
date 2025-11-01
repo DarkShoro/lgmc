@@ -1,6 +1,6 @@
 # LGMC - Werewolf Game Plugin
 
-[![Version](https://img.shields.io/badge/version-3.4.1--BETA-blue.svg)](https://github.com/DarkShoro/lgmc/releases)
+[![Version](https://img.shields.io/badge/version-3.4.2--BETA-blue.svg)](https://github.com/DarkShoro/lgmc/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg)](https://www.minecraft.net/)
 [![Paper](https://img.shields.io/badge/paper-required-orange.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/java-21-red.svg)](https://www.oracle.com/java/)
@@ -57,7 +57,7 @@ A feature-complete Minecraft implementation of the classic Werewolf social deduc
 
 ### Steps
 
-1. Download `lgmc-3.4.1-BETA.jar` from [releases](https://github.com/DarkShoro/lgmc/releases)
+1. Download `lgmc-3.4.2-BETA.jar` from [releases](https://github.com/DarkShoro/lgmc/releases)
 2. Place in your server's `plugins/` folder
 3. Restart server
 4. Configure locations with `/lg setup`
@@ -271,7 +271,7 @@ cd lgmc
 ./gradlew shadowJar          # Linux/Mac
 gradlew.bat shadowJar        # Windows
 
-# Output: build/libs/lgmc-3.4.1-BETA.jar
+# Output: build/libs/lgmc-3.4.2-BETA.jar
 ```
 
 ### Project Structure
