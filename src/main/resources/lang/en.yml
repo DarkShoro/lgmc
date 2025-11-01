@@ -197,6 +197,7 @@ victory:
 gui:
   vote: "&4&lChoose a culprit to eliminate"
   vote-capitaine: "&d&lVote for the new {roles.capitaine.name}"
+  testament: "&d&lChoose your successor"
   loup-garou: "&4&lChoose a victim"
   voyante: "&d&lChoose a player to investigate"
   sorciere: "&eChoose an action to perform"

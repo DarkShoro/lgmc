@@ -1,6 +1,7 @@
 package fr.lightshoro.lgmc.managers;
 
 import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.gui.TestamentGUI;
 import fr.lightshoro.lgmc.models.GamePlayer;
 import fr.lightshoro.lgmc.models.Role;
 import org.bukkit.*;
@@ -1166,11 +1167,11 @@ public class GameManager {
             return;
         }
 
-        capitaine.sendMessage(plugin.getLanguageManager().getMessage("succession.dying-message"));
-        capitaine.sendMessage(plugin.getLanguageManager().getMessage("succession.instruction"));
-
         capitaineSuccession = true;
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("succession.timer"), 30);
+
+        // Ouvrir le GUI pour choisir le successeur
+        new TestamentGUI(plugin).open(capitaine);
     }
 
     public GamePlayer getGamePlayer(Player player) {

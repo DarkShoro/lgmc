@@ -80,9 +80,6 @@ public final class Lgmc extends JavaPlugin {
             Objects.requireNonNull(getCommand("lg")).setExecutor(lgCommand);
             Objects.requireNonNull(getCommand("lg")).setTabCompleter(lgCommand);
         }
-        if (getCommand("testament") != null) {
-            Objects.requireNonNull(getCommand("testament")).setExecutor(new TestamentCommand(this));
-        }
         if (getCommand("goodGuys") != null) {
             Objects.requireNonNull(getCommand("goodGuys")).setExecutor(new GoodGuysCommand(this));
         }

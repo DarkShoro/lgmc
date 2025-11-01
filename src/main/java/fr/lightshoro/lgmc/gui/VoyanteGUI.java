@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
@@ -79,7 +80,11 @@ public class VoyanteGUI {
 
         // Option "Ne rien faire"
         ItemStack barrier = new ItemStack(Material.BARRIER);
-        barrier.getItemMeta().setDisplayName(plugin.getLanguageManager().getMessage("gui.items.skip"));
+        ItemMeta barrierMeta = barrier.getItemMeta();
+        if (barrierMeta != null) {
+            barrierMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.skip"));
+            barrier.setItemMeta(barrierMeta);
+        }
 
         GuiItem skipItem = new GuiItem(barrier, event -> {
             event.setCancelled(true);
