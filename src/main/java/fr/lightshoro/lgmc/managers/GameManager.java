@@ -1174,11 +1174,14 @@ public class GameManager {
             return;
         }
 
+        // Sauvegarder le capitaine mourant AVANT d'ouvrir le GUI
+        dyingCapitaine = capitaine;
+
         capitaineSuccession = true;
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("succession.timer"), 30);
 
         // Ouvrir le GUI pour choisir le successeur
-        new TestamentGUI(plugin).open(capitaine);
+        new TestamentGUI(plugin).open(dyingCapitaine);
     }
 
     public GamePlayer getGamePlayer(Player player) {

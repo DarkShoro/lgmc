@@ -47,7 +47,6 @@ public class TestamentGUI {
                 event.setCancelled(true);
 
                 // Nommer le successeur
-                gm.setDyingCapitaine(capitaine);
                 gm.setCapitaine(target);
 
                 // Donne le casque au successeur
@@ -71,6 +70,17 @@ public class TestamentGUI {
 
         gui.addPane(pane);
         gui.show(capitaine);
+
+
+        // Skip timer on gui close, randomly choose successor if none chosen
+        gui.setOnClose(event -> {
+            if (gm.isCapitaineSuccession()) {
+                // Le jeu choisit un successeur aléatoire
+                plugin.getTimerManager().advanceTimer();
+            }
+        });
     }
+
+
 }
 

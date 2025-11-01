@@ -307,7 +307,7 @@ commands:
 
 # Chat
 chat:
-  cannot-chat: "&cVous ne pouvez pas parler pendant que les Loups-Garous discutent."
+  cannot-chat: "&cVous ne pouvez pas parler la nuit"
 
 # Erreurs
 errors:

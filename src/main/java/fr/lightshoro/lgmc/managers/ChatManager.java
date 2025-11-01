@@ -27,30 +27,44 @@ public class ChatManager {
 
     public boolean canPlayerSeeLGChat(Player player) {
         return plugin.getGameManager().getLoupGarous().contains(player) ||
-               player.equals(plugin.getGameManager().getPetiteFille());
+               player.equals(plugin.getGameManager().getPetiteFille()) ||
+               isSpectator(player);
     }
 
     public void sendLGChatMessage(Player sender, String message) {
-        Component formattedMessage;
         Style boldName = Style.style(NamedTextColor.RED, TextDecoration.BOLD);
 
-        if (plugin.getGameManager().getLoupGarous().contains(sender)) {
-            formattedMessage = Component.text()
-                    .append(Component.text(sender.getName(), boldName))
-                    .append(Component.text(" >> ", NamedTextColor.YELLOW))
-                    .append(Component.text(message, NamedTextColor.WHITE))
-                    .build();
-        } else {
-            formattedMessage = Component.text()
-                    .append(Component.text(plugin.getLanguageManager().getMessage("roles.loup-garou.name"), boldName))
-                    .append(Component.text(" >> ", NamedTextColor.YELLOW))
-                    .append(Component.text(message, NamedTextColor.WHITE))
-                    .build();
-        }
+        // Message pour les loups-garous (avec pseudo réel)
+        Component lgMessage = Component.text()
+                .append(Component.text(sender.getName(), boldName))
+                .append(Component.text(" >> ", NamedTextColor.YELLOW))
+                .append(Component.text(message, NamedTextColor.WHITE))
+                .build();
+
+        // Message pour la petite fille et les spectateurs (pseudo anonyme)
+        Component anonymousMessage = Component.text()
+                .append(Component.text(plugin.getLanguageManager().getMessage("roles.loup-garou.name"), boldName))
+                .append(Component.text(" >> ", NamedTextColor.YELLOW))
+                .append(Component.text(message, NamedTextColor.WHITE))
+                .build();
 
         for (Player player : plugin.getGameManager().getPlayersAlive()) {
             if (canPlayerSeeLGChat(player)) {
-                player.sendMessage(formattedMessage);
+                // Les loups-garous voient les pseudos réels
+                if (plugin.getGameManager().getLoupGarous().contains(player)) {
+                    player.sendMessage(lgMessage);
+                }
+                // La petite fille et les spectateurs voient le message anonyme
+                else {
+                    player.sendMessage(anonymousMessage);
+                }
+            }
+        }
+
+        // Les spectateurs morts peuvent aussi voir le chat
+        for (Player player : plugin.getGameManager().getPlayingPlayers()) {
+            if (isSpectator(player) && !plugin.getGameManager().getPlayersAlive().contains(player)) {
+                player.sendMessage(anonymousMessage);
             }
         }
     }

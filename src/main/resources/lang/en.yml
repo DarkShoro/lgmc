@@ -305,7 +305,7 @@ commands:
 
 # Chat
 chat:
-  cannot-chat: "&cYou cannot speak while the Werewolves are discussing."
+  cannot-chat: "&cYou cannot speak at night!"
 
 # Errors
 errors:
