@@ -72,12 +72,10 @@ The plugin auto-generates all configuration files on first run.
 ### 1. Setup Locations
 
 ```
-/lg setup spawn <role>    # Set spawn points
+/lg setup spawn <1-12>    # Set spawn points
 /lg setup campfire        # Set gathering location
-/lg setup vote            # Set voting location
+/lg setup chasseurtp            # Set chasseur (hunter) location
 ```
-
-**Required spawns**: `villageois`, `loup-garou`, `voyante`, `sorciere`, `chasseur`, `cupidon`, `petite-fille`
 
 ### 2. Start Game
 
