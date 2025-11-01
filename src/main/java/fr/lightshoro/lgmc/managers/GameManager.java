@@ -811,6 +811,13 @@ public class GameManager {
         designatedPlayers.clear();
         voyanteSondage = false;
 
+        // Réinitialiser tous les flags de succession du capitaine
+        // pour que tout nouveau capitaine puisse faire sa succession normalement
+        successorChosen = false;
+        capitaineSuccession = false;
+        interceptCapitaine = false;
+        dyingCapitaine = null;
+
         nightCount++;
         queueMode = "night";
 
