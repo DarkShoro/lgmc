@@ -34,6 +34,13 @@ public class ChatManager {
     public void sendLGChatMessage(Player sender, String message) {
         Style boldName = Style.style(NamedTextColor.RED, TextDecoration.BOLD);
 
+        // Un autre check pour qu'on s'assure que sender est bien un
+        // Loup-Garou, seul eux peuvent envoyer des messages dans ce chat
+        if (!plugin.getGameManager().getLoupGarous().contains(sender)) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("chat.cannot-chat"));
+            return;
+        }
+
         // Message pour les loups-garous (avec pseudo réel)
         Component lgMessage = Component.text()
                 .append(Component.text(sender.getName(), boldName))
