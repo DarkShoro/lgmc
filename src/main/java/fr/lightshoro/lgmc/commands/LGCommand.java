@@ -33,7 +33,8 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             "vote", "VoteGUI",
             "voyante", "VoyanteGUI",
             "sorcierepoison", "SorcierePoisonGUI",
-            "cupidon", "CupidonGUI"
+            "cupidon", "CupidonGUI",
+            "testament", "TestamentGUI"
     );
 
     public LGCommand(Lgmc plugin) {
@@ -249,6 +250,9 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             }
             case "CupidonGUI" -> {
                 new CupidonGUI(plugin).open(player);
+            }
+            case "TestamentGUI" -> {
+                new TestamentGUI(plugin).open(player);
             }
             default -> player.sendMessage(plugin.getLanguageManager().getMessage("commands.opengui.usage")
                     .replace("{guis}", String.join(", ", VALID_GUIS.keySet())));

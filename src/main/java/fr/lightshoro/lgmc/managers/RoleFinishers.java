@@ -453,32 +453,15 @@ public class RoleFinishers {
     }
 
     public void finishCapitaineSuccessor() {
-        if (gm.getDyingCapitaine() == null) {
-            // Choisir au hasard parmi les vivants
-            List<Player> alivePlayers = new ArrayList<>(gm.getPlayersAlive());
-            alivePlayers.remove(gm.getCapitaine());
+        // Le successeur a déjà été choisi (soit par le GUI, soit aléatoirement)
+        // On tue maintenant le capitaine mourant
 
-            gm.setDyingCapitaine(gm.getCapitaine());
-
-            if (!alivePlayers.isEmpty()) {
-                Player newCapitaine = alivePlayers.get((int)(Math.random() * alivePlayers.size()));
-                gm.setCapitaine(newCapitaine);
-
-                // Donner un casque bleu au nouveau capitaine
-                newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
-                // Retirer le casque du capitaine mourant
-                gm.getDyingCapitaine().getInventory().setHelmet(null);
-
-                Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("succession.testament-random")
-                                       .replace("{dying}", gm.getDyingCapitaine().getName())
-                                       .replace("{new}", newCapitaine.getName()));
+        if (gm.getDyingCapitaine() != null) {
+            if (gm.getDyingCapitaine().equals(gm.getChasseur())) {
+                gm.actionQueuePocketNext("doChasseur");
+            } else {
+                gm.killPlayer(gm.getDyingCapitaine(), gm.getGamePlayer(gm.getDyingCapitaine()).getDeathReason());
             }
-        }
-
-        if (gm.getDyingCapitaine().equals(gm.getChasseur())) {
-            gm.actionQueuePocketNext("doChasseur");
-        } else {
-            gm.killPlayer(gm.getDyingCapitaine(), gm.getGamePlayer(gm.getDyingCapitaine()).getDeathReason());
         }
 
         plugin.getTimerManager().advanceTimer();
