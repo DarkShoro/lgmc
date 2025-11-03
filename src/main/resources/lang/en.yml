@@ -6,6 +6,7 @@
 # General messages
 general:
   prefix: "&9[LG]&r "
+  scoreboard-title: "Werewolf"
   game-starting: "&eGame starting in &c&l{time}&e second(s)"
   game-started: "&eLet's go!"
   game-reset: "&eThe game has been reset by an administrator."
@@ -29,12 +30,20 @@ phases:
   night-falls: "&9The {roles.villageois.name}&9 fall asleep peacefully."
   day-breaks: "&9The {roles.villageois.name}&9 wake up."
 
+scoreboard:
+  players: "players"
+  alive: "Alive"
+  total: "Total"
+  nights: "Nights: {count}"
+  days: "Days: {count}"
+
 # Roles
 roles:
   loup-garou:
     name: "&c&lWerewolf"
     title: "&6You are a {roles.loup-garou.name}"
     subtitle: "&6You win with the {roles.loup-garou.name}&c&les"
+    plural: "&c&lWerewolves"
   villageois:
     name: "&a&lVillager"
     title: "&6You are a {roles.villageois.name}"

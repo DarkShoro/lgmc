@@ -4,7 +4,9 @@ import fr.lightshoro.lgmc.Lgmc;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.checkerframework.framework.qual.DefaultQualifier;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -256,8 +258,33 @@ public class LanguageManager {
         return getMessage("general.prefix");
     }
 
+    // plurar default false
+    public String getRoleName(String role, boolean plural, boolean colorFormat) {
+        if (plural) {
+            String pluralName = getMessage("roles." + role + ".name-plural");
+            String colorLessName = ChatColor.stripColor(pluralName);
+            if (colorFormat == false) {
+                return colorLessName;
+            }
+
+            return pluralName;
+        }
+
+        String name = getMessage("roles." + role + ".name");
+        String colorLessName = ChatColor.stripColor(name);
+        if (colorFormat == false) {
+            return colorLessName;
+        }
+
+        return name;
+    }
+
     public String getRoleName(String role) {
-        return getMessage("roles." + role + ".name");
+        return getRoleName(role, false, true);
+    }
+
+    public String getRoleName(String role, boolean plural) {
+        return getRoleName(role, plural, true);
     }
 
     public String getRoleTitle(String role) {

@@ -6,6 +6,7 @@ import fr.lightshoro.lgmc.listeners.VoteListener;
 import fr.lightshoro.lgmc.listeners.ChatListener;
 import fr.lightshoro.lgmc.managers.*;
 import fr.lightshoro.lgmc.tasks.DeadPlayerActionBarTask;
+import fr.lightshoro.lgmc.tasks.ScoreboardUpdateTask;
 import fr.lightshoro.lgmc.tasks.VisibilityTask;
 import fr.lightshoro.lgmc.tasks.VoteCheckTask;
 import org.bukkit.Bukkit;
@@ -39,6 +40,7 @@ public final class Lgmc extends JavaPlugin {
     private MotdManager motdManager;
     private WebsocketManager websocketManager;
     private ChatManager chatManager;
+    private ScoreboardManager scoreboardManager;
     public CachedServerIcon serverIcon;
 
     private static final String ASCII_ART =
@@ -68,6 +70,7 @@ public final class Lgmc extends JavaPlugin {
         this.resourcePackManager = new ResourcePackManager(this);
         this.motdManager = new MotdManager(this);
         this.chatManager = new ChatManager(this);
+        this.scoreboardManager = new ScoreboardManager(this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
@@ -95,6 +98,8 @@ public final class Lgmc extends JavaPlugin {
         new VisibilityTask(this).runTaskTimer(this, 20L, 20L);
         // Démarrer la tâche périodique d'affichage de l'action bar pour les joueurs morts (toutes les secondes)
         new DeadPlayerActionBarTask(this).runTaskTimer(this, 20L, 20L);
+        // Démarrer la tâche périodique de mise à jour du scoreboard (toutes les secondes)
+        new ScoreboardUpdateTask(this).runTaskTimer(this, 20L, 20L);
 
 
         // Affiche notre magnifique ASCII art dans la console ; ligne par ligne pour éviter les problèmes d'encodage
@@ -147,6 +152,11 @@ public final class Lgmc extends JavaPlugin {
         // Nettoyage du timer
         if (timerManager != null) {
             timerManager.clearTimer();
+        }
+
+        // Nettoyage des scoreboards
+        if (scoreboardManager != null) {
+            scoreboardManager.clearScoreboards();
         }
 
         // Reset du jeu si en cours
@@ -230,5 +240,13 @@ public final class Lgmc extends JavaPlugin {
      */
     public ChatManager getChatManager() {
         return chatManager;
+    }
+
+    /**
+     * Récupère le gestionnaire de scoreboard
+     * @return ScoreboardManager instance
+     */
+    public ScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
     }
 }

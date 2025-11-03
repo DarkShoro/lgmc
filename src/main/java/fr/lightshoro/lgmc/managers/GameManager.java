@@ -159,6 +159,7 @@ public class GameManager {
 
         plugin.getTimerManager().clearTimer();
         plugin.getWebsocketManager().sendDemuteAll();
+        plugin.getScoreboardManager().clearScoreboards();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
@@ -1413,6 +1414,9 @@ public class GameManager {
     public Player getMostVoted() { return mostVoted; }
     public Player getDoubleMostVoted() { return doubleMostVoted; }
     public boolean getIsStarting() { return isStarting; }
+    public List<Player> getVillageois() { return villageois; }
+    public int getNightCount() { return nightCount; }
+    public int getDayCount() { return dayCount; }
 
     public boolean isNight() {
         return "night".equals(queueMode);

@@ -6,6 +6,7 @@
 # Messages généraux
 general:
   prefix: "&9[LG]&r "
+  scoreboard-title: "Loup-Garou"
   game-starting: "&eLa partie commence dans &c&l{time}&e seconde(s)"
   game-started: "&eC'est parti !"
   game-reset: "&eLe jeu a été réinitialisé par un administrateur."
@@ -29,12 +30,21 @@ phases:
   night-falls: "&9Les {roles.villageois.name}&9 s'endorment paisiblement."
   day-breaks: "&9Les {roles.villageois.name}&9 se réveillent."
 
+scoreboard:
+  players: "joueurs"
+  alive: "Vivants"
+  total: "Total"
+  nights: "Nuits: {count}"
+  days: "Jours: {count}"
+
+
 # Rôles
 roles:
   loup-garou:
     name: "&c&lLoup Garou"
     title: "&6Tu es {roles.loup-garou.name}"
     subtitle: "&6Tu gagnes avec les {roles.loup-garou.name}&c&ls"
+    plural: "&c&lLoups Garous"
   villageois:
     name: "&a&lVillageois"
     title: "&6Tu es {roles.villageois.name}"
