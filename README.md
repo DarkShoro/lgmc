@@ -144,7 +144,7 @@ All commands support tab completion for easier use.
 
 ### Village Team
 
-**👁️ Seer (Voyante)**
+**👁️ Psychic (Voyante)**
 - Investigate one player's role each night
 - Guides village with information
 
@@ -160,7 +160,7 @@ All commands support tab completion for easier use.
 - Choose two lovers on first night
 - Creates special win condition
 
-**👧 Little Girl (Petite Fille)**
+**👧 Insomniac (Petite Fille)**
 - Spy on werewolves during night (anonymous)
 - Risk/reward information gathering
 
