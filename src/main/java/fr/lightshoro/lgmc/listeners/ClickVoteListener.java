@@ -1,5 +1,9 @@
 package fr.lightshoro.lgmc.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,17 +25,20 @@ import fr.lightshoro.lgmc.models.GamePlayer;
 public class ClickVoteListener implements Listener {
     private final Lgmc plugin;
 
+    private List<Player> cupidonTargetedPlayers = new ArrayList<>();
+
     public ClickVoteListener(Lgmc plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Détecte le clic gauche (air ou bloc) et fait un raycast pour trouver le joueur visé
+     * Détecte le clic gauche ou droit (air ou bloc) et fait un raycast pour trouver le joueur visé
      */
     @EventHandler
     public void onLeftClick(PlayerInteractEvent event) {
-        // Vérifier que c'est un clic gauche
-        if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK) {
+        // Vérifier que c'est un clic gauche ou droit
+        if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK &&
+            event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
 
@@ -410,6 +417,12 @@ public class ClickVoteListener implements Listener {
             // Premier amoureux
             if (cupidonGP.getFirstLover() == null) {
                 cupidonGP.setFirstLover(target);
+                
+                // Ajouter l'effet glow sur le premier amoureux
+                plugin.getVoteDisplayManager().setGlowEffect(damager, target);
+                // add to targeted players list
+                cupidonTargetedPlayers.add(target);
+                
                 damager.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.first-lover")
                         .replace("{player}", target.getName()));
                 return;
@@ -422,6 +435,12 @@ public class ClickVoteListener implements Listener {
                 }
                 
                 cupidonGP.setSecondLover(target);
+                
+                // Ajouter l'effet glow sur le deuxième amoureux
+                plugin.getVoteDisplayManager().setGlowEffect(damager, target);
+                // add to targeted players list
+                cupidonTargetedPlayers.add(target);
+                
                 damager.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.second-lover")
                         .replace("{player}", target.getName()));
                 
@@ -443,6 +462,13 @@ public class ClickVoteListener implements Listener {
                 
                 // Avancer le timer
                 plugin.getTimerManager().advanceTimer();
+                // Clear glow after 1 second
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    for (Player p : cupidonTargetedPlayers) {
+                        plugin.getVoteDisplayManager().removeGlowEffect(damager, p);
+                    }
+                    cupidonTargetedPlayers.clear();
+                }, 20L);
                 return;
             }
         }
