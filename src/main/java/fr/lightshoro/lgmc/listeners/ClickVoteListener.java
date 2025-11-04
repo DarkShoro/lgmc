@@ -84,8 +84,9 @@ public class ClickVoteListener implements Listener {
             return;
         }
 
-        // Si le joueur fait shift-clic, il se désigne lui-même (sauf voyante et chasseur)
-        if (damager.isSneaking()) {
+        // Si le joueur regarde ses pieds (pitch > 70), il se désigne lui-même (sauf voyante et chasseur)
+        float pitch = damager.getLocation().getPitch();
+        if (pitch > 70) {
             // Exclure la voyante et le chasseur (qui tire avec la houe en bois, pas un item spécifique)
             if (!"doVoyante".equals(gameStep)) {
                 handlePlayerClick(damager, damager, itemInHand, gameStep);
@@ -379,6 +380,9 @@ public class ClickVoteListener implements Listener {
                 .replace("{role}", targetRole.getFormattedName()));
             
             target.sendMessage(plugin.getLanguageManager().getMessage("roles.voleur.victim-message"));
+
+            // Update scoreboard to reflect role changes
+            plugin.getScoreboardManager().updateScoreboards();
 
             gm.setVoleurAction(true);
 

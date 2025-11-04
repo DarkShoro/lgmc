@@ -99,6 +99,9 @@ public class VoleurGUI {
                 
                 target.sendMessage(plugin.getLanguageManager().getMessage("roles.voleur.victim-message"));
 
+                // Update scoreboard to reflect role changes
+                plugin.getScoreboardManager().updateScoreboards();
+
                 gm.setVoleurAction(true);
                 plugin.getTimerManager().advanceTimer();
                 voleur.closeInventory();

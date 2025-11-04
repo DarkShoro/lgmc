@@ -205,16 +205,11 @@ public class VoteListener implements Listener {
         }
 
         if (player.equals(gm.getChasseur())) {
-            // Get the player the chasseur is looking at
+            // Get the player the chasseur is looking at (ignores dead players)
             Player target = getTargetedPlayer(player, 50.0);
 
             if (target == null) {
                 player.sendMessage(plugin.getLanguageManager().getMessage("actions.chasseur.must-aim"));
-                return;
-            }
-
-            if (!gm.getPlayersAlive().contains(target)) {
-                player.sendMessage(plugin.getLanguageManager().getMessage("actions.chasseur.already-dead"));
                 return;
             }
 
@@ -345,12 +340,18 @@ public class VoteListener implements Listener {
     private Player getTargetedPlayer(Player shooter, double range) {
         org.bukkit.util.Vector direction = shooter.getEyeLocation().getDirection();
         org.bukkit.Location start = shooter.getEyeLocation();
+        GameManager gm = plugin.getGameManager();
 
         Player closestPlayer = null;
         double closestDistance = range;
 
         for (Player target : shooter.getWorld().getPlayers()) {
             if (target.equals(shooter)) continue;
+            
+            // Ignore dead players - they shouldn't be targeted
+            if (!gm.getPlayersAlive().contains(target)) {
+                continue;
+            }
 
             org.bukkit.util.Vector toTarget = target.getEyeLocation().toVector().subtract(start.toVector());
             double distance = toTarget.length();
