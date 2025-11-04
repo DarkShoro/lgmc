@@ -260,6 +260,7 @@ gui:
     death-potion-lore: "&9Poison someone."
     first-lover: "&d❤ First lover"
     steal-role: "&e&lSteal role"
+    designate-lovers: "&d&lDesignate lovers"
   
   click-mode:
     vote-player: "&aYou voted for &l{player}&a."

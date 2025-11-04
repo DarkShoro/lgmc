@@ -76,7 +76,8 @@ public class ClickVoteListener implements Listener {
         } else if (itemInHand.getType() == Material.FLINT &&
                    "doVoyante".equals(gameStep) && damager.equals(gm.getVoyante())) {
             hasRelevantItem = true;
-        } else if ("doCupidon".equals(gameStep) && damager.equals(gm.getGamePlayer(damager).getPlayer())) {
+        } else if (itemInHand.getType() == Material.NETHERITE_SCRAP &&
+                   "doCupidon".equals(gameStep) && damager.equals(gm.getCupidon())) {
             hasRelevantItem = true;
         }
 
@@ -395,8 +396,10 @@ public class ClickVoteListener implements Listener {
             return;
         }
 
-        // CUPIDON - Premier amoureux (pendant la nuit, n'importe quel item)
-        if ("doCupidon".equals(gameStep) && damager.equals(plugin.getGameManager().getGamePlayer(damager).getPlayer())) {
+        // CUPIDON - Premier amoureux (pendant la nuit, avec netherite scrap)
+        if ("doCupidon".equals(gameStep) && 
+            itemInHand.getType() == Material.NETHERITE_SCRAP &&
+            damager.equals(plugin.getGameManager().getCupidon())) {
             if (!gm.getPlayersAlive().contains(target)) {
                 damager.sendMessage(plugin.getLanguageManager().getMessage("actions.chasseur.already-dead"));
                 return;
@@ -435,8 +438,8 @@ public class ClickVoteListener implements Listener {
                 lover2.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.in-love")
                         .replace("{player}", lover1.getName()));
                 
-                // Nettoyer les items
-                damager.getInventory().setItem(8, new ItemStack(Material.AIR));
+                // Nettoyer les items (netherite scrap et skip feather)
+                gm.clearRelevantItems(damager);
                 
                 // Avancer le timer
                 plugin.getTimerManager().advanceTimer();

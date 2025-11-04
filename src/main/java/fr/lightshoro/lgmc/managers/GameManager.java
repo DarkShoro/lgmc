@@ -1329,6 +1329,14 @@ public class GameManager {
         
         // En mode clic, ne pas ouvrir le GUI, juste donner les instructions
         if (plugin.getConfigManager().isClickVoteMode()) {
+            // Donner le netherite scrap à Cupidon pour désigner les amoureux
+            ItemStack cupidonItem = new ItemStack(Material.NETHERITE_SCRAP);
+            ItemMeta cupidonMeta = cupidonItem.getItemMeta();
+            if (cupidonMeta != null) {
+                cupidonMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.designate-lovers"));
+                cupidonItem.setItemMeta(cupidonMeta);
+            }
+            cupidon.getInventory().setItem(4, cupidonItem);
             //cupidon.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
             giveSkipFeather(cupidon);
         } else {
@@ -1792,7 +1800,7 @@ public class GameManager {
 
     /**
      * Nettoie tous les items pertinents de l'inventaire d'un joueur
-     * (papier, houes, livre, plume, têtes de joueurs, silex, etc.)
+     * (papier, houes, livre, plume, têtes de joueurs, silex, netherite scrap, etc.)
      */
     public void clearRelevantItems(Player player) {
         if (player == null) return;
@@ -1812,7 +1820,8 @@ public class GameManager {
                     type == Material.PLAYER_HEAD ||
                     type == Material.GUNPOWDER ||
                     type == Material.WHEAT ||
-                    type == Material.FLINT) {
+                    type == Material.FLINT ||
+                    type == Material.NETHERITE_SCRAP) {
                     player.getInventory().setItem(i, new ItemStack(Material.AIR));
                 }
             }

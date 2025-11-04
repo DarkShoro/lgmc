@@ -148,6 +148,8 @@ public class VoteListener implements Listener {
             } else if ("doCupidon".equals(gameStep) && player.equals(gm.getCupidon()) && !gm.isCupidonAction()) {
                 gm.setCupidonAction(false);
                 player.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.no-action"));
+                // Nettoyer les items de Cupidon
+                gm.clearRelevantItems(player);
                 // Finir automatiquement
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                     if (gm.isInGame() && "doCupidon".equals(gm.getGameStep())) {

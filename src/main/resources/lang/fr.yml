@@ -261,6 +261,7 @@ gui:
     death-potion-lore: "&9Empoisonner quelqu'un."
     first-lover: "&d❤ Premier amoureux"
     steal-role: "&e&lVoler un rôle"
+    designate-lovers: "&d&lDésigner les amoureux"
   
   click-mode:
     vote-player: "&aVous avez voté pour &l{player}&a."
