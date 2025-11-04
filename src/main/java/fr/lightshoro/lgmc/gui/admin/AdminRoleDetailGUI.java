@@ -77,7 +77,7 @@ public class AdminRoleDetailGUI {
         pane.addItem(new GuiItem(thresholdLabel, event -> event.setCancelled(true)), 1, 0);
 
         // Decrease threshold
-        ItemStack decreaseThreshold = new ItemStack(Material.RED_CONCRETE);
+        ItemStack decreaseThreshold = new ItemStack(Material.ARMADILLO_SCUTE);
         ItemMeta decreaseThresholdMeta = decreaseThreshold.getItemMeta();
         if (decreaseThresholdMeta != null) {
             decreaseThresholdMeta.setDisplayName(plugin.getLanguageManager().getMessage("admin.role-detail.decrease"));
@@ -174,7 +174,7 @@ public class AdminRoleDetailGUI {
         pane.addItem(decreaseChanceItem, 4, 0);
 
         // Increase chance
-        ItemStack increaseChance = new ItemStack(Material.LIME_CONCRETE);
+        ItemStack increaseChance = new ItemStack(Material.TURTLE_SCUTE);
         ItemMeta increaseChanceMeta = increaseChance.getItemMeta();
         if (increaseChanceMeta != null) {
             increaseChanceMeta.setDisplayName(plugin.getLanguageManager().getMessage("admin.role-detail.increase"));
