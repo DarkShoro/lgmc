@@ -29,6 +29,12 @@ public class RoleFinishers {
         if (gm.getVoleur() != null) {
             // Nettoyer l'inventaire du voleur
             gm.clearRelevantItems(gm.getVoleur());
+            
+            // Re-hide players and re-apply blindness to voleur
+            gm.getVoleur().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false));
+            for (Player player : gm.getPlayersAlive()) {
+                gm.getVoleur().hidePlayer(plugin, player);
+            }
         }
 
         if (!gm.isVoleurAction()) {
@@ -84,11 +90,14 @@ public class RoleFinishers {
             for (Player lg : gm.getLoupGarous()) {
                 lg.sendMessage(plugin.getLanguageManager().getMessage("actions.loups-garous.no-target"));
             }
-            plugin.getTimerManager().advanceTimer();
             // Retire leur ironhoe aux loups-garous
             for (Player lg : gm.getLoupGarous()) {
                 gm.clearRelevantItems(lg);
             }
+            // Attendre un peu avant d'avancer pour laisser le temps aux skins de se réinitialiser
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                plugin.getTimerManager().advanceTimer();
+            }, 40L); // 2 secondes de délai
             return;
         }
 
@@ -100,11 +109,14 @@ public class RoleFinishers {
             }
             gm.setNextLGTarget(target);
             gm.waitListAdd(target, "loupGarou");
-            plugin.getTimerManager().advanceTimer();
             // Retire leur ironhoe aux loups-garous
             for (Player lg : gm.getLoupGarous()) {
                 gm.clearRelevantItems(lg);
             }
+            // Attendre un peu avant d'avancer pour laisser le temps aux skins de se réinitialiser
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                plugin.getTimerManager().advanceTimer();
+            }, 40L); // 2 secondes de délai
             return;
         }
 
@@ -138,7 +150,11 @@ public class RoleFinishers {
         }
 
         plugin.getChatManager().setLoupGarouChatActive(false);
-        plugin.getTimerManager().advanceTimer();
+        
+        // Attendre un peu avant d'avancer pour laisser le temps aux skins de se réinitialiser
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            plugin.getTimerManager().advanceTimer();
+        }, 40L); // 2 secondes de délai
     }
 
     public void finishSorciere() {

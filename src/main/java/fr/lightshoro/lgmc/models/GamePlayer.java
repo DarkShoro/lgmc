@@ -15,6 +15,7 @@ public class GamePlayer {
     private String deathReason;
     private Player firstLover;
     private Player secondLover;
+    private boolean hasGuiOpen;
 
     public GamePlayer(Player player) {
         this.player = player;
@@ -22,6 +23,7 @@ public class GamePlayer {
         this.didDesignation = false;
         this.didVote = false;
         this.didVoteForCapitaine = false;
+        this.hasGuiOpen = false;
     }
 
     public Player getPlayer() {
@@ -116,6 +118,14 @@ public class GamePlayer {
         this.votedPlayer = votedPlayer;
     }
 
+    public boolean hasGuiOpen() {
+        return hasGuiOpen;
+    }
+
+    public void setGuiOpen(boolean hasGuiOpen) {
+        this.hasGuiOpen = hasGuiOpen;
+    }
+
     public void reset() {
         this.didDesignation = false;
         this.designated = null;
@@ -127,6 +137,7 @@ public class GamePlayer {
         this.deathReason = null;
         this.firstLover = null;
         this.secondLover = null;
+        this.hasGuiOpen = false;
     }
 }
 

@@ -68,7 +68,7 @@ public class ClickVoteListener implements Listener {
         } else if (itemInHand.getType() == Material.GUNPOWDER && 
                    "doSorciere".equals(gameStep) && damager.equals(gm.getSorciere())) {
             hasRelevantItem = true;
-        } else if (itemInHand.getType() == Material.GUNPOWDER && 
+        } else if (itemInHand.getType() == Material.WHEAT && 
                    "doVoleur".equals(gameStep) && damager.equals(gm.getVoleur())) {
             hasRelevantItem = true;
         } else if (itemInHand.getType() == Material.FLINT &&
@@ -327,9 +327,9 @@ public class ClickVoteListener implements Listener {
             return;
         }
 
-        // VOLEUR - Vol de rôle (pendant la première nuit, avec gunpowder)
+        // VOLEUR - Vol de rôle (pendant la première nuit, avec wheat)
         if ("doVoleur".equals(gameStep) && 
-            itemInHand.getType() == Material.GUNPOWDER && 
+            itemInHand.getType() == Material.WHEAT && 
             damager.equals(gm.getVoleur())) {
             
             if (gm.isVoleurAction()) {

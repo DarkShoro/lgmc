@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.BrewingStandGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -111,12 +112,9 @@ public class SorciereGUI {
                 event.setCancelled(true);
                 gm.setSorciereAction(true);
                 openSecond = true;
-                sorciere.closeInventory();
                 
                 // En mode clic, donner une gunpowder au lieu d'ouvrir le GUI
                 if (plugin.getConfigManager().isClickVoteMode()) {
-                    //sorciere.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
-                    
                     // Donner la poudre à canon
                     ItemStack gunpowder = new ItemStack(Material.GUNPOWDER);
                     org.bukkit.inventory.meta.ItemMeta gunMeta = gunpowder.getItemMeta();
@@ -135,8 +133,10 @@ public class SorciereGUI {
                     }
                     sorciere.getInventory().setItem(8, feather);
                     
-                    openSecond = true; // Ne pas trigger l'avancement du timer à la fermeture
+                    // Fermer l'inventaire après avoir donné les items
+                    sorciere.closeInventory();
                 } else {
+                    sorciere.closeInventory();
                     openPoisonGUI(sorciere);
                 }
             });
@@ -146,7 +146,19 @@ public class SorciereGUI {
             gui.getThirdBottleComponent().addPane(pane3);
         }
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(sorciere);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
         gui.setOnClose(event -> {
+            // Réinitialiser le flag GUI
+            GamePlayer gp = gm.getGamePlayer(sorciere);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+            
             if (!gm.isSorciereAction()) {
                 sorciere.sendMessage(plugin.getLanguageManager().getMessage("actions.sorciere.no-action"));
             }

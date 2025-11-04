@@ -107,7 +107,19 @@ public class VoleurGUI {
 
         gui.addPane(pane);
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(voleur);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
         gui.setOnClose(event -> {
+            // Réinitialiser le flag GUI
+            GamePlayer gp = gm.getGamePlayer(voleur);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+            
             if (!gm.isVoleurAction()) {
                 voleur.sendMessage(plugin.getLanguageManager().getMessage("actions.voleur.no-steal"));
                 gm.setVoleurAction(true);

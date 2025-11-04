@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ConfigManager {
     private final Lgmc plugin;
     private FileConfiguration config;
-    private final int CURRENT_CONFIG_VERSION = 6;
+    private final int CURRENT_CONFIG_VERSION = 7;
 
     public ConfigManager(Lgmc plugin) {
         this.plugin = plugin;
@@ -85,11 +85,23 @@ public class ConfigManager {
                 if (oldConfig.contains("game.two-wolves-threshold")) {
                     defConfig.set("game.two-wolves-threshold", oldConfig.get("game.two-wolves-threshold"));
                 }
+                if (oldConfig.contains("game.cupidon-threshold")) {
+                    defConfig.set("game.cupidon-threshold", oldConfig.get("game.cupidon-threshold"));
+                }
+                if (oldConfig.contains("game.ange-threshold")) {
+                    defConfig.set("game.ange-threshold", oldConfig.get("game.ange-threshold"));
+                }
+                if (oldConfig.contains("game.voleur-threshold")) {
+                    defConfig.set("game.voleur-threshold", oldConfig.get("game.voleur-threshold"));
+                }
                 if (oldConfig.contains("game.cupidon-enabled")) {
                     defConfig.set("game.cupidon-enabled", oldConfig.get("game.cupidon-enabled"));
                 }
                 if (oldConfig.contains("game.ange-enabled")) {
                     defConfig.set("game.ange-enabled", oldConfig.get("game.ange-enabled"));
+                }
+                if (oldConfig.contains("game.voleur-enabled")) {
+                    defConfig.set("game.voleur-enabled", oldConfig.get("game.voleur-enabled"));
                 }
                 if (oldConfig.contains("game.voleur-chance")) {
                     defConfig.set("game.voleur-chance", oldConfig.get("game.voleur-chance"));
@@ -154,9 +166,11 @@ public class ConfigManager {
                     defConfig.set("display.debug-messages", oldConfig.get("display.debug-messages"));
                 }
 
-                // Roles helmets (préserver tout)
+                // Roles helmets (copier les valeurs individuellement pour permettre l'ajout de nouvelles clés)
                 if (oldConfig.contains("roles.helmets")) {
-                    defConfig.set("roles.helmets", oldConfig.get("roles.helmets"));
+                    for (String key : oldConfig.getConfigurationSection("roles.helmets").getKeys(false)) {
+                        defConfig.set("roles.helmets." + key, oldConfig.get("roles.helmets." + key));
+                    }
                 }
 
                 // GUI settings (préserver tout)
@@ -244,12 +258,28 @@ public class ConfigManager {
         return config.getInt("game.two-wolves-threshold", 9);
     }
 
+    public int getCupidonThreshold() {
+        return config.getInt("game.cupidon-threshold", 9);
+    }
+
+    public int getAngeThreshold() {
+        return config.getInt("game.ange-threshold", 9);
+    }
+
+    public int getVoleurThreshold() {
+        return config.getInt("game.voleur-threshold", 6);
+    }
+
     public boolean isCupidonEnabled() {
         return config.getBoolean("game.cupidon-enabled", true);
     }
 
     public boolean isAngeEnabled() {
         return config.getBoolean("game.ange-enabled", true);
+    }
+
+    public boolean isVoleurEnabled() {
+        return config.getBoolean("game.voleur-enabled", true);
     }
 
     public double getVoleurChance() {

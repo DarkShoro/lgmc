@@ -108,6 +108,19 @@ public class VoteGUI {
 
         gui.addPane(pane);
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(voter);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
+        // Ajouter un listener pour réinitialiser le flag quand le GUI se ferme
+        gui.setOnClose(event -> {
+            GamePlayer gp = gm.getGamePlayer(voter);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+        });
 
         gui.show(voter);
     }

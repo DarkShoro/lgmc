@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -83,7 +84,19 @@ public class CupidonGUI {
 
         gui.addPane(pane);
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(cupidon);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
         gui.setOnClose(event -> {
+            // Réinitialiser le flag GUI
+            GamePlayer gp = gm.getGamePlayer(cupidon);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+            
             if (firstLover == null) {
                 cupidon.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.no-couple"));
                 gm.setCupidonAction(true);
@@ -150,7 +163,19 @@ public class CupidonGUI {
 
         gui.addPane(pane);
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(cupidon);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
         gui.setOnClose(event -> {
+            // Réinitialiser le flag GUI
+            GamePlayer gp = gm.getGamePlayer(cupidon);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+            
             if (!gm.isCupidonAction()) {
                 cupidon.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.no-couple"));
                 gm.setCupidonAction(true);

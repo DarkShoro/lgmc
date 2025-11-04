@@ -162,11 +162,9 @@ public class SkinManager {
             }
         }
         
-        // Clear the tracking set after a delay
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            modifiedPlayers.clear();
-            plugin.getLogger().info("All skins restored and tracking cleared");
-        }, 40L); // 2 seconds delay
+        // Clear the tracking set immediately (no delay to avoid issues when plugin is being disabled)
+        modifiedPlayers.clear();
+        plugin.getLogger().info("All skins restored and tracking cleared");
     }
 
     /**

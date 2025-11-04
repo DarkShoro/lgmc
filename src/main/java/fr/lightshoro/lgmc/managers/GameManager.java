@@ -803,28 +803,33 @@ public class GameManager {
         allPlayers.remove(loupGarouOne);
         loupGarous.add(loupGarouOne);
 
-        // Distribution du deuxième loup-garou si 9+ joueurs
-        if (playerNumber >= 9 && !allPlayers.isEmpty()) {
+        // Distribution du deuxième loup-garou si seuil atteint
+        int twoWolvesThreshold = plugin.getConfigManager().getTwoWolvesThreshold();
+        if (playerNumber >= twoWolvesThreshold && !allPlayers.isEmpty()) {
             Player loupGarouTwo = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(loupGarouTwo);
             loupGarous.add(loupGarouTwo);
         }
 
-        // Distribution du Voleur (chance configurable)
+        // Distribution du Voleur (seulement si seuil atteint, avec chance configurable et si activé)
+        boolean voleurEnabled = plugin.getConfigManager().isVoleurEnabled();
         double voleurChance = plugin.getConfigManager().getVoleurChance();
-        if (Math.random() < voleurChance && !allPlayers.isEmpty()) {
+        int voleurThreshold = plugin.getConfigManager().getVoleurThreshold();
+        if (voleurEnabled && playerNumber >= voleurThreshold && Math.random() < voleurChance && !allPlayers.isEmpty()) {
             voleur = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(voleur);
         }
 
-        // Distribution de Cupidon si 9+ joueurs
-        if (playerNumber >= 9 && !allPlayers.isEmpty()) {
+        // Distribution de Cupidon si seuil atteint
+        int cupidonThreshold = plugin.getConfigManager().getCupidonThreshold();
+        if (playerNumber >= cupidonThreshold && !allPlayers.isEmpty()) {
             cupidon = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(cupidon);
         }
 
-        // Distribution de l'Ange si 9+ joueurs
-        if (playerNumber >= 9 && !allPlayers.isEmpty()) {
+        // Distribution de l'Ange si seuil atteint
+        int angeThreshold = plugin.getConfigManager().getAngeThreshold();
+        if (playerNumber >= angeThreshold && !allPlayers.isEmpty()) {
             ange = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(ange);
         }
@@ -1142,10 +1147,22 @@ public class GameManager {
         String nextAction = actionQueue.poll();
         if (nextAction == null) return;
 
-        gameStep = nextAction;
+        // Si on passe de doLoupGarou à doSorciere, ajouter un délai supplémentaire
+        if ("doLoupGarou".equals(gameStep) && "doSorciere".equals(nextAction)) {
+            gameStep = nextAction;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                executeRoleAction(nextAction);
+            }, 50L); // 2.5 secondes de délai supplémentaire
+            return;
+        }
 
+        gameStep = nextAction;
+        executeRoleAction(nextAction);
+    }
+
+    private void executeRoleAction(String action) {
         // Execute action based on type
-        switch (nextAction) {
+        switch (action) {
             case "revealDeath":
                 waitListKill();
                 Bukkit.getScheduler().runTaskLater(plugin, this::nextStep, 40L);
@@ -1240,14 +1257,20 @@ public class GameManager {
         Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("actions.voleur.announce"));
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("actions.voleur.timer"), 60);
 
+        // Remove blindness and show all players to the Voleur
+        voleur.removePotionEffect(PotionEffectType.BLINDNESS);
+        for (Player player : playersAlive) {
+            voleur.showPlayer(plugin, player);
+        }
+
         voleurAction = false;
         
         // En mode clic, ne pas ouvrir le GUI, juste donner les instructions
         if (plugin.getConfigManager().isClickVoteMode()) {
             giveSkipFeather(voleur);
             
-            // Donner un item pour voler (gunpowder = poudre noire = masque de voleur)
-            ItemStack stealItem = new ItemStack(Material.GUNPOWDER);
+            // Donner du blé pour voler
+            ItemStack stealItem = new ItemStack(Material.WHEAT);
             ItemMeta meta = stealItem.getItemMeta();
             if (meta != null) {
                 meta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.steal-role"));
@@ -1389,6 +1412,12 @@ public class GameManager {
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("actions.sorciere.timer"), 30);
 
         sorciereAction = false;
+        
+        // En mode clic, donner la plume de skip dès le début
+        if (plugin.getConfigManager().isClickVoteMode()) {
+            giveSkipFeather(sorciere);
+        }
+        
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             new fr.lightshoro.lgmc.gui.SorciereGUI(plugin).open(sorciere);
         }, 20L);
@@ -1749,6 +1778,7 @@ public class GameManager {
                     type == Material.FEATHER ||
                     type == Material.PLAYER_HEAD ||
                     type == Material.GUNPOWDER ||
+                    type == Material.WHEAT ||
                     type == Material.FLINT) {
                     player.getInventory().setItem(i, new ItemStack(Material.AIR));
                 }
@@ -1814,5 +1844,9 @@ public class GameManager {
 
     public Player getVoleur() {
         return voleur;
+    }
+
+    public Player getCupidon() {
+        return cupidon;
     }
 }

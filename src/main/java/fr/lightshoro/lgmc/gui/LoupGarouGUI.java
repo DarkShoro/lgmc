@@ -130,6 +130,20 @@ public class LoupGarouGUI {
 
         gui.addPane(pane);
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(loupGarou);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
+        // Ajouter un listener pour réinitialiser le flag quand le GUI se ferme
+        gui.setOnClose(event -> {
+            GamePlayer gp = gm.getGamePlayer(loupGarou);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+        });
+
         // Deprecated! : Deux loup-garous peuvent fermer le menu pour discuté dans le chat
         /*gui.setOnClose(event -> {
             GamePlayer lgGp = gm.getGamePlayer(loupGarou);

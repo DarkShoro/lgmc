@@ -102,7 +102,19 @@ public class VoyanteGUI {
 
         gui.addPane(pane);
 
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(voyante);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
         gui.setOnClose(event -> {
+            // Réinitialiser le flag GUI
+            GamePlayer gp = gm.getGamePlayer(voyante);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+            
             if (!gm.isVoyanteSondage()) {
                 voyante.sendMessage(plugin.getLanguageManager().getMessage("actions.voyante.no-probe"));
                 gm.setVoyanteSondage(true);

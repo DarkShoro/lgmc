@@ -4,7 +4,7 @@
 # ============================================
 
 # Ne modifiez pas cette valeur - elle permet la mise à jour automatique de la config
-config-version: 6
+config-version: 7
 
 # Langue du plugin (fr, en)
 language: en
@@ -53,11 +53,23 @@ game:
   # Nombre de joueurs pour avoir 2 loups-garous
   two-wolves-threshold: 9
 
-  # Activer Cupidon avec 9+ joueurs
+  # Nombre minimum de joueurs pour Cupidon
+  cupidon-threshold: 9
+
+  # Nombre minimum de joueurs pour l'Ange
+  ange-threshold: 9
+
+  # Nombre minimum de joueurs pour le Voleur
+  voleur-threshold: 6
+
+  # Activer Cupidon
   cupidon-enabled: true
 
-  # Activer l'Ange avec 9+ joueurs
+  # Activer l'Ange
   ange-enabled: true
+
+  # Activer le Voleur
+  voleur-enabled: true
 
   # Chance d'apparition du Voleur (0.0 = jamais, 1.0 = toujours)
   # Le Voleur peut voler le rôle d'un joueur lors de la première nuit

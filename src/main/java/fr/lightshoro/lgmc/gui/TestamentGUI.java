@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -74,6 +75,21 @@ public class TestamentGUI {
         }
 
         gui.addPane(pane);
+        
+        // Marquer que le joueur a un GUI ouvert
+        GamePlayer gamePlayer = gm.getGamePlayer(capitaine);
+        if (gamePlayer != null) {
+            gamePlayer.setGuiOpen(true);
+        }
+
+        // Ajouter un listener pour réinitialiser le flag quand le GUI se ferme
+        gui.setOnClose(event -> {
+            GamePlayer gp = gm.getGamePlayer(capitaine);
+            if (gp != null) {
+                gp.setGuiOpen(false);
+            }
+        });
+        
         gui.show(capitaine);
     }
 

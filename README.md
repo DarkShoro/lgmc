@@ -1,6 +1,6 @@
 # LGMC - Werewolf Game Plugin
 
-[![Version](https://img.shields.io/badge/version-5.0.1-blue.svg)](https://github.com/DarkShoro/lgmc/releases)
+[![Version](https://img.shields.io/badge/version-5.0.5-blue.svg)](https://github.com/DarkShoro/lgmc/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21-green.svg)](https://www.minecraft.net/)
 [![Paper](https://img.shields.io/badge/paper-required-orange.svg)](https://papermc.io/)
 [![Java](https://img.shields.io/badge/java-21-red.svg)](https://www.oracle.com/java/)
@@ -66,7 +66,7 @@ A feature-complete Minecraft implementation of the classic Werewolf social deduc
 
 ### Steps
 
-1. Download `lgmc-5.0.1.jar` from [releases](https://github.com/DarkShoro/lgmc/releases)
+1. Download `lgmc-5.0.5.jar` from [releases](https://github.com/DarkShoro/lgmc/releases)
 2. (Optional) Install SkinsRestorer for visual transformations
 3. Place in your server's `plugins/` folder
 4. Restart server
@@ -224,10 +224,14 @@ All commands support tab completion for easier use.
 # Game settings
 game:
   min-players: 4
-  two-wolves-threshold: 9
-  cupidon-enabled: false    # Enable with 9+ players
-  ange-enabled: true        # Enable Angel role with 9+ players
-  voleur-chance: 0.5        # 50% chance for Thief to appear
+  two-wolves-threshold: 9    # Minimum players for 2 werewolves
+  cupidon-threshold: 9       # Minimum players for Cupidon
+  ange-threshold: 9          # Minimum players for Ange
+  voleur-threshold: 6        # Minimum players for Voleur
+  cupidon-enabled: false     # Enable Cupidon role
+  ange-enabled: true         # Enable Ange role
+  voleur-enabled: true       # Enable Voleur role
+  voleur-chance: 0.5         # 50% chance for Thief to appear
 
 # Phase durations (seconds)
 timers:
@@ -321,7 +325,7 @@ cd lgmc
 ./gradlew shadowJar          # Linux/Mac
 gradlew.bat shadowJar        # Windows
 
-# Output: build/libs/lgmc-5.0.1.jar
+# Output: build/libs/lgmc-5.0.5.jar
 ```
 
 ### Project Structure

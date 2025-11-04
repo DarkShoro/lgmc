@@ -91,6 +91,36 @@ public class VoteListener implements Listener {
                     }
                 }, 20L);
                 return;
+            } else if ("doSorciere".equals(gameStep) && player.equals(gm.getSorciere()) && !gm.isSorciereAction()) {
+                gm.setSorciereAction(false);
+                player.sendMessage(plugin.getLanguageManager().getMessage("actions.sorciere.no-action"));
+                // Finir automatiquement
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (gm.isInGame() && "doSorciere".equals(gm.getGameStep())) {
+                        plugin.getTimerManager().advanceTimer();
+                    }
+                }, 20L);
+                return;
+            } else if ("doCupidon".equals(gameStep) && player.equals(gm.getCupidon()) && !gm.isCupidonAction()) {
+                gm.setCupidonAction(false);
+                player.sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.no-action"));
+                // Finir automatiquement
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (gm.isInGame() && "doCupidon".equals(gm.getGameStep())) {
+                        plugin.getTimerManager().advanceTimer();
+                    }
+                }, 20L);
+                return;
+            } else if ("doVoleur".equals(gameStep) && player.equals(gm.getVoleur()) && !gm.isVoleurAction()) {
+                gm.setVoleurAction(false);
+                player.sendMessage(plugin.getLanguageManager().getMessage("actions.voleur.no-steal"));
+                // Finir automatiquement
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (gm.isInGame() && "doVoleur".equals(gm.getGameStep())) {
+                        plugin.getTimerManager().advanceTimer();
+                    }
+                }, 20L);
+                return;
             }
             return;
         }
@@ -355,6 +385,8 @@ public class VoteListener implements Listener {
                 1.0f
         );
 
+        GameManager gm = plugin.getGameManager();
+
         // Perform the ray trace in the world
         RayTraceResult result = player.getWorld().rayTrace(
                 start,
@@ -363,7 +395,20 @@ public class VoteListener implements Listener {
                 FluidCollisionMode.NEVER, // ignore fluids
                 true,                     // ignore passable blocks like tall grass
                 0.1,                      // entity border size (how close is considered a hit)
-                entity -> entity != player // ignore self
+                entity -> {
+                    // Ignore self
+                    if (entity.equals(player)) {
+                        return false;
+                    }
+                    // Ignore dead players (they shouldn't block shots)
+                    if (entity instanceof Player targetPlayer) {
+                        GamePlayer targetGp = gm.getGamePlayer(targetPlayer);
+                        if (targetGp != null && !gm.getPlayersAlive().contains(targetPlayer)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
         );
 
         // Check if something was hit

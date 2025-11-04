@@ -186,6 +186,12 @@ public class GameListener implements Listener {
             return;
         }
 
+        // Si le joueur a un GUI de jeu ouvert, ne pas bloquer les interactions
+        GamePlayer gamePlayer = plugin.getGameManager().getGamePlayer(player);
+        if (gamePlayer != null && gamePlayer.hasGuiOpen()) {
+            return;
+        }
+
         // Vérifier si c'est l'inventaire du joueur
         if (event.getClickedInventory() == null) {
             return;
@@ -273,7 +279,8 @@ public class GameListener implements Listener {
             type == Material.WRITTEN_BOOK ||    // Testament
             type == Material.FEATHER ||         // Skip
             type == Material.PLAYER_HEAD ||     // Têtes de joueurs dans GUI
-            type == Material.GUNPOWDER ||       // Voleur / Sorcière poison
+            type == Material.GUNPOWDER ||       // Sorcière poison
+            type == Material.WHEAT ||           // Voleur
             type == Material.FLINT) {           // Voyante
             return true;
         }
