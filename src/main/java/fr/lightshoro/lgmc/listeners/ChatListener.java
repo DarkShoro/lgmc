@@ -16,6 +16,25 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        String message = event.getMessage();
+
+        // Check for <3 prefix to send to love chat
+        if (message.startsWith("<3")) {
+            if (plugin.getChatManager().isLover(player)) {
+                event.setCancelled(true);
+                // Remove the <3 prefix and any spaces after it
+                String loveMessage = message.substring(2).trim();
+                if (!loveMessage.isEmpty()) {
+                    plugin.getChatManager().sendLoverChatMessage(player, loveMessage);
+                } else {
+                    player.sendMessage("§c❤ Votre message d'amour ne peut pas être vide !");
+                }
+            } else {
+                event.setCancelled(true);
+                player.sendMessage(plugin.getLanguageManager().getMessage("chat.not-lover"));
+            }
+            return;
+        }
 
         // Check if player is a spectator (dead or not in game)
         if (plugin.getChatManager().isSpectator(player)) {

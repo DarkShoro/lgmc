@@ -3,15 +3,20 @@ package fr.lightshoro.lgmc.listeners;
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.models.GamePlayer;
 import fr.lightshoro.lgmc.models.Role;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.inventory.ItemStack;
 
 
 public class GameListener implements Listener {
@@ -24,7 +29,7 @@ public class GameListener implements Listener {
     @EventHandler
     public void onServerListPing(ServerListPingEvent event) {
         event.setServerIcon(plugin.serverIcon);
-        event.setMaxPlayers(12);
+        event.setMaxPlayers(plugin.getLocationManager().getMaxPlayers());
         event.motd(plugin.getMotdManager().getCurrentMotd());
     }
 
@@ -162,5 +167,114 @@ public class GameListener implements Listener {
         // - Vérification des conditions de victoire
         // - Attribution aléatoire du capitaine si le joueur déconnecté était capitaine
         plugin.getGameManager().killPlayer(quittingPlayer, "disconnect");
+    }
+
+    /**
+     * Empêche les joueurs de déplacer les casques de rôle dans leur inventaire
+     */
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        // Ne bloquer que pendant une partie en cours
+        if (!plugin.getGameManager().isInGame()) {
+            return;
+        }
+
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+
+        // Vérifier si c'est l'inventaire du joueur
+        if (event.getClickedInventory() == null) {
+            return;
+        }
+
+        ItemStack clickedItem = event.getCurrentItem();
+        ItemStack cursorItem = event.getCursor();
+
+        // Empêcher le déplacement du casque (slot helmet)
+        if (event.getSlotType() == InventoryType.SlotType.ARMOR && event.getSlot() == 39) {
+            // Slot 39 = helmet
+            event.setCancelled(true);
+            return;
+        }
+
+        // Empêcher le déplacement d'items pertinents (papier, houes, livre, plume, etc.)
+        if (clickedItem != null && isRelevantItem(clickedItem)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // Empêcher de mettre un item pertinent sur le curseur vers un autre slot
+        if (cursorItem != null && isRelevantItem(cursorItem)) {
+            event.setCancelled(true);
+            return;
+        }
+    }
+
+    /**
+     * Empêche les joueurs de jeter les casques et items pertinents
+     */
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        // Ne bloquer que pendant une partie en cours
+        if (!plugin.getGameManager().isInGame()) {
+            return;
+        }
+
+        ItemStack droppedItem = event.getItemDrop().getItemStack();
+
+        // Empêcher de jeter un item pertinent
+        if (isRelevantItem(droppedItem)) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * Vérifie si un item est un item "pertinent" du jeu (casque de rôle ou item d'action)
+     */
+    private boolean isRelevantItem(ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return false;
+        }
+
+        Material type = item.getType();
+
+        // Carved pumpkin (casque des morts) - toujours protégé
+        if (type == Material.CARVED_PUMPKIN) {
+            return true;
+        }
+
+        // Casques de rôle (lire depuis la config)
+        String[] roles = {
+            "loup-garou", "villageois", "petite-fille", "voyante", 
+            "sorciere", "cupidon", "chasseur", "voleur", "ange", "capitaine"
+        };
+        
+        for (String role : roles) {
+            String helmetMaterial = plugin.getConfigManager().getRoleHelmet(role);
+            try {
+                Material configMaterial = Material.valueOf(helmetMaterial.toUpperCase());
+                if (type == configMaterial) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                // Ignorer les matériaux invalides
+            }
+        }
+
+        // Items d'action du jeu
+        if (type == Material.PAPER ||           // Vote
+            type == Material.WOODEN_HOE ||      // Chasseur
+            type == Material.IRON_HOE ||        // Loup-garou
+            type == Material.BOOK ||            // Sorcière
+            type == Material.WRITTEN_BOOK ||    // Testament
+            type == Material.FEATHER ||         // Skip
+            type == Material.PLAYER_HEAD ||     // Têtes de joueurs dans GUI
+            type == Material.GUNPOWDER ||       // Voleur / Sorcière poison
+            type == Material.FLINT) {           // Voyante
+            return true;
+        }
+
+        return false;
     }
 }

@@ -81,7 +81,7 @@ public class VoyanteGUI {
         }
 
         // Option "Ne rien faire" - toujours en dernière position
-        ItemStack barrier = new ItemStack(Material.BARRIER);
+        ItemStack barrier = new ItemStack(Material.FEATHER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
             barrierMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.skip"));

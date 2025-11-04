@@ -4,7 +4,7 @@
 # ============================================
 
 # Ne modifiez pas cette valeur - elle permet la mise à jour automatique de la config
-config-version: 2
+config-version: 6
 
 # Langue du plugin (fr, en)
 language: en
@@ -56,11 +56,19 @@ game:
   # Activer Cupidon avec 9+ joueurs
   cupidon-enabled: true
 
+  # Activer l'Ange avec 9+ joueurs
+  ange-enabled: true
+
+  # Chance d'apparition du Voleur (0.0 = jamais, 1.0 = toujours)
+  # Le Voleur peut voler le rôle d'un joueur lors de la première nuit
+  voleur-chance: 0.5
+
   # Durée du compte à rebours avant le début (secondes)
   countdown-duration: 10
 
   # Durées des phases (secondes)
   timers:
+    voleur: 60
     cupidon: 60
     voyante: 30
     loups-garous: 30  # par loup-garou (multiplié par le nombre)
@@ -104,6 +112,8 @@ roles:
     sorciere: GRAY_DYE
     cupidon: LIGHT_GRAY_DYE
     chasseur: CYAN_DYE
+    voleur: BROWN_DYE
+    ange: LIGHT_BLUE_DYE
     capitaine: BLUE_DYE
     mort: CARVED_PUMPKIN
 
@@ -117,6 +127,11 @@ gui:
     voyante: ""
     sorciere: ""
     cupidon: ""
+  
+  # Mode de vote: "gui" ou "click"
+  # gui: Utilise les menus GUI pour voter (par défaut)
+  # click: Utilise le clic gauche sur les joueurs pour voter directement
+  vote-mode: "gui"
 
 # Paramètres avancés
 advanced:
@@ -136,3 +151,19 @@ messages:
   game-start: "&eLa partie commence !"
   game-stop: "&cLa partie a été arrêtée."
 
+websocket:
+  url: "ws://localhost:8080"
+  enabled: false
+  reconnect-interval: 10
+  secret: "MY_SUPER_SECRET_KEY_123"
+
+# Intégration SkinsRestorer
+skinsrestorer:
+  # Activer l'intégration SkinsRestorer
+  # Change le skin des loups-garous pendant leur tour uniquement
+  enabled: false
+  
+  # URL du skin Minecraft à utiliser pour le loup-garou
+  # Vous pouvez utiliser une URL de skin Minecraft (ex: https://mineskin.eu/...)
+  # Ou un nom de joueur Minecraft
+  werewolf-skin-url: "https://cdn.eradium.fr/lgrsp/ww.png"

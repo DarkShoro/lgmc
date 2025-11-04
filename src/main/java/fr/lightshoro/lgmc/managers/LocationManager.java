@@ -158,6 +158,22 @@ public class LocationManager {
     }
 
     /**
+     * Retourne le nombre maximum de joueurs basé sur le nombre de spawns
+     * Minimum de 12 spawns requis pour une configuration valide
+     */
+    public int getMaxPlayers() {
+        int spawnCount = getSpawnCount();
+        return Math.max(12, spawnCount);
+    }
+
+    /**
+     * Vérifie si le serveur est correctement configuré (au moins 12 spawns)
+     */
+    public boolean isProperlyConfigured() {
+        return getSpawnCount() >= 12;
+    }
+
+    /**
      * Recharge tous les emplacements depuis la configuration
      */
     public void reload() {

@@ -41,6 +41,60 @@ public class VoteListener implements Listener {
         GameManager gm = plugin.getGameManager();
         String gameStep = gm.getGameStep();
 
+        // Gestion de la plume pour skip (mode clic)
+        if (item.getType() == Material.FEATHER && plugin.getConfigManager().isClickVoteMode()) {
+            if (!gm.isInGame()) {
+                return;
+            }
+
+            GamePlayer gp = gm.getGamePlayer(player);
+            
+            // Skip pour les votes
+            if ("doCapitaine".equals(gameStep) && !gp.isDidVoteForCapitaine()) {
+                gp.setDidVoteForCapitaine(true);
+                player.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.no-vote"));
+                return;
+            } else if ("doVote".equals(gameStep) && !gp.isDidVote()) {
+                gp.setDidVote(true);
+                player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.no-vote"));
+                return;
+            } else if ("doVoyante".equals(gameStep) && player.equals(gm.getVoyante()) && !gm.isVoyanteSondage()) {
+                gm.setVoyanteSondage(true);
+                player.sendMessage(plugin.getLanguageManager().getMessage("actions.voyante.no-probe"));
+                // Finir automatiquement
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (gm.isInGame() && "doVoyante".equals(gm.getGameStep())) {
+                        plugin.getTimerManager().advanceTimer();
+                    }
+                }, 20L);
+                return;
+            } else if ("doLoupGarou".equals(gameStep) && gm.getLoupGarous().contains(player) && !gp.isDidVote()) {
+                gp.setDidVote(true);
+                player.sendMessage(plugin.getLanguageManager().getMessage("actions.loups-garous.no-target"));
+                
+                // Vérifier si tous les loups ont voté pour avancer le timer
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (gm.isInGame() && "doLoupGarou".equals(gm.getGameStep())) {
+                        boolean allVoted = true;
+                        for (Player lg : gm.getLoupGarous()) {
+                            if (gm.getPlayersAlive().contains(lg)) {
+                                GamePlayer lgGp = gm.getGamePlayer(lg);
+                                if (!lgGp.isDidVote()) {
+                                    allVoted = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (allVoted) {
+                            plugin.getTimerManager().advanceTimer();
+                        }
+                    }
+                }, 20L);
+                return;
+            }
+            return;
+        }
+
         // Gestion du livre Testament pour la succession du capitaine
         if (item.getType() == Material.WRITTEN_BOOK) {
             if (!gm.isInGame() || !gm.isCapitaineSuccession()) {
@@ -52,14 +106,27 @@ public class VoteListener implements Listener {
                 return;
             }
 
-            // Ouvrir le GUI de testament
+            // En mode clic, le testament se fait par clic gauche sur un joueur
+            if (plugin.getConfigManager().isClickVoteMode()) {
+                //player.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+                event.setCancelled(true);
+                return;
+            }
+
+            // Ouvrir le GUI de testament (mode GUI uniquement)
             new TestamentGUI(plugin).open(player);
             event.setCancelled(true);
             return;
         }
 
-        // Gestion du papier pour les votes
+        // Gestion du papier pour les votes (mode GUI uniquement)
         if (item.getType() != Material.PAPER) {
+            return;
+        }
+
+        // En mode clic, ne pas ouvrir de GUI avec le papier
+        if (plugin.getConfigManager().isClickVoteMode()) {
+            //player.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
             return;
         }
 
@@ -70,19 +137,9 @@ public class VoteListener implements Listener {
         }
 
         if ("doCapitaine".equals(gameStep)) {
-            GamePlayer gp = gm.getGamePlayer(player);
-            if (gp.isDidVoteForCapitaine()) {
-                player.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.already-voted"));
-            } else {
-                new CapitaineVoteGUI(plugin).open(player);
-            }
+            new CapitaineVoteGUI(plugin).open(player);
         } else if ("doVote".equals(gameStep)) {
-            GamePlayer gp = gm.getGamePlayer(player);
-            if (gp.isDidVote()) {
-                player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.already-voted"));
-            } else {
-                new VoteGUI(plugin).open(player);
-            }
+            new VoteGUI(plugin).open(player);
         } else {
             player.sendMessage(plugin.getLanguageManager().getMessage("errors.cannot-vote-now"));
         }
@@ -160,9 +217,16 @@ public class VoteListener implements Listener {
             return;
         }
 
+        // En mode clic, ne pas ouvrir le GUI
+        if (plugin.getConfigManager().isClickVoteMode()) {
+            //player.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+            return;
+        }
+
         GamePlayer gp = gm.getGamePlayer(player);
         if (gp.isDidVote()) {
             player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.already-voted"));
+            return;
         }
 
         new LoupGarouGUI(plugin).open(player);
@@ -230,6 +294,11 @@ public class VoteListener implements Listener {
         // Retirer les têtes du capitaine
         player.getInventory().setItem(3, new ItemStack(Material.AIR));
         player.getInventory().setItem(5, new ItemStack(Material.AIR));
+
+        // Vérifier si c'est l'Ange qui est éliminé au premier jour
+        if (gm.checkAngeVictory(target)) {
+            return; // L'Ange a gagné, le jeu est terminé
+        }
 
         // Tuer le joueur
         gm.killPlayer(target, "vote");

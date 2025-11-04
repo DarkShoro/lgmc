@@ -25,12 +25,30 @@ public class RoleFinishers {
         this.gm = gm;
     }
 
+    public void finishVoleur() {
+        if (gm.getVoleur() != null) {
+            // Nettoyer l'inventaire du voleur
+            gm.clearRelevantItems(gm.getVoleur());
+        }
+
+        if (!gm.isVoleurAction()) {
+            if (gm.getVoleur() != null) {
+                gm.getVoleur().sendMessage(plugin.getLanguageManager().getMessage("actions.voleur.no-steal"));
+            }
+        }
+
+        plugin.getTimerManager().advanceTimer();
+    }
+
     public void finishVoyante() {
         if (gm.getVoyante() != null) {
             gm.getVoyante().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false));
             for (Player player : gm.getPlayersAlive()) {
                 gm.getVoyante().hidePlayer(plugin, player);
             }
+            
+            // Nettoyer l'inventaire de la voyante
+            gm.clearRelevantItems(gm.getVoyante());
         }
 
         if (!gm.isVoyanteSondage()) {
@@ -49,6 +67,9 @@ public class RoleFinishers {
             for (Player player : gm.getPlayersAlive()) {
                 lg.hidePlayer(plugin, player);
             }
+            
+            // Restaurer le skin original de chaque loup-garou
+            plugin.getSkinManager().restoreOriginalSkin(lg);
         }
 
         // Cacher aussi pour la petite fille
@@ -105,7 +126,7 @@ public class RoleFinishers {
 
         // Retire leur ironhoe aux loups-garous
         for (Player lg : gm.getLoupGarous()) {
-            lg.getInventory().removeItem(new ItemStack(Material.IRON_HOE));
+            gm.clearRelevantItems(lg);
         }
 
         plugin.getChatManager().setLoupGarouChatActive(false);
@@ -117,6 +138,9 @@ public class RoleFinishers {
             for (Player player : gm.getPlayersAlive()) {
                 gm.getSorciere().hidePlayer(plugin, player);
             }
+            
+            // Nettoyer l'inventaire de la sorcière
+            gm.clearRelevantItems(gm.getSorciere());
         }
 
         plugin.getTimerManager().advanceTimer();
@@ -190,8 +214,8 @@ public class RoleFinishers {
             if (gp != null) {
                 gp.setDidVoteForCapitaine(false);
             }
-            // Retirer le papier de vote
-            player.getInventory().setItem(4, new ItemStack(Material.AIR));
+            // Nettoyer les items pertinents
+            gm.clearRelevantItems(player);
         }
 
         plugin.getTimerManager().advanceTimer();
@@ -229,8 +253,11 @@ public class RoleFinishers {
                 mostVoted = entry.getKey();
                 mostVotedNum = numOfVote;
             }
-            // Retirer le papier de vote
-            entry.getKey().getInventory().setItem(4, new ItemStack(Material.AIR));
+        }
+        
+        // Nettoyer les items de tous les joueurs
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            gm.clearRelevantItems(player);
         }
 
         // Si plus de votes nuls que de votes valides, le village ne s'est pas mis d'accord
@@ -242,6 +269,9 @@ public class RoleFinishers {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 gm.getGamePlayer(player).setDidVote(false);
             }
+            
+            // Nettoyer l'affichage des votes et les effets glow
+            plugin.getVoteDisplayManager().reset();
 
             plugin.getTimerManager().advanceTimer();
             return;
@@ -255,6 +285,9 @@ public class RoleFinishers {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 gm.getGamePlayer(player).setDidVote(false);
             }
+            
+            // Nettoyer l'affichage des votes et les effets glow
+            plugin.getVoteDisplayManager().reset();
 
             plugin.getTimerManager().advanceTimer();
             return;
@@ -281,6 +314,9 @@ public class RoleFinishers {
         for (Player player : Bukkit.getOnlinePlayers()) {
             gm.getGamePlayer(player).setDidVote(false);
         }
+        
+        // Nettoyer l'affichage des votes et les effets glow
+        plugin.getVoteDisplayManager().reset();
 
         // Si égalité et qu'il y a un capitaine, il départage
         if (doubleMostVotedNum > 0 && mostVotedNum == doubleMostVotedNum && gm.getCapitaine() != null) {
@@ -292,7 +328,15 @@ public class RoleFinishers {
             doCapitaineTieBreaker(mostVoted, doubleMostVoted);
         } else {
             // Pas d'égalité, éliminer le plus voté
+            // Vérifier si c'est l'Ange qui est éliminé au premier jour
+            if (gm.checkAngeVictory(mostVoted)) {
+                return; // L'Ange a gagné, le jeu est terminé
+            }
             gm.killPlayer(mostVoted, "vote");
+            
+            // Si c'est le premier jour et l'Ange n'a pas été éliminé, il devient villageois
+            gm.checkAngeTransformation();
+            
             plugin.getTimerManager().advanceTimer();
         }
     }
@@ -313,9 +357,9 @@ public class RoleFinishers {
 
         gm.getCapitaine().sendMessage(plugin.getLanguageManager().getMessage("vote.tiebreaker.instruction"));
 
-        // Retirer les papiers de tous
+        // Nettoyer les items de tous les joueurs
         for (Player player : gm.getPlayingPlayers()) {
-            player.getInventory().setItem(4, new ItemStack(Material.AIR));
+            gm.clearRelevantItems(player);
         }
 
         // Donner les crânes au capitaine
@@ -341,6 +385,15 @@ public class RoleFinishers {
 
     public void finishTieBreaker() {
         gm.setCapitaineTieBreakerInProg(false);
+        
+        // Nettoyer les têtes du capitaine
+        if (gm.getCapitaine() != null) {
+            gm.clearRelevantItems(gm.getCapitaine());
+        }
+        
+        // Si c'est le premier jour et l'Ange n'a pas été éliminé, il devient villageois
+        gm.checkAngeTransformation();
+        
         plugin.getTimerManager().advanceTimer();
     }
 
@@ -354,6 +407,7 @@ public class RoleFinishers {
         if (gm.getChasseurTarget() == null) {
             gm.getChasseur().teleport(gm.getChasseurOldPos());
             gm.killPlayer(gm.getChasseur(), null);
+            gm.lightCampfire(); // Rallumer le feu même si le chasseur n'a pas tiré
             plugin.getTimerManager().advanceTimer();
             return;
         }
@@ -395,10 +449,16 @@ public class RoleFinishers {
 
         gm.getChasseur().teleport(gm.getChasseurOldPos());
         gm.setInterceptChasseur(true);
-        gm.getChasseur().getInventory().setItem(4, new ItemStack(Material.AIR));
+        gm.clearRelevantItems(gm.getChasseur());
         gm.lightCampfire();
 
-        // Vérifier si c'est un stalemate (chasseur et loup-garou sont les deux derniers)
+        // Vérifier que le chasseur et la cible sont toujours vivants
+        if (!gm.getPlayersAlive().contains(gm.getChasseur()) || !gm.getPlayersAlive().contains(gm.getChasseurTarget())) {
+            plugin.getTimerManager().advanceTimer();
+            return;
+        }
+
+        // Vérifier si c'est un stalemate (chasseur et loup-garou sont les deux derniers) AVANT de tuer qui que ce soit
         boolean isStalemate = false;
         if (gm.getPlayersAlive().size() == 2 &&
             gm.getPlayersAlive().contains(chasseur) &&
@@ -413,22 +473,7 @@ public class RoleFinishers {
             }
         }
 
-        // Fix bug : si le joueur ciblé est loup-garou, le retirer
-        if (gm.getLoupGarous().contains(gm.getChasseurTarget())) {
-            gm.getLoupGarous().remove(gm.getChasseurTarget());
-            gm.decrementBadGuysCount();
-        }
-
-        // Vérifier que le chasseur et la cible sont toujours vivants
-        if (!gm.getPlayersAlive().contains(gm.getChasseur()) || !gm.getPlayersAlive().contains(gm.getChasseurTarget())) {
-            plugin.getTimerManager().advanceTimer();
-            return;
-        }
-
-        gm.killPlayer(gm.getChasseur(), gm.getGamePlayer(gm.getChasseur()).getDeathReason());
-        gm.killPlayer(gm.getChasseurTarget(), "chasseur");
-
-        // Si c'est un stalemate, annoncer l'égalité et réinitialiser le jeu
+        // Si c'est un stalemate, annoncer l'égalité et réinitialiser le jeu SANS tuer les joueurs
         if (isStalemate) {
             Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.stalemate.broadcast-header"));
             Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.stalemate.broadcast-title"));
@@ -444,6 +489,16 @@ public class RoleFinishers {
             gm.gameReset(false);
             return;
         }
+
+        // Pas de stalemate, continuer normalement
+        // Fix bug : si le joueur ciblé est loup-garou, le retirer
+        if (gm.getLoupGarous().contains(gm.getChasseurTarget())) {
+            gm.getLoupGarous().remove(gm.getChasseurTarget());
+            gm.decrementBadGuysCount();
+        }
+
+        gm.killPlayer(gm.getChasseur(), gm.getGamePlayer(gm.getChasseur()).getDeathReason());
+        gm.killPlayer(gm.getChasseurTarget(), "chasseur");
 
         plugin.getTimerManager().advanceTimer();
     }
@@ -479,8 +534,8 @@ public class RoleFinishers {
                 newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
                 // Retirer le casque du capitaine mourant
                 gm.getDyingCapitaine().getInventory().setHelmet(null);
-                // Retirer le livre Testament
-                gm.getDyingCapitaine().getInventory().setItem(4, new ItemStack(Material.AIR));
+                // Nettoyer les items du capitaine mourant
+                gm.clearRelevantItems(gm.getDyingCapitaine());
 
                 Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("succession.testament-random")
                         .replace("{dying}", gm.getDyingCapitaine().getName())
@@ -500,5 +555,7 @@ public class RoleFinishers {
 
         plugin.getTimerManager().advanceTimer();
     }
+    
+
 }
 

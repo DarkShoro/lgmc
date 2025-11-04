@@ -3,6 +3,7 @@ package fr.lightshoro.lgmc;
 import fr.lightshoro.lgmc.commands.*;
 import fr.lightshoro.lgmc.listeners.GameListener;
 import fr.lightshoro.lgmc.listeners.VoteListener;
+import fr.lightshoro.lgmc.listeners.ClickVoteListener;
 import fr.lightshoro.lgmc.listeners.ChatListener;
 import fr.lightshoro.lgmc.managers.*;
 import fr.lightshoro.lgmc.tasks.DeadPlayerActionBarTask;
@@ -41,6 +42,8 @@ public final class Lgmc extends JavaPlugin {
     private WebsocketManager websocketManager;
     private ChatManager chatManager;
     private ScoreboardManager scoreboardManager;
+    private VoteDisplayManager voteDisplayManager;
+    private SkinManager skinManager;
     public CachedServerIcon serverIcon;
 
     private static final String ASCII_ART =
@@ -71,10 +74,13 @@ public final class Lgmc extends JavaPlugin {
         this.motdManager = new MotdManager(this);
         this.chatManager = new ChatManager(this);
         this.scoreboardManager = new ScoreboardManager(this);
+        this.voteDisplayManager = new VoteDisplayManager(this);
+        this.skinManager = new SkinManager(this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
         Bukkit.getPluginManager().registerEvents(new VoteListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClickVoteListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(this), this);
         Bukkit.getPluginManager().registerEvents(resourcePackManager, this);
 
@@ -107,8 +113,11 @@ public final class Lgmc extends JavaPlugin {
             getLogger().info(line);
         }
 
-        // A l'initialisation du plugin, on force le nombre de slot a 12.
-        Bukkit.getServer().setMaxPlayers(12);
+        // A l'initialisation du plugin, on force le nombre de slots selon le nombre de spawns configurés
+        int maxPlayers = locationManager.getMaxPlayers();
+        Bukkit.getServer().setMaxPlayers(maxPlayers);
+        getLogger().info("Max players set to: " + maxPlayers + " (based on " + locationManager.getSpawnCount() + " spawns)");
+        
         // On force aussi le server-icon sur le plugin
         // On prend le server-icon depuis les ressources du plugin
         InputStream iconStream = this.getResource("server-icon.png");
@@ -149,6 +158,11 @@ public final class Lgmc extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Restaurer tous les skins avant de désactiver le plugin
+        if (skinManager != null) {
+            skinManager.restoreAllSkins();
+        }
+
         // Nettoyage du timer
         if (timerManager != null) {
             timerManager.clearTimer();
@@ -248,5 +262,21 @@ public final class Lgmc extends JavaPlugin {
      */
     public ScoreboardManager getScoreboardManager() {
         return scoreboardManager;
+    }
+
+    /**
+     * Récupère le gestionnaire d'affichage des votes
+     * @return VoteDisplayManager instance
+     */
+    public VoteDisplayManager getVoteDisplayManager() {
+        return voteDisplayManager;
+    }
+
+    /**
+     * Récupère le gestionnaire de skins
+     * @return SkinManager instance
+     */
+    public SkinManager getSkinManager() {
+        return skinManager;
     }
 }

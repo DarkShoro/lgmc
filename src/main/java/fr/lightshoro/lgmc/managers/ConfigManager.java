@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ConfigManager {
     private final Lgmc plugin;
     private FileConfiguration config;
-    private final int CURRENT_CONFIG_VERSION = 3;
+    private final int CURRENT_CONFIG_VERSION = 6;
 
     public ConfigManager(Lgmc plugin) {
         this.plugin = plugin;
@@ -68,12 +68,17 @@ public class ConfigManager {
                 // Copier les valeurs personnalisées
                 FileConfiguration oldConfig = config;
 
+                // Préserver la langue si elle était définie
+                if (oldConfig.contains("language")) {
+                    defConfig.set("language", oldConfig.get("language"));
+                }
+
                 // Locations (toujours préserver)
                 if (oldConfig.contains("locations")) {
                     defConfig.set("locations", oldConfig.get("locations"));
                 }
 
-                // Game settings (préserver si modifiés)
+                // Game settings (préserver tout)
                 if (oldConfig.contains("game.min-players")) {
                     defConfig.set("game.min-players", oldConfig.get("game.min-players"));
                 }
@@ -83,10 +88,127 @@ public class ConfigManager {
                 if (oldConfig.contains("game.cupidon-enabled")) {
                     defConfig.set("game.cupidon-enabled", oldConfig.get("game.cupidon-enabled"));
                 }
+                if (oldConfig.contains("game.ange-enabled")) {
+                    defConfig.set("game.ange-enabled", oldConfig.get("game.ange-enabled"));
+                }
+                if (oldConfig.contains("game.voleur-chance")) {
+                    defConfig.set("game.voleur-chance", oldConfig.get("game.voleur-chance"));
+                }
+                if (oldConfig.contains("game.countdown-duration")) {
+                    defConfig.set("game.countdown-duration", oldConfig.get("game.countdown-duration"));
+                }
 
-                // Préserver la langue si elle était définie
-                if (oldConfig.contains("language")) {
-                    defConfig.set("language", oldConfig.get("language"));
+                // Timers (préserver tout)
+                if (oldConfig.contains("game.timers")) {
+                    if (oldConfig.contains("game.timers.voleur")) {
+                        defConfig.set("game.timers.voleur", oldConfig.get("game.timers.voleur"));
+                    }
+                    if (oldConfig.contains("game.timers.cupidon")) {
+                        defConfig.set("game.timers.cupidon", oldConfig.get("game.timers.cupidon"));
+                    }
+                    if (oldConfig.contains("game.timers.voyante")) {
+                        defConfig.set("game.timers.voyante", oldConfig.get("game.timers.voyante"));
+                    }
+                    if (oldConfig.contains("game.timers.loups-garous")) {
+                        defConfig.set("game.timers.loups-garous", oldConfig.get("game.timers.loups-garous"));
+                    }
+                    if (oldConfig.contains("game.timers.sorciere")) {
+                        defConfig.set("game.timers.sorciere", oldConfig.get("game.timers.sorciere"));
+                    }
+                    if (oldConfig.contains("game.timers.vote-capitaine")) {
+                        defConfig.set("game.timers.vote-capitaine", oldConfig.get("game.timers.vote-capitaine"));
+                    }
+                    if (oldConfig.contains("game.timers.debat")) {
+                        defConfig.set("game.timers.debat", oldConfig.get("game.timers.debat"));
+                    }
+                    if (oldConfig.contains("game.timers.chasseur")) {
+                        defConfig.set("game.timers.chasseur", oldConfig.get("game.timers.chasseur"));
+                    }
+                    if (oldConfig.contains("game.timers.capitaine-succession")) {
+                        defConfig.set("game.timers.capitaine-succession", oldConfig.get("game.timers.capitaine-succession"));
+                    }
+                    if (oldConfig.contains("game.timers.capitaine-tiebreaker")) {
+                        defConfig.set("game.timers.capitaine-tiebreaker", oldConfig.get("game.timers.capitaine-tiebreaker"));
+                    }
+                }
+
+                // Capitaine settings
+                if (oldConfig.contains("game.capitaine.vote-double")) {
+                    defConfig.set("game.capitaine.vote-double", oldConfig.get("game.capitaine.vote-double"));
+                }
+
+                // Display settings (préserver tout)
+                if (oldConfig.contains("display.death-particles")) {
+                    defConfig.set("display.death-particles", oldConfig.get("display.death-particles"));
+                }
+                if (oldConfig.contains("display.death-lightning")) {
+                    defConfig.set("display.death-lightning", oldConfig.get("display.death-lightning"));
+                }
+                if (oldConfig.contains("display.night-blindness")) {
+                    defConfig.set("display.night-blindness", oldConfig.get("display.night-blindness"));
+                }
+                if (oldConfig.contains("display.chasseur-bullet-trace")) {
+                    defConfig.set("display.chasseur-bullet-trace", oldConfig.get("display.chasseur-bullet-trace"));
+                }
+                if (oldConfig.contains("display.debug-messages")) {
+                    defConfig.set("display.debug-messages", oldConfig.get("display.debug-messages"));
+                }
+
+                // Roles helmets (préserver tout)
+                if (oldConfig.contains("roles.helmets")) {
+                    defConfig.set("roles.helmets", oldConfig.get("roles.helmets"));
+                }
+
+                // GUI settings (préserver tout)
+                if (oldConfig.contains("gui.titles")) {
+                    defConfig.set("gui.titles", oldConfig.get("gui.titles"));
+                }
+                if (oldConfig.contains("gui.vote-mode")) {
+                    defConfig.set("gui.vote-mode", oldConfig.get("gui.vote-mode"));
+                }
+
+                // Advanced settings (préserver tout)
+                if (oldConfig.contains("advanced.save-stats")) {
+                    defConfig.set("advanced.save-stats", oldConfig.get("advanced.save-stats"));
+                }
+                if (oldConfig.contains("advanced.spectators-see-dead")) {
+                    defConfig.set("advanced.spectators-see-dead", oldConfig.get("advanced.spectators-see-dead"));
+                }
+                if (oldConfig.contains("advanced.auto-teleport-spawns")) {
+                    defConfig.set("advanced.auto-teleport-spawns", oldConfig.get("advanced.auto-teleport-spawns"));
+                }
+                if (oldConfig.contains("advanced.freeze-during-night")) {
+                    defConfig.set("advanced.freeze-during-night", oldConfig.get("advanced.freeze-during-night"));
+                }
+
+                // Messages (préserver si modifiés)
+                if (oldConfig.contains("messages.game-start")) {
+                    defConfig.set("messages.game-start", oldConfig.get("messages.game-start"));
+                }
+                if (oldConfig.contains("messages.game-stop")) {
+                    defConfig.set("messages.game-stop", oldConfig.get("messages.game-stop"));
+                }
+
+                // WebSocket settings (préserver tout)
+                if (oldConfig.contains("websocket.url")) {
+                    defConfig.set("websocket.url", oldConfig.get("websocket.url"));
+                }
+                if (oldConfig.contains("websocket.enabled")) {
+                    defConfig.set("websocket.enabled", oldConfig.get("websocket.enabled"));
+                }
+                if (oldConfig.contains("websocket.reconnect-interval")) {
+                    defConfig.set("websocket.reconnect-interval", oldConfig.get("websocket.reconnect-interval"));
+                }
+                if (oldConfig.contains("websocket.secret")) {
+                    defConfig.set("websocket.secret", oldConfig.get("websocket.secret"));
+                }
+
+                // SkinsRestorer settings (préserver si présent)
+                if (oldConfig.contains("skinsrestorer.enabled")) {
+                    defConfig.set("skinsrestorer.enabled", oldConfig.get("skinsrestorer.enabled"));
+                }
+                if (oldConfig.contains("skinsrestorer.werewolf-skin-url")) {
+                    defConfig.set("skinsrestorer.werewolf-skin-url", oldConfig.get("skinsrestorer.werewolf-skin-url"));
                 }
 
                 // Mettre à jour la version
@@ -126,6 +248,14 @@ public class ConfigManager {
         return config.getBoolean("game.cupidon-enabled", true);
     }
 
+    public boolean isAngeEnabled() {
+        return config.getBoolean("game.ange-enabled", true);
+    }
+
+    public double getVoleurChance() {
+        return config.getDouble("game.voleur-chance", 0.5);
+    }
+
     public int getCountdownDuration() {
         return config.getInt("game.countdown-duration", 10);
     }
@@ -135,6 +265,10 @@ public class ConfigManager {
     }
 
     // Getters pour les timers
+    public int getTimerVoleur() {
+        return config.getInt("game.timers.voleur", 60);
+    }
+
     public int getTimerCupidon() {
         return config.getInt("game.timers.cupidon", 60);
     }
@@ -247,6 +381,15 @@ public class ConfigManager {
         return title.isEmpty() ? null : title;
     }
 
+    // Getter pour le mode de vote
+    public String getVoteMode() {
+        return config.getString("gui.vote-mode", "gui");
+    }
+
+    public boolean isClickVoteMode() {
+        return "click".equalsIgnoreCase(getVoteMode());
+    }
+
     public FileConfiguration getConfig() {
         return config;
     }
@@ -272,6 +415,15 @@ public class ConfigManager {
 
     public boolean isWebsocketEnabled() {
         return config.getBoolean("websocket.enabled", false);
+    }
+
+    // SkinsRestorer integration
+    public boolean isSkinsRestorerEnabled() {
+        return config.getBoolean("skinsrestorer.enabled", false);
+    }
+
+    public String getWerewolfSkinUrl() {
+        return config.getString("skinsrestorer.werewolf-skin-url", "https://mineskin.eu/skin/werewolf");
     }
 }
 

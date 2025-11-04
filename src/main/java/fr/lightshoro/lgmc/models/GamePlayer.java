@@ -10,7 +10,11 @@ public class GamePlayer {
     private Player vote;
     private boolean didVote;
     private boolean didVoteForCapitaine;
+    private Player votedCapitaine; // Stocke pour qui le joueur a voté pour capitaine
+    private Player votedPlayer; // Stocke pour qui le joueur a voté lors de la désignation
     private String deathReason;
+    private Player firstLover;
+    private Player secondLover;
 
     public GamePlayer(Player player) {
         this.player = player;
@@ -80,13 +84,49 @@ public class GamePlayer {
         this.deathReason = deathReason;
     }
 
+    public Player getFirstLover() {
+        return firstLover;
+    }
+
+    public void setFirstLover(Player firstLover) {
+        this.firstLover = firstLover;
+    }
+
+    public Player getSecondLover() {
+        return secondLover;
+    }
+
+    public void setSecondLover(Player secondLover) {
+        this.secondLover = secondLover;
+    }
+
+    public Player getVotedCapitaine() {
+        return votedCapitaine;
+    }
+
+    public void setVotedCapitaine(Player votedCapitaine) {
+        this.votedCapitaine = votedCapitaine;
+    }
+
+    public Player getVotedPlayer() {
+        return votedPlayer;
+    }
+
+    public void setVotedPlayer(Player votedPlayer) {
+        this.votedPlayer = votedPlayer;
+    }
+
     public void reset() {
         this.didDesignation = false;
         this.designated = null;
         this.vote = null;
         this.didVote = false;
         this.didVoteForCapitaine = false;
+        this.votedCapitaine = null;
+        this.votedPlayer = null;
         this.deathReason = null;
+        this.firstLover = null;
+        this.secondLover = null;
     }
 }
 
