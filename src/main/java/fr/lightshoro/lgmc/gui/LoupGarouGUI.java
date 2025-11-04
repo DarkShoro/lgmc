@@ -59,15 +59,11 @@ public class LoupGarouGUI {
                 loupGarou.sendMessage(plugin.getLanguageManager().getMessage("actions.loups-garous.designated")
                                     .replace("{player}", target.getName()));
 
-                // Ajouter la désignation
-                gm.addDesignatedPlayer(target);
-                gm.incrementDesignationCount();
+                // Ajouter l'effet glow sur le joueur désigné
+                plugin.getVoteDisplayManager().setGlowEffect(loupGarou, target);
 
-                GamePlayer lgGp = gm.getGamePlayer(loupGarou);
-                lgGp.setDidDesignation(true);
-
-                // Incrémenter le compteur de désignation pour ce joueur
-                gm.incrementPlayerDesignation(target);
+                // Utiliser la méthode qui gère le changement de désignation
+                gm.designatePlayerAsWolf(target, loupGarou);
 
                 // Vérifier si tous les loups ont désigné
                 int numLG = gm.getLoupGarous().size();
@@ -83,7 +79,7 @@ public class LoupGarouGUI {
         }
 
         // Option "Ne rien faire" - toujours en dernière position
-        ItemStack barrier = new ItemStack(Material.BARRIER);
+        ItemStack barrier = new ItemStack(Material.FEATHER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
             barrierMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.skip"));
@@ -94,7 +90,22 @@ public class LoupGarouGUI {
             event.setCancelled(true);
 
             GamePlayer lgGp = gm.getGamePlayer(loupGarou);
-            lgGp.setDidDesignation(true); // Le loup a agi (même en skippant)
+            Player previousDesignation = lgGp.getDesignated();
+            
+            // Si le loup avait désigné quelqu'un, retirer la désignation
+            if (previousDesignation != null) {
+                int currentDesignations = gm.getDesignatedPlayers().getOrDefault(previousDesignation, 0);
+                if (currentDesignations > 0) {
+                    gm.getDesignatedPlayers().put(previousDesignation, currentDesignations - 1);
+                    if (gm.getDesignatedPlayers().get(previousDesignation) == 0) {
+                        gm.getDesignatedPlayers().remove(previousDesignation);
+                    }
+                }
+            }
+            
+            // Marquer comme ayant agi mais sans désignation
+            lgGp.setDesignated(null);
+            lgGp.setDidDesignation(true);
 
             // Vérifier si tous les loups ont fait leur action
             boolean allActed = true;

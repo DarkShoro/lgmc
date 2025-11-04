@@ -57,6 +57,10 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             case "stop" -> {
                 return handleStop(sender, args);
             }
+            case "reset" -> {
+                plugin.getGameManager().gameReset(true);
+                return true;
+            }
             case "reload" -> {
                 return handleReload(sender, args);
             }
@@ -68,6 +72,9 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             }
             case "neighbors", "voisins" -> {
                 return handleNeighbors(sender, args);
+            }
+            case "testskin" -> {
+                return handleTestSkin(sender, args);
             }
             case "help" -> {
                 sendHelp(sender);
@@ -98,8 +105,11 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (playerCount > 12) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("general.too-many-players"));
+        int maxPlayers = plugin.getLocationManager().getMaxPlayers();
+        if (playerCount > maxPlayers) {
+            String message = plugin.getLanguageManager().getMessage("general.too-many-players")
+                    .replace("{max}", String.valueOf(maxPlayers));
+            sender.sendMessage(message);
             return true;
         }
 
@@ -132,9 +142,16 @@ public class LGCommand implements CommandExecutor, TabCompleter {
 
         sender.sendMessage(plugin.getLanguageManager().getMessage("commands.lgreload.reloading"));
 
+        // Store old values for comparison
         int oldVersion = plugin.getConfigManager().getConfig().getInt("config-version");
+        boolean wasWebsocketEnabled = plugin.getConfigManager().isWebsocketEnabled();
+        
+        // Reload configuration
         plugin.getConfigManager().reloadConfig();
+        
+        // Check what changed
         int newVersion = plugin.getConfigManager().getConfig().getInt("config-version");
+        boolean isWebsocketEnabled = plugin.getConfigManager().isWebsocketEnabled();
 
         if (oldVersion != newVersion) {
             sender.sendMessage(plugin.getLanguageManager().getMessage("commands.lgreload.config-updated")
@@ -142,10 +159,46 @@ public class LGCommand implements CommandExecutor, TabCompleter {
                     .replace("{new}", String.valueOf(newVersion)));
         }
 
+        // Reload language manager
         plugin.getLanguageManager().reload();
         sender.sendMessage(plugin.getLanguageManager().getMessage("commands.lgreload.reloaded"));
         sender.sendMessage(plugin.getLanguageManager().getMessage("commands.lgreload.language-info")
                 .replace("{language}", plugin.getLanguageManager().getCurrentLanguage()));
+
+        // Reload location manager (in case spawn locations or other locations changed)
+        plugin.getLocationManager().reload();
+        
+        // Update max players based on spawn count
+        int maxPlayers = plugin.getLocationManager().getMaxPlayers();
+        org.bukkit.Bukkit.getServer().setMaxPlayers(maxPlayers);
+        sender.sendMessage("§aMax players updated to: §e" + maxPlayers);
+
+        // Handle WebSocket reconnection
+        if (plugin.getWebsocketManager() != null) {
+            // If websocket settings changed, reconnect
+            if (wasWebsocketEnabled != isWebsocketEnabled) {
+                sender.sendMessage("§eWebSocket setting changed, reconnecting...");
+                plugin.getWebsocketManager().reconnect();
+                
+                if (isWebsocketEnabled) {
+                    sender.sendMessage("§aWebSocket enabled and connected");
+                } else {
+                    sender.sendMessage("§cWebSocket disabled");
+                }
+            } else if (isWebsocketEnabled) {
+                // If still enabled, reconnect to pick up URL/secret changes
+                sender.sendMessage("§eReconnecting WebSocket with new configuration...");
+                plugin.getWebsocketManager().reconnect();
+                sender.sendMessage("§aWebSocket reconnected");
+            }
+        }
+
+        // Reload skin manager settings
+        if (plugin.getSkinManager() != null) {
+            sender.sendMessage("§aSkin settings reloaded");
+        }
+
+        sender.sendMessage("§a§l✓ All settings reloaded successfully!");
 
         return true;
     }
@@ -188,14 +241,18 @@ public class LGCommand implements CommandExecutor, TabCompleter {
 
                 try {
                     int spawnNumber = Integer.parseInt(args[2]);
-                    if (spawnNumber < 1 || spawnNumber > 12) {
-                        sender.sendMessage("§cLe numéro de spawn doit être entre 1 et 12.");
+                    if (spawnNumber < 1) {
+                        sender.sendMessage("§cLe numéro de spawn doit être supérieur ou égal à 1.");
                         return true;
                     }
 
                     plugin.getLocationManager().setSpawnLocation(spawnNumber, playerLoc);
                     sender.sendMessage(plugin.getLanguageManager().getMessage("commands.lgsetup.spawn-set")
                             .replace("{number}", String.valueOf(spawnNumber)));
+                    
+                    // Notify about max players update
+                    int maxPlayers = plugin.getLocationManager().getMaxPlayers();
+                    sender.sendMessage("§aMax players set to: §e" + maxPlayers);
                     return true;
                 } catch (NumberFormatException e) {
                     sender.sendMessage("§cNuméro de spawn invalide.");
@@ -310,14 +367,72 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean handleTestSkin(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("lgmc.debug")) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
+            return true;
+        }
+
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.player-only"));
+            return true;
+        }
+
+        if (!plugin.getSkinManager().isEnabled()) {
+            sender.sendMessage("§cSkinsRestorer integration is disabled in config!");
+            return true;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage("§6=== Test Skin Commands ===");
+            sender.sendMessage("§e/lg testskin apply §f- Apply werewolf skin to yourself");
+            sender.sendMessage("§e/lg testskin restore §f- Restore your original skin");
+            sender.sendMessage("§e/lg testskin apply <player> §f- Apply werewolf skin to a player");
+            sender.sendMessage("§e/lg testskin restore <player> §f- Restore a player's original skin");
+            return true;
+        }
+
+        String action = args[1].toLowerCase();
+        Player target = player;
+
+        // Check if a target player was specified
+        if (args.length >= 3) {
+            target = Bukkit.getPlayer(args[2]);
+            if (target == null) {
+                sender.sendMessage("§cPlayer not found: " + args[2]);
+                return true;
+            }
+        }
+
+        switch (action) {
+            case "apply" -> {
+                plugin.getSkinManager().setWerewolfSkin(target);
+                sender.sendMessage("§aApplying werewolf skin to " + target.getName() + "...");
+                sender.sendMessage("§7(This may take a moment)");
+                return true;
+            }
+            case "restore" -> {
+                plugin.getSkinManager().restoreOriginalSkin(target);
+                sender.sendMessage("§aRestoring original skin for " + target.getName() + "...");
+                return true;
+            }
+            default -> {
+                sender.sendMessage("§cInvalid action. Use 'apply' or 'restore'.");
+                return true;
+            }
+        }
+    }
+
     private void sendHelp(CommandSender sender) {
         sender.sendMessage("§6=== Commandes Loup-Garou ===");
         sender.sendMessage("§e/lg start §f- Démarrer une partie");
         sender.sendMessage("§e/lg stop §f- Arrêter la partie en cours");
+        sender.sendMessage("§e/lg reset §f- Réinitialiser la partie en cours");
         sender.sendMessage("§e/lg reload §f- Recharger la configuration");
         sender.sendMessage("§e/lg setup <type> [args] §f- Configuration du jeu");
         sender.sendMessage("§e/lg gui <type> §f- Ouvrir un GUI (debug)");
         sender.sendMessage("§e/lg neighbors <player> §f- Afficher les voisins d'un joueur (debug)");
+        sender.sendMessage("§e/lg testskin <apply|restore> [player] §f- Tester les skins (debug)");
         sender.sendMessage("§e/lg help §f- Afficher cette aide");
     }
 
@@ -358,7 +473,7 @@ public class LGCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             // Sous-commandes principales
-            List<String> subCommands = Arrays.asList("start", "stop", "reload", "setup", "gui", "neighbors", "voisins", "help");
+            List<String> subCommands = Arrays.asList("start", "stop", "reset", "reload", "setup", "gui", "neighbors", "voisins", "testskin", "help");
             return subCommands.stream()
                     .filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
@@ -380,9 +495,9 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("setup") && args[1].equalsIgnoreCase("spawn")) {
-            // Numéros de spawn (1-12)
+            // Numéros de spawn (1 et plus, suggérer jusqu'à 20)
             List<String> numbers = new ArrayList<>();
-            for (int i = 1; i <= 12; i++) {
+            for (int i = 1; i <= 20; i++) {
                 numbers.add(String.valueOf(i));
             }
             return numbers.stream()
@@ -395,6 +510,22 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("testskin")) {
+            // Arguments pour /lg testskin
+            List<String> skinActions = Arrays.asList("apply", "restore");
+            return skinActions.stream()
+                    .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("testskin")) {
+            // Liste des joueurs en ligne pour la commande testskin
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase()))
                     .collect(Collectors.toList());
         }
 

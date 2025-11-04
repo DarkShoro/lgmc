@@ -18,10 +18,11 @@ public class MotdManager {
 
     public Component getCurrentMotd() {
 
-        // Si le nombre de joueurs est supérieur ou égal à 12, on affiche "Serveur plein"
+        // Si le nombre de joueurs est supérieur ou égal au max, on affiche "Serveur plein"
         int playerCount = plugin.getServer().getOnlinePlayers().size();
+        int maxPlayers = plugin.getLocationManager().getMaxPlayers();
 
-        if (playerCount >= 12) {
+        if (playerCount >= maxPlayers) {
             return LegacyComponentSerializer.legacySection().deserialize(plugin.getLanguageManager().getMessage("motd.full"));
         }
 
@@ -37,8 +38,9 @@ public class MotdManager {
 
         // Par défaut, on affiche "En attente de joueurs"
         String waitingMessage = plugin.getLanguageManager().getMessage("motd.waiting");
-        // replace {players} par le nombre actuel de joueurs
-        waitingMessage = waitingMessage.replace("{players}", String.valueOf(playerCount));
+        // replace {players} et {max} par les valeurs actuelles
+        waitingMessage = waitingMessage.replace("{players}", String.valueOf(playerCount))
+                                      .replace("{max}", String.valueOf(maxPlayers));
         return LegacyComponentSerializer.legacySection().deserialize(waitingMessage);
     }
 }

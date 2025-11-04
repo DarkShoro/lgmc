@@ -44,6 +44,8 @@ public class GameManager {
     private Player sorciere;
     private Player voyante;
     private Player capitaine;
+    private Player ange;
+    private Player voleur;
 
     private Player nextLGTarget;
     private Player chasseurTarget;
@@ -62,6 +64,7 @@ public class GameManager {
     private boolean chasseurDidLastKill;
     private boolean cupidonAction;
     private boolean sorciereAction;
+    private boolean voleurAction;
 
     private Player dyingCapitaine;
     private final Map<Player, Integer> voteCount;
@@ -124,6 +127,8 @@ public class GameManager {
         sorciere = null;
         voyante = null;
         capitaine = null;
+        ange = null;
+        voleur = null;
         nextLGTarget = null;
         chasseurTarget = null;
         chasseurOldPos = null;
@@ -160,6 +165,8 @@ public class GameManager {
         plugin.getTimerManager().clearTimer();
         plugin.getWebsocketManager().sendDemuteAll();
         plugin.getScoreboardManager().clearScoreboards();
+        plugin.getChatManager().setLoupGarouChatActive(false);
+        plugin.getVoteDisplayManager().reset();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
@@ -170,13 +177,7 @@ public class GameManager {
                 player.showPlayer(plugin, other);
             }
 
-            ItemStack slot4 = player.getInventory().getItem(4);
-            if (slot4 != null && (slot4.getType() == Material.PAPER ||
-                    slot4.getType() == Material.WOODEN_HOE ||
-                    slot4.getType() == Material.BOOK ||
-                    slot4.getType() == Material.IRON_HOE)) {
-                player.getInventory().setItem(4, new ItemStack(Material.AIR));
-            }
+         
 
             // If the player have any kind of inventory GUI open, close it
             player.closeInventory();
@@ -185,6 +186,7 @@ public class GameManager {
         freezeAll = false;
         plugin.getWebsocketManager().sendReset();
         lightCampfire();
+        plugin.getSkinManager().restoreAllSkins();
 
         if (isAdmin) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -317,6 +319,9 @@ public class GameManager {
 
         player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
         player.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("mort"));
+        
+        // Mark player as dead in scoreboard memory
+        plugin.getScoreboardManager().markPlayerAsDead(player);
 
         // Cacher le joueur mort de tous les joueurs vivants
         for (Player alive : playersAlive) {
@@ -356,7 +361,7 @@ public class GameManager {
             List<Player> availablePlayers = new ArrayList<>(playersAlive);
             if (!availablePlayers.isEmpty()) {
                 Player newCapitaine = availablePlayers.get((int)(Math.random() * availablePlayers.size()));
-                capitaine = newCapitaine;
+                setCapitaine(newCapitaine);
 
                 // Donner le casque de capitaine
                 newCapitaine.getInventory().setHelmet(plugin.getConfigManager().getRoleHelmetItemStack("capitaine"));
@@ -366,7 +371,7 @@ public class GameManager {
                         .replace("{player}", newCapitaine.getName())
                 );
             } else {
-                capitaine = null;
+                setCapitaine(null);
             }
         }
 
@@ -425,8 +430,120 @@ public class GameManager {
         if (player.equals(sorciere)) sorciere = null;
         if (player.equals(chasseur) && goodGuysCount != 0) chasseur = null;
         if (player.equals(petiteFille)) petiteFille = null;
+        if (player.equals(ange)) ange = null;
+        if (player.equals(voleur)) voleur = null;
         loupGarous.remove(player);
         villageois.remove(player);
+    }
+
+    /**
+     * Add a player to a specific role in GameManager
+     */
+    public void addPlayerToRole(Player player, Role role) {
+        switch (role) {
+            case LOUP_GAROU:
+                if (!loupGarous.contains(player)) {
+                    loupGarous.add(player);
+                    goodGuys.remove(player);
+                    if (!badGuys.contains(player)) {
+                        badGuys.add(player);
+                    }
+                }
+                break;
+            case VOYANTE:
+                voyante = player;
+                break;
+            case SORCIERE:
+                sorciere = player;
+                break;
+            case CHASSEUR:
+                chasseur = player;
+                break;
+            case PETITE_FILLE:
+                petiteFille = player;
+                break;
+            case CUPIDON:
+                cupidon = player;
+                break;
+            case ANGE:
+                ange = player;
+                break;
+            case VOLEUR:
+                voleur = player;
+                break;
+            case VILLAGEOIS:
+                if (!villageois.contains(player)) {
+                    villageois.add(player);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Vérifie si l'Ange gagne (éliminé par vote au premier jour)
+     * @param player Le joueur qui vient d'être éliminé par vote
+     * @return true si l'Ange a gagné, false sinon
+     */
+    public boolean checkAngeVictory(Player player) {
+        if (!inGame) return false;
+        
+        // Vérifier si le joueur éliminé est l'Ange au premier jour
+        if (dayCount == 1 && ange != null && ange.equals(player)) {
+            // L'Ange gagne !
+            announceAngeVictory(player);
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Transforme l'Ange en villageois s'il survit au premier jour
+     * À appeler à la fin du premier jour
+     */
+    public void checkAngeTransformation() {
+        if (!inGame || dayCount != 1 || ange == null) return;
+        
+        // Si l'Ange est toujours vivant après le premier jour, il devient villageois
+        if (playersAlive.contains(ange)) {
+            GamePlayer gp = getGamePlayer(ange);
+            gp.setRole(Role.VILLAGEOIS);
+            ange.sendMessage(plugin.getLanguageManager().getMessage("roles.ange.becomes-villager"));
+            
+            // Changer son item en main gauche pour celui de villageois
+            ange.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("villageois"));
+            
+            // L'ange n'existe plus en tant que rôle spécial
+            ange = null;
+        }
+    }
+
+    /**
+     * Annonce la victoire de l'Ange
+     */
+    private void announceAngeVictory(Player ange) {
+        for (Player player : playingPlayers) {
+            if (player.equals(ange)) {
+                player.sendTitle(plugin.getLanguageManager().getMessage("victory.ange.title"),
+                                plugin.getLanguageManager().getMessage("victory.ange.subtitle"),
+                                10, 70, 20);
+            } else {
+                player.sendTitle(plugin.getLanguageManager().getMessage("victory.defeat.title"),
+                                plugin.getLanguageManager().getMessage("victory.ange.subtitle"),
+                                10, 70, 20);
+            }
+        }
+
+        Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.ange.broadcast-header"));
+        Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.ange.broadcast-title"));
+        Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.ange.broadcast-message")
+                               .replace("{player}", ange.getName()));
+        Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("victory.ange.broadcast-footer"));
+
+        plugin.getWebsocketManager().sendGameOver();
+        gameReset(false);
     }
 
     public void checkForWinCondition() {
@@ -637,8 +754,16 @@ public class GameManager {
             return;
         }
 
-        if (playerNumber > 12) {
-            Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("general.too-many-players"));
+        int maxPlayers = plugin.getLocationManager().getMaxPlayers();
+        if (playerNumber > maxPlayers) {
+            Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("general.too-many-players")
+                .replace("{max}", String.valueOf(maxPlayers)));
+            return;
+        }
+
+        // Vérifier si le serveur est correctement configuré (au moins 12 spawns)
+        if (!plugin.getLocationManager().isProperlyConfigured()) {
+            Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("general.not-properly-configured"));
             return;
         }
 
@@ -685,10 +810,23 @@ public class GameManager {
             loupGarous.add(loupGarouTwo);
         }
 
+        // Distribution du Voleur (chance configurable)
+        double voleurChance = plugin.getConfigManager().getVoleurChance();
+        if (Math.random() < voleurChance && !allPlayers.isEmpty()) {
+            voleur = allPlayers.get((int)(Math.random() * allPlayers.size()));
+            allPlayers.remove(voleur);
+        }
+
         // Distribution de Cupidon si 9+ joueurs
         if (playerNumber >= 9 && !allPlayers.isEmpty()) {
             cupidon = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(cupidon);
+        }
+
+        // Distribution de l'Ange si 9+ joueurs
+        if (playerNumber >= 9 && !allPlayers.isEmpty()) {
+            ange = allPlayers.get((int)(Math.random() * allPlayers.size()));
+            allPlayers.remove(ange);
         }
 
         // Distribution de la Petite Fille
@@ -744,6 +882,7 @@ public class GameManager {
                                  plugin.getLanguageManager().getMessage("roles.petite-fille.subtitle"),
                                  10, 70, 20);
             petiteFille.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("petite-fille"));
+            plugin.getScoreboardManager().setRoleMemory("petiteFille", petiteFille);
         }
 
         if (cupidon != null) {
@@ -753,6 +892,27 @@ public class GameManager {
                              plugin.getLanguageManager().getMessage("roles.cupidon.subtitle"),
                              10, 70, 20);
             cupidon.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("cupidon"));
+            plugin.getScoreboardManager().setRoleMemory("cupidon", cupidon);
+        }
+
+        if (ange != null) {
+            GamePlayer gp = getGamePlayer(ange);
+            gp.setRole(Role.ANGE);
+            ange.sendTitle(plugin.getLanguageManager().getMessage("roles.ange.title"),
+                          plugin.getLanguageManager().getMessage("roles.ange.subtitle"),
+                          10, 70, 20);
+            ange.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("ange"));
+            plugin.getScoreboardManager().setRoleMemory("ange", ange);
+        }
+
+        if (voleur != null) {
+            GamePlayer gp = getGamePlayer(voleur);
+            gp.setRole(Role.VOLEUR);
+            voleur.sendTitle(plugin.getLanguageManager().getMessage("roles.voleur.title"),
+                            plugin.getLanguageManager().getMessage("roles.voleur.subtitle"),
+                            10, 70, 20);
+            voleur.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("voleur"));
+            plugin.getScoreboardManager().setRoleMemory("voleur", voleur);
         }
 
         if (chasseur != null) {
@@ -762,6 +922,7 @@ public class GameManager {
                               plugin.getLanguageManager().getMessage("roles.chasseur.subtitle"),
                               10, 70, 20);
             chasseur.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("chasseur"));
+            plugin.getScoreboardManager().setRoleMemory("chasseur", chasseur);
         }
 
         if (sorciere != null) {
@@ -771,6 +932,7 @@ public class GameManager {
                               plugin.getLanguageManager().getMessage("roles.sorciere.subtitle"),
                               10, 70, 20);
             sorciere.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("sorciere"));
+            plugin.getScoreboardManager().setRoleMemory("sorciere", sorciere);
         }
 
         if (voyante != null) {
@@ -780,6 +942,7 @@ public class GameManager {
                              plugin.getLanguageManager().getMessage("roles.voyante.subtitle"),
                              10, 70, 20);
             voyante.getInventory().setItemInOffHand(plugin.getConfigManager().getRoleHelmetItemStack("voyante"));
+            plugin.getScoreboardManager().setRoleMemory("voyante", voyante);
         }
 
         // Initialisation des listes
@@ -857,6 +1020,9 @@ public class GameManager {
 
         // Build action queue for night
         actionQueueClear();
+        if (voleur != null && nightCount == 1) {
+            actionQueueAdd("doVoleur");
+        }
         if (cupidon != null && nightCount == 1) {
             actionQueueAdd("doCupidon");
         }
@@ -881,6 +1047,12 @@ public class GameManager {
                     slot4.getType() == Material.IRON_HOE ||
                     slot4.getType() == Material.BOOK)) {
                 player.getInventory().setItem(4, new ItemStack(Material.AIR));
+            }
+            
+            // Retirer la plume au slot 8
+            ItemStack slot8 = player.getInventory().getItem(8);
+            if (slot8 != null && slot8.getType() == Material.FEATHER) {
+                player.getInventory().setItem(8, new ItemStack(Material.AIR));
             }
         }
     }
@@ -937,6 +1109,12 @@ public class GameManager {
                     slot4.getType() == Material.BOOK)) {
                 player.getInventory().setItem(4, new ItemStack(Material.AIR));
             }
+            
+            // Retirer la plume au slot 8
+            ItemStack slot8 = player.getInventory().getItem(8);
+            if (slot8 != null && slot8.getType() == Material.FEATHER) {
+                player.getInventory().setItem(8, new ItemStack(Material.AIR));
+            }
         }
 
         // Start the day sequence after a delay
@@ -977,6 +1155,9 @@ public class GameManager {
                 break;
             case "doVote":
                 doVote();
+                break;
+            case "doVoleur":
+                doVoleur();
                 break;
             case "doVoyante":
                 doVoyante();
@@ -1019,6 +1200,9 @@ public class GameManager {
 
     private void executeFinisher(String action) {
         switch (action) {
+            case "doVoleur":
+                finishers.finishVoleur();
+                break;
             case "doVoyante":
                 finishers.finishVoyante();
                 break;
@@ -1047,6 +1231,35 @@ public class GameManager {
     }
 
     // Placeholder methods for role actions
+    private void doVoleur() {
+        if (voleur == null || !playersAlive.contains(voleur)) {
+            nextStep();
+            return;
+        }
+
+        Bukkit.broadcastMessage(plugin.getLanguageManager().getMessage("actions.voleur.announce"));
+        plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("actions.voleur.timer"), 60);
+
+        voleurAction = false;
+        
+        // En mode clic, ne pas ouvrir le GUI, juste donner les instructions
+        if (plugin.getConfigManager().isClickVoteMode()) {
+            giveSkipFeather(voleur);
+            
+            // Donner un item pour voler (gunpowder = poudre noire = masque de voleur)
+            ItemStack stealItem = new ItemStack(Material.GUNPOWDER);
+            ItemMeta meta = stealItem.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.steal-role"));
+                stealItem.setItemMeta(meta);
+            }
+            voleur.getInventory().setItem(4, stealItem);
+        } else {
+            // Mode GUI
+            new fr.lightshoro.lgmc.gui.VoleurGUI(plugin).open(voleur);
+        }
+    }
+
     private void doCupidon() {
         if (cupidon == null || !playersAlive.contains(cupidon)) {
             nextStep();
@@ -1057,7 +1270,15 @@ public class GameManager {
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("actions.cupidon.timer"), 60);
 
         cupidonAction = false;
-        new fr.lightshoro.lgmc.gui.CupidonGUI(plugin).open(cupidon);
+        
+        // En mode clic, ne pas ouvrir le GUI, juste donner les instructions
+        if (plugin.getConfigManager().isClickVoteMode()) {
+            //cupidon.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+            giveSkipFeather(cupidon);
+        } else {
+            // Mode GUI: Cupidon utilise le GUI
+            new fr.lightshoro.lgmc.gui.CupidonGUI(plugin).open(cupidon);
+        }
     }
 
     private void doVoyante() {
@@ -1078,9 +1299,26 @@ public class GameManager {
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("actions.voyante.timer"), 30);
 
         voyanteSondage = false;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            new fr.lightshoro.lgmc.gui.VoyanteGUI(plugin).open(voyante);
-        }, 20L);
+        
+        // En mode clic, donner l'instruction et la plume
+        if (plugin.getConfigManager().isClickVoteMode()) {
+            //voyante.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+            giveSkipFeather(voyante);
+            
+            // Donner un silex (boule de cristal) pour sonder
+            ItemStack crystal = new ItemStack(Material.FLINT);
+            ItemMeta crystalMeta = crystal.getItemMeta();
+            if (crystalMeta != null) {
+                crystalMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.crystal"));
+                crystal.setItemMeta(crystalMeta);
+            }
+            voyante.getInventory().setItem(4, crystal);
+        } else {
+            // En mode GUI, ouvrir le GUI après un délai
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                new fr.lightshoro.lgmc.gui.VoyanteGUI(plugin).open(voyante);
+            }, 20L);
+        }
     }
 
     private void doLoupGarou() {
@@ -1098,6 +1336,9 @@ public class GameManager {
             for (Player player : playersAlive) {
                 lg.showPlayer(plugin, player);
             }
+            
+            // Changer le skin de chaque Loup-Garou si SkinsRestorer est activé
+            plugin.getSkinManager().setWerewolfSkin(lg);
         }
 
         if (petiteFille != null && playersAlive.contains(petiteFille)) {
@@ -1112,15 +1353,20 @@ public class GameManager {
         // Ouvrir le GUI pour chaque loup-garou après un délai
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             for (Player lg : loupGarous) {
-                // new fr.lightshoro.lgmc.gui.LoupGarouGUI(plugin).open(lg);
-                // Give loup-garou a iron hoe to open GUI
+                // Donner une houe en fer pour voter en mode clic
                 ItemStack item = new ItemStack(Material.IRON_HOE);
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
                     meta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.werewolf-attack"));
                     item.setItemMeta(meta);
                 }
-                lg.getInventory().setItem(4, new ItemStack(Material.IRON_HOE));
+                lg.getInventory().setItem(4, item);
+                
+                // En mode clic, donner aussi la plume de skip et l'instruction
+                if (plugin.getConfigManager().isClickVoteMode()) {
+                    //lg.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+                    giveSkipFeather(lg);
+                }
             }
         }, 20L);
     }
@@ -1167,8 +1413,13 @@ public class GameManager {
                     paper.setItemMeta(meta);
                 }
             }
+            
+            // En mode clic, donner aussi la plume et l'instruction
+            if (plugin.getConfigManager().isClickVoteMode()) {
+                //player.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+                giveSkipFeather(player);
+            }
         }
-        // TODO: Implement GUI for Capitaine vote
     }
 
     private void doVote() {
@@ -1180,6 +1431,9 @@ public class GameManager {
         }
 
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("vote.day.timer"), 300);
+        
+        // Initialiser l'affichage des votes au-dessus des têtes
+        plugin.getVoteDisplayManager().updateAllVoteDisplays();
 
         for (Player player : playersAlive) {
             player.getInventory().setItem(4, new ItemStack(Material.PAPER));
@@ -1191,8 +1445,13 @@ public class GameManager {
                     paper.setItemMeta(meta);
                 }
             }
+            
+            // En mode clic, donner aussi la plume et l'instruction
+            if (plugin.getConfigManager().isClickVoteMode()) {
+                //player.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+                giveSkipFeather(player);
+            }
         }
-        // TODO: Implement GUI for Vote
     }
 
     private void doChasseur() {
@@ -1290,6 +1549,19 @@ public class GameManager {
         }
     }
 
+    /**
+     * Donne une plume "skip" au joueur au slot 8 (mode clic)
+     */
+    private void giveSkipFeather(Player player) {
+        ItemStack feather = new ItemStack(Material.FEATHER);
+        ItemMeta meta = feather.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.feather-skip"));
+            feather.setItemMeta(meta);
+        }
+        player.getInventory().setItem(8, feather);
+    }
+
     // Getters and setters
     public boolean isInGame() { return inGame; }
     public void setInGame(boolean inGame) { this.inGame = inGame; }
@@ -1298,7 +1570,12 @@ public class GameManager {
     public String getGameStep() { return gameStep; }
     public void setGameStep(String gameStep) { this.gameStep = gameStep; }
     public Player getCapitaine() { return capitaine; }
-    public void setCapitaine(Player capitaine) { this.capitaine = capitaine; }
+    public void setCapitaine(Player capitaine) { 
+        this.capitaine = capitaine; 
+        if (capitaine != null) {
+            plugin.getScoreboardManager().setRoleMemory("capitaine", capitaine);
+        }
+    }
     public void setDyingCapitaine(Player player) { this.dyingCapitaine = player; }
     public Player getDyingCapitaine() { return dyingCapitaine; }
     public Player getChasseur() { return chasseur; }
@@ -1338,6 +1615,37 @@ public class GameManager {
         designatedPlayers.put(player, designatedPlayers.getOrDefault(player, 0) + 1);
     }
 
+    public void designatePlayerAsWolf(Player target, Player wolf) {
+        // Récupérer la désignation précédente du loup
+        GamePlayer gp = getGamePlayer(wolf);
+        Player previousDesignation = gp.getDesignated();
+        
+        // Si le loup a déjà désigné quelqu'un, décrémenter la désignation précédente
+        if (previousDesignation != null) {
+            int currentDesignations = designatedPlayers.getOrDefault(previousDesignation, 0);
+            if (currentDesignations > 0) {
+                designatedPlayers.put(previousDesignation, currentDesignations - 1);
+                // Si la désignation tombe à 0, on peut la retirer de la map
+                if (designatedPlayers.get(previousDesignation) == 0) {
+                    designatedPlayers.remove(previousDesignation);
+                }
+            }
+            // Décrémenter le compteur de désignation (car on remplace, pas on ajoute)
+            if (designationCount > 0) {
+                designationCount--;
+            }
+        }
+        
+        // Ajouter la nouvelle désignation
+        addDesignatedPlayer(target);
+        incrementDesignationCount();
+        incrementPlayerDesignation(target);
+        
+        // Enregistrer la nouvelle désignation
+        gp.setDesignated(target);
+        gp.setDidDesignation(true);
+    }
+
     public Player getNextLGTarget() {
         return nextLGTarget;
     }
@@ -1374,9 +1682,78 @@ public class GameManager {
         voteCapitaine.put(player, voteCapitaine.getOrDefault(player, 0) + 1);
     }
 
+    public void incrementCapitaineVote(Player target, Player voter) {
+        // Récupérer le vote précédent du voteur
+        GamePlayer gp = getGamePlayer(voter);
+        Player previousVote = gp.getVotedCapitaine();
+        
+        // Si le joueur a déjà voté, décrémenter le vote précédent
+        if (previousVote != null) {
+            int currentVotes = voteCapitaine.getOrDefault(previousVote, 0);
+            if (currentVotes > 0) {
+                voteCapitaine.put(previousVote, currentVotes - 1);
+            }
+        }
+        
+        // Incrémenter le nouveau vote
+        voteCapitaine.put(target, voteCapitaine.getOrDefault(target, 0) + 1);
+        
+        // Enregistrer le nouveau vote
+        gp.setVotedCapitaine(target);
+        gp.setDidVoteForCapitaine(true);
+    }
+
     public void incrementVoteCount(Player target, Player voter) {
+        // Récupérer le vote précédent du voteur
+        GamePlayer gp = getGamePlayer(voter);
+        Player previousVote = gp.getVotedPlayer();
+        
+        // Calculer la valeur du vote (2 si capitaine, 1 sinon)
         int voteValue = (voter.equals(capitaine)) ? 2 : 1;
+        
+        // Si le joueur a déjà voté, décrémenter le vote précédent
+        if (previousVote != null) {
+            int previousVoteValue = (voter.equals(capitaine)) ? 2 : 1;
+            int currentVotes = voteCount.getOrDefault(previousVote, 0);
+            if (currentVotes >= previousVoteValue) {
+                voteCount.put(previousVote, currentVotes - previousVoteValue);
+            }
+        }
+        
+        // Incrémenter le nouveau vote
         voteCount.put(target, voteCount.getOrDefault(target, 0) + voteValue);
+        
+        // Enregistrer le nouveau vote
+        gp.setVotedPlayer(target);
+        gp.setDidVote(true);
+    }
+
+    /**
+     * Nettoie tous les items pertinents de l'inventaire d'un joueur
+     * (papier, houes, livre, plume, têtes de joueurs, silex, etc.)
+     */
+    public void clearRelevantItems(Player player) {
+        if (player == null) return;
+        
+        // Nettoyer les slots 0-8 (hotbar) et slot 8 spécifiquement
+        for (int i = 0; i <= 8; i++) {
+            ItemStack item = player.getInventory().getItem(i);
+            if (item != null) {
+                Material type = item.getType();
+                // Vérifier si c'est un item pertinent
+                if (type == Material.PAPER || 
+                    type == Material.WOODEN_HOE || 
+                    type == Material.IRON_HOE || 
+                    type == Material.BOOK ||
+                    type == Material.WRITTEN_BOOK ||
+                    type == Material.FEATHER ||
+                    type == Material.PLAYER_HEAD ||
+                    type == Material.GUNPOWDER ||
+                    type == Material.FLINT) {
+                    player.getInventory().setItem(i, new ItemStack(Material.AIR));
+                }
+            }
+        }
     }
 
     public boolean isCupidonAction() {
@@ -1396,6 +1773,7 @@ public class GameManager {
     // Getters supplémentaires pour RoleFinishers
     public RoleFinishers getFinishers() { return finishers; }
     public Player getPetiteFille() { return petiteFille; }
+    public Player getAnge() { return ange; }
     public List<Player> getPlayingPlayers() { return playingPlayers; }
     public Map<Player, Integer> getDesignatedPlayers() { return designatedPlayers; }
     public Player getChasseurTarget() { return chasseurTarget; }
@@ -1424,5 +1802,17 @@ public class GameManager {
 
     public List<Player> getLesAmoureux() {
         return lesAmoureux;
+    }
+
+    public boolean isVoleurAction() {
+        return voleurAction;
+    }
+
+    public void setVoleurAction(boolean val) {
+        this.voleurAction = val;
+    }
+
+    public Player getVoleur() {
+        return voleur;
     }
 }

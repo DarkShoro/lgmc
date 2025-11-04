@@ -51,11 +51,14 @@ public class CapitaineVoteGUI {
                 voter.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.voted-for")
                                 .replace("{player}", target.getName()));
 
-                // Incrémenter le vote pour ce joueur
-                gm.incrementCapitaineVote(target);
+                // Ajouter l'effet glow sur le joueur voté pour capitaine
+                plugin.getVoteDisplayManager().setGlowEffect(voter, target);
 
-                GamePlayer gp = gm.getGamePlayer(voter);
-                gp.setDidVoteForCapitaine(true);
+                // Incrémenter le vote pour ce joueur (gère automatiquement le changement de vote)
+                gm.incrementCapitaineVote(target, voter);
+                
+                // Mettre à jour l'affichage des votes pour le capitaine
+                plugin.getVoteDisplayManager().updateCapitaineVoteDisplays();
 
                 voter.closeInventory();
             });
@@ -65,7 +68,7 @@ public class CapitaineVoteGUI {
         }
 
         // Option "Ne rien faire" - toujours en dernière position
-        ItemStack barrier = new ItemStack(Material.BARRIER);
+        ItemStack barrier = new ItemStack(Material.FEATHER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
             barrierMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.skip"));
@@ -77,6 +80,22 @@ public class CapitaineVoteGUI {
             voter.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.no-vote"));
 
             GamePlayer gp = gm.getGamePlayer(voter);
+            Player previousVote = gp.getVotedCapitaine();
+            
+            // Si le joueur avait voté, décrémenter le vote précédent et retirer le glow
+            if (previousVote != null) {
+                int currentVotes = gm.getVoteCapitaine().getOrDefault(previousVote, 0);
+                if (currentVotes > 0) {
+                    gm.getVoteCapitaine().put(previousVote, currentVotes - 1);
+                }
+                // Retirer l'effet glow
+                plugin.getVoteDisplayManager().removeGlowEffect(voter, previousVote);
+                // Mettre à jour l'affichage
+                plugin.getVoteDisplayManager().updateCapitaineVoteDisplays();
+            }
+            
+            // Marquer comme ayant voté mais sans vote enregistré
+            gp.setVotedCapitaine(null);
             gp.setDidVoteForCapitaine(true);
 
             voter.closeInventory();

@@ -1,38 +1,32 @@
 name: lgmc
-version: '2.7.1-SNAPSHOT'
+version: '5.0.0'
 main: fr.lightshoro.lgmc.Lgmc
 api-version: '1.21'
-description: Plugin de jeu Loup-Garou pour Minecraft (4-12 joueurs)
+description: Plugin de jeu Loup-Garou pour Minecraft (4+ joueurs, basé sur le nombre de spawns)
 author: LightShoro
+depend: [ProtocolLib]
+softdepend: [ "SkinsRestorer" ]
 
 commands:
-  lgstart:
-    description: Démarre une partie de Loup-Garou (4-12 joueurs)
-    usage: /lgstart
-    permission: lgmc.start
-    aliases: [lggo, startlg]
-  lgstop:
-    description: Arrête la partie de Loup-Garou en cours
-    usage: /lgstop
-    permission: lgmc.stop
-    aliases: [stoplg]
-  lgreload:
-    description: Recharge la configuration du plugin
-    usage: /lgreload
-    permission: lgmc.reload
-    aliases: [lgrl, reloadlg]
-  lgsetup:
-    description: Configure les emplacements pour le jeu
-    usage: /lgsetup <campfire|chasseurtp|spawn|info> [numéro]
-    permission: lgmc.setup
-  testament:
-    description: Permet au capitaine de nommer son successeur
-    usage: /testament <joueur>
-    permission: lgmc.testament
+  lg:
+    description: Commande principale du Loup-Garou
+    usage: /lg <start|stop|reload|setup|gui|help> [args]
+    aliases: [loupgarou, werewolf]
   goodGuys:
     description: Affiche le nombre de bons joueurs restants (debug)
     usage: /goodGuys
     permission: lgmc.debug
+  wsaction:
+    description: Commande interne pour les actions WebSocket
+    usage: /wsaction <action>
+    permission: lgmc.debug
+  linkDiscord:
+    description: Affiche le lien vers le serveur Discord du plugin
+    usage: /linkDiscord
+  love:
+    description: Permet aux amoureux de communiquer entre eux
+    usage: /love <message>
+    aliases: [amour]
 
 permissions:
   lgmc.start:
@@ -47,9 +41,6 @@ permissions:
   lgmc.setup:
     description: Permet de configurer les emplacements
     default: op
-  lgmc.testament:
-    description: Permet d'utiliser la commande testament
-    default: true
   lgmc.debug:
     description: Permet d'utiliser les commandes de débogage
     default: op

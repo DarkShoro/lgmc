@@ -10,6 +10,8 @@ public enum Role {
     SORCIERE("Sorcière", "&a&l", Team.GOOD_GUYS),
     CUPIDON("Cupidon", "&a&l", Team.GOOD_GUYS),
     CHASSEUR("Chasseur", "&a&l", Team.GOOD_GUYS),
+    VOLEUR("Voleur", "&e&l", Team.GOOD_GUYS),
+    ANGE("Ange", "&b&l", Team.ANGE),
     DEAD("Décédé(e)", "&7&l", Team.NONE),
     NOT_IN_GAME("Pas dans la partie", "&7&l", Team.NONE);
 
@@ -42,6 +44,7 @@ public enum Role {
     public enum Team {
         GOOD_GUYS,
         BAD_GUYS,
+        ANGE,
         NONE
     }
 }

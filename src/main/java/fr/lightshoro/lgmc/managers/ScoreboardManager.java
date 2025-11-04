@@ -16,11 +16,17 @@ public class ScoreboardManager {
     private final Lgmc plugin;
     private final Map<Player, Scoreboard> playerScoreboards;
     private LanguageManager lm;
+    
+    // Memory system to track role assignments even after death
+    private final Map<String, Player> roleMemory; // role -> player
+    private final Map<Player, Boolean> playerDeathStatus; // player -> isDead
 
     public ScoreboardManager(Lgmc plugin) {
         this.plugin = plugin;
         this.playerScoreboards = new HashMap<>();
         this.lm = plugin.getLanguageManager();
+        this.roleMemory = new HashMap<>();
+        this.playerDeathStatus = new HashMap<>();
     }
 
     /**
@@ -65,7 +71,7 @@ public class ScoreboardManager {
         String voyanteRoleName = lm.getRoleName("voyante", false, false);
         String sorciereRoleName = lm.getRoleName("sorciere", false, false);
         String chasseurRoleName = lm.getRoleName("chasseur", false, false);
-        String petiteFilleRoleName = lm.getRoleName("petite-fille, false, false");
+        String petiteFilleRoleName = lm.getRoleName("petite-fille", false, false);
         String capitaineRoleName = lm.getRoleName("capitaine", false, false);
 
         String scoreboardTitle = lm.getMessage("general.scoreboard-title");
@@ -80,10 +86,10 @@ public class ScoreboardManager {
 
         // Afficher le compteur de nuit/jour
         if (gm.isNight()) {
-            String nightText = lm.getMessage("scoreboard.night").replace("{count}", String.valueOf(gm.getNightCount()));
+            String nightText = lm.getMessage("scoreboard.nights").replace("{count}", String.valueOf(gm.getNightCount()));
             setScore(objective, nightText, line--);
         } else {
-            String dayText = lm.getMessage("scoreboard.day").replace("{count}", String.valueOf(gm.getDayCount()));
+            String dayText = lm.getMessage("scoreboard.days").replace("{count}", String.valueOf(gm.getDayCount()));
             setScore(objective, dayText, line--);
         }
 
@@ -96,8 +102,7 @@ public class ScoreboardManager {
         long lgAlive = loupGarous.stream().filter(playersAlive::contains).count();
 
         // Afficher les loups-garous avec leur nombre
-        setScore(objective, ChatColor.DARK_RED + "☾ " + ChatColor.RED + ChatColor.BOLD + lgRoleName +
-                 ChatColor.DARK_RED + " ☽", line--);
+        setScore(objective, ChatColor.RED + "" + ChatColor.BOLD + lgRoleName + ChatColor.DARK_RED + " ☽", line--);
         setScore(objective, ChatColor.WHITE + lm.getMessage("scoreboard.alive") + ": " + ChatColor.RED + lgAlive, line--);
 
         // Ligne vide
@@ -116,44 +121,64 @@ public class ScoreboardManager {
 
         // Voyante
         Player voyante = gm.getVoyante();
+        if (voyante == null && roleMemory.containsKey("voyante")) {
+            voyante = roleMemory.get("voyante");
+        }
         if (voyante != null) {
             boolean isAlive = playersAlive.contains(voyante);
             String status = isAlive ? ChatColor.GREEN + "✓" : ChatColor.RED + "✗";
-            setScore(objective, ChatColor.LIGHT_PURPLE + "  ◈ " + voyanteRoleName + ": " + status, line--);
+            setScore(objective, ChatColor.GREEN + "  ◈ " + voyanteRoleName + ": " + status, line--);
         }
 
         // Sorcière
         Player sorciere = gm.getSorciere();
+        if (sorciere == null && roleMemory.containsKey("sorciere")) {
+            sorciere = roleMemory.get("sorciere");
+        }
         if (sorciere != null) {
             boolean isAlive = playersAlive.contains(sorciere);
             String status = isAlive ? ChatColor.GREEN + "✓" : ChatColor.RED + "✗";
-            setScore(objective, ChatColor.DARK_PURPLE + "  ◈ " + sorciereRoleName+ ": " + status, line--);
+            setScore(objective, ChatColor.GREEN + "  ◈ " + sorciereRoleName + ": " + status, line--);
         }
 
         // Chasseur
         Player chasseur = gm.getChasseur();
+        if (chasseur == null && roleMemory.containsKey("chasseur")) {
+            chasseur = roleMemory.get("chasseur");
+        }
         if (chasseur != null) {
             boolean isAlive = playersAlive.contains(chasseur);
             String status = isAlive ? ChatColor.GREEN + "✓" : ChatColor.RED + "✗";
-            setScore(objective, ChatColor.GOLD + "  ◈ " + chasseurRoleName + ": " + status, line--);
+            setScore(objective, ChatColor.GREEN + "  ◈ " + chasseurRoleName + ": " + status, line--);
         }
 
         // Petite Fille
         Player petiteFille = gm.getPetiteFille();
+        if (petiteFille == null && roleMemory.containsKey("petiteFille")) {
+            petiteFille = roleMemory.get("petiteFille");
+        }
         if (petiteFille != null) {
             boolean isAlive = playersAlive.contains(petiteFille);
             String status = isAlive ? ChatColor.GREEN + "✓" : ChatColor.RED + "✗";
-            setScore(objective, ChatColor.YELLOW + "  ◈ " + petiteFilleRoleName + ": " + status, line--);
+            setScore(objective, ChatColor.GREEN + "  ◈ " + petiteFilleRoleName + ": " + status, line--);
         }
 
         // Capitaine
         Player capitaine = gm.getCapitaine();
+        if (capitaine == null && roleMemory.containsKey("capitaine")) {
+            capitaine = roleMemory.get("capitaine");
+        }
         if (capitaine != null) {
             boolean isAlive = playersAlive.contains(capitaine);
             if (isAlive) {
                 setScore(objective, "  ", line--);
                 setScore(objective, ChatColor.AQUA + "  ♔ " + capitaineRoleName + ": " +
                         ChatColor.WHITE + capitaine.getName(), line--);
+            } else {
+                // Show dead capitaine with strikethrough
+                setScore(objective, "  ", line--);
+                setScore(objective, ChatColor.AQUA + "  ♔ " + ChatColor.STRIKETHROUGH + capitaineRoleName + ": " +
+                        ChatColor.GRAY + ChatColor.STRIKETHROUGH + capitaine.getName() + ChatColor.RED + " ✗", line--);
             }
         }
 
@@ -197,10 +222,32 @@ public class ScoreboardManager {
      * Retire tous les scoreboards
      */
     public void clearScoreboards() {
-        for (Player player : playerScoreboards.keySet()) {
+        // Create a copy of the keySet to avoid ConcurrentModificationException
+        for (Player player : new java.util.ArrayList<>(playerScoreboards.keySet())) {
             removeScoreboard(player);
         }
         playerScoreboards.clear();
+        roleMemory.clear();
+        playerDeathStatus.clear();
+    }
+    
+    /**
+     * Register a player's role in memory so it can be displayed even after death
+     */
+    public void setRoleMemory(String role, Player player) {
+        if (player != null) {
+            roleMemory.put(role, player);
+            playerDeathStatus.put(player, false); // Initially alive
+        }
+    }
+    
+    /**
+     * Mark a player as dead in the scoreboard memory
+     */
+    public void markPlayerAsDead(Player player) {
+        if (player != null) {
+            playerDeathStatus.put(player, true);
+        }
     }
 }
 

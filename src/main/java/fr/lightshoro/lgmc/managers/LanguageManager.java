@@ -261,7 +261,7 @@ public class LanguageManager {
     // plurar default false
     public String getRoleName(String role, boolean plural, boolean colorFormat) {
         if (plural) {
-            String pluralName = getMessage("roles." + role + ".name-plural");
+            String pluralName = getMessage("roles." + role + ".plural");
             String colorLessName = ChatColor.stripColor(pluralName);
             if (colorFormat == false) {
                 return colorLessName;

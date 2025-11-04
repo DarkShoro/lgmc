@@ -6,18 +6,22 @@
 # General messages
 general:
   prefix: "&9[LG]&r "
+  scoreboard-title: "Werewolf"
   game-starting: "&eGame starting in &c&l{time}&e second(s)"
   game-started: "&eLet's go!"
   game-reset: "&eThe game has been reset by an administrator."
   game-in-progress: "&eA game is already in progress. You can observe but cannot participate in this game."
   not-enough-players: "&9Not enough players to start. Minimum: 4 players."
-  too-many-players: "&cToo many players connected! Maximum: 12 players."
+  too-many-players: "&cToo many players connected! Maximum: {max} players."
   player-joined: "&a{player} joined the game"
   player-left: "&c{player} left the game"
   village: "&a&lVillage"
   lovers: "&dLovers"
   timer-advanced-capitaine: "&9Timer advanced as everyone voted for the {roles.capitaine.name}&9."
   timer-advanced-vote: "&9Timer advanced as everyone voted."
+  player-disconnect: "&c{player} disconnected during the game!"
+  new-capitaine-random: "&9A new {roles.capitaine.name} &9has been randomly chosen: &6&l{player}&9."
+  you-are-dead: "&c&lYou are dead"
 
 # Game phases
 phases:
@@ -26,22 +30,30 @@ phases:
   night-falls: "&9The {roles.villageois.name}&9 fall asleep peacefully."
   day-breaks: "&9The {roles.villageois.name}&9 wake up."
 
+scoreboard:
+  players: "players"
+  alive: "Alive"
+  total: "Total"
+  nights: "Nights: {count}"
+  days: "Days: {count}"
+
 # Roles
 roles:
   loup-garou:
     name: "&c&lWerewolf"
     title: "&6You are a {roles.loup-garou.name}"
     subtitle: "&6You win with the {roles.loup-garou.name}&c&les"
+    plural: "&c&lWerewolves"
   villageois:
     name: "&a&lVillager"
     title: "&6You are a {roles.villageois.name}"
     subtitle: "&6You win with the {general.village}"
   petite-fille:
-    name: "&a&lLittle Girl"
+    name: "&a&lInsomniac"
     title: "&6You are the {roles.petite-fille.name}"
     subtitle: "&6You win with the {general.village}"
   voyante:
-    name: "&a&lSeer"
+    name: "&a&lPsychic"
     title: "&6You are the {roles.voyante.name}"
     subtitle: "&6You win with the {general.village}"
   sorciere:
@@ -54,10 +66,23 @@ roles:
     subtitle: "&6You win with the {general.village}"
   chasseur:
     name: "&a&lHunter"
-    title: "&6You are the {roles.chasseur.name}"
+    title: "&6You are {roles.chasseur.name}"
     subtitle: "&6You win with the {general.village}"
+  ange:
+    name: "&b&lAngel"
+    title: "&6You are {roles.ange.name}"
+    subtitle: "&6You must be eliminated in the first vote"
+    becomes-villager: "&9You were not eliminated in the first vote, you become {roles.villageois.name}&9."
+  voleur:
+    name: "&e&lThief"
+    title: "&6You are {roles.voleur.name}"
+    subtitle: "&6You can steal someone's role"
+    stole-role: "&9You stole the role of &7&l{player}&9 and became {role}&9!"
+    victim-message: "&9Your role has been stolen by {roles.voleur.name}&9! You are now {roles.villageois.name}&9."
   capitaine:
     name: "&6&lCaptain"
+  spectator:
+    name: "Spectator"
 
 # Role actions
 actions:
@@ -69,6 +94,12 @@ actions:
     same-player: "&cYou cannot choose the same person twice!"
     no-couple: "&9You didn't create a couple."
     in-love: "&d❤ You fell in love with &l{player}&d! ❤"
+
+  voleur:
+    announce: "&9{roles.voleur.name} &9will choose a role to steal..."
+    timer: "&e{roles.voleur.name} &echooses a victim"
+    no-steal: "&9You didn't steal anyone's role."
+    stole: "&9You stole the role of &7&l{player}&9!"
 
   voyante:
     announce: "&9The {roles.voyante.name} &9will investigate a player."
@@ -136,6 +167,7 @@ succession:
   testament-chosen: "&9In their will, &6&l{dying}&9 named &6&l{new}&9 as successor to {roles.capitaine.name}&9."
   dying-message: "&9The village targets you, you are about to die."
   instruction: "&7Please name your successor with the command (/testament <player>)"
+  book-received: "&9You received your &6&lTestament&9. Right-click with it to choose your successor."
   timer: "&aThe {roles.capitaine.name} &awill name their successor"
 
 # Death messages
@@ -146,6 +178,7 @@ death:
   witch: "{player} &9was poisoned by the {roles.sorciere.name}&9, they were {role}"
   hunter: "{player} &9took the {roles.chasseur.name}&9's last bullet, they were {role}"
   vote: "&9The {general.village} &9decided to eliminate {player}, &9they were {role}"
+  disconnect: "{player} &9disconnected during the game, they were {role}"
   no-deaths: "&9No players are waiting to die."
 
 # Victories
@@ -188,6 +221,14 @@ victory:
     broadcast-no-winner: "&8No one won!"
     broadcast-footer: "&6═══════════════════════════════════"
 
+  ange:
+    title: "&b&lVictory!"
+    subtitle: "&eThe {roles.ange.name}&e won!"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&b&l{roles.ange.name} Victory &b&l!"
+    broadcast-message: "&9{player}&9 was eliminated in the first vote and wins as the {roles.ange.name}&9!"
+    broadcast-footer: "&6═══════════════════════════════════"
+
   defeat:
     title: "&c&lDefeat!"
 
@@ -195,28 +236,45 @@ victory:
 gui:
   vote: "&4&lChoose a culprit to eliminate"
   vote-capitaine: "&d&lVote for the new {roles.capitaine.name}"
+  testament: "&d&lChoose your successor"
   loup-garou: "&4&lChoose a victim"
   voyante: "&d&lChoose a player to investigate"
   sorciere: "&eChoose an action to perform"
   sorciere-poison: "&4&lChoose a target"
   cupidon-first: "&dChoose the first lover"
   cupidon-second: "&dChoose the second lover"
+  voleur: "&eChoose a player to steal their role"
 
   items:
+    werewolf-attack: "&4&lDesignate victim"
     vote-paper: "&a&lVote for the new {roles.capitaine.name}"
     vote-day: "&a&lVote"
+    testament: "&6&lTestament"
     skip: "&c&lDo nothing"
     skip-gray: "&7&lDo nothing"
+    feather-skip: "&7&lSkip your turn"
+    crystal: "&b&lCrystal ball"
     life-potion: "&a&lLife Potion"
     life-potion-lore: "&9Save {player}'s life."
     death-potion: "&c&lDeath Potion"
     death-potion-lore: "&9Poison someone."
     first-lover: "&d❤ First lover"
+    steal-role: "&e&lSteal role"
+  
+  click-mode:
+    vote-player: "&aYou voted for &l{player}&a."
+    target-player: "&cYou targeted &l{player}&c."
+    hold-item: "&cYou must hold the appropriate item to vote!"
+    left-click-hint: "&9Left-click a player to target them."
 
 # Commands
 commands:
   no-permission: "&cYou don't have permission to use this command."
   player-only: "&cThis command must be executed by a player."
+  blocked-during-game: "&cThis command is disabled during a game to prevent cheating."
+
+  lg:
+    unknown-subcommand: "&cUnknown subcommand: {subcommand}. Use /lg help for more information."
 
   lgstart:
     usage: "&cUsage: /lgstart"
@@ -266,6 +324,39 @@ commands:
     header: "&9=== Good Guys Alive ==="
     player: "&a- {player}"
 
+  love:
+    usage: "&cUsage: /love <message>"
+    not-lover: "&cYou are not a lover or your love is unrequited."
+  opengui:
+    usage: "&cUsage: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon|voleur>"
+  linkDiscord:
+    usage: "&cUsage: /linkDiscord <uuid>"
+    uuid-invalid: "&c❌ The provided UUID is invalid!"
+    linked: "&a✔ Your Minecraft account has been linked to Discord!"
+    websocket-error: "&c❌ Unable to connect to the Discord bot!"
+    websocket-disabled: "&c❌ Unable to link accounts as WebSocket actions are disabled in the configuration."
+  wsaction:
+    invalid-action: "&cInvalid action. Valid options: gamestart, gameover, player_died <player>, muteall, demuteall."
+    websocket-error: "&c❌ Communication error with the Discord bot. Please try again later."
+    websocket-disabled: "&c❌ WebSocket actions are disabled in the configuration."
+    gamestart:
+      sent: "&a✔ 'gamestart' action sent to Discord bot."
+    gameover:
+      sent: "&a✔ 'gameover' action sent to Discord bot."
+    player_died:
+      usage: "&cUsage: /wsaction player_died <player>"
+      sent: "&a✔ 'player_dead' action for player '{player}' sent to Discord bot."
+    muteall:
+      sent: "&a✔ 'muteall' action sent to Discord bot."
+    demuteall:
+      sent: "&a✔ 'demuteall' action sent to Discord bot."
+    usage: "&cUsage: /wsaction <gamestart|gameover|player_died <player>|muteall|demuteall>"
+
+
+# Chat
+chat:
+  cannot-chat: "&cYou cannot speak at night!"
+
 # Errors
 errors:
   game-not-started: "&cNo game is currently running."
@@ -273,3 +364,11 @@ errors:
   not-in-game: "&cYou are not in the game."
   cannot-vote-now: "&cYou cannot vote now."
   config-error: "&c❌ Error reloading configuration!"
+  ressource-pack-needed: "&c❌ Resource pack is required to play!"
+  ressource-pack-failed: "&c❌ Failed to download resource pack!"
+
+motd:
+  waiting: "&e{players}&9/&e{max} &9players &9| Waiting for players..."
+  in-progress: "&cGame in progress &9| You can spectate!"
+  starting: "Starting soon! &9| Join quickly!"
+  full: "&cServer full &9| Try again later!"

@@ -80,7 +80,7 @@ public class SorciereGUI {
         }
 
         // Ne rien faire
-        ItemStack barrier = new ItemStack(Material.BARRIER);
+        ItemStack barrier = new ItemStack(Material.FEATHER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
             barrierMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.skip-gray"));
@@ -112,7 +112,33 @@ public class SorciereGUI {
                 gm.setSorciereAction(true);
                 openSecond = true;
                 sorciere.closeInventory();
-                openPoisonGUI(sorciere);
+                
+                // En mode clic, donner une gunpowder au lieu d'ouvrir le GUI
+                if (plugin.getConfigManager().isClickVoteMode()) {
+                    //sorciere.sendMessage(plugin.getLanguageManager().getMessage("gui.click-mode.left-click-hint"));
+                    
+                    // Donner la poudre à canon
+                    ItemStack gunpowder = new ItemStack(Material.GUNPOWDER);
+                    org.bukkit.inventory.meta.ItemMeta gunMeta = gunpowder.getItemMeta();
+                    if (gunMeta != null) {
+                        gunMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.death-potion"));
+                        gunpowder.setItemMeta(gunMeta);
+                    }
+                    sorciere.getInventory().setItem(4, gunpowder);
+                    
+                    // Donner aussi la plume de skip
+                    ItemStack feather = new ItemStack(Material.FEATHER);
+                    org.bukkit.inventory.meta.ItemMeta featherMeta = feather.getItemMeta();
+                    if (featherMeta != null) {
+                        featherMeta.setDisplayName(plugin.getLanguageManager().getMessage("gui.items.feather-skip"));
+                        feather.setItemMeta(featherMeta);
+                    }
+                    sorciere.getInventory().setItem(8, feather);
+                    
+                    openSecond = true; // Ne pas trigger l'avancement du timer à la fermeture
+                } else {
+                    openPoisonGUI(sorciere);
+                }
             });
 
             pane3.addItem(mortItem, 0, 0);

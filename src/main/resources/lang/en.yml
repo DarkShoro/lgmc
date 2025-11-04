@@ -12,7 +12,7 @@ general:
   game-reset: "&eThe game has been reset by an administrator."
   game-in-progress: "&eA game is already in progress. You can observe but cannot participate in this game."
   not-enough-players: "&9Not enough players to start. Minimum: 4 players."
-  too-many-players: "&cToo many players connected! Maximum: 12 players."
+  too-many-players: "&cToo many players connected! Maximum: {max} players."
   player-joined: "&a{player} joined the game"
   player-left: "&c{player} left the game"
   village: "&a&lVillage"
@@ -49,11 +49,11 @@ roles:
     title: "&6You are a {roles.villageois.name}"
     subtitle: "&6You win with the {general.village}"
   petite-fille:
-    name: "&a&lLittle Girl"
+    name: "&a&lInsomniac"
     title: "&6You are the {roles.petite-fille.name}"
     subtitle: "&6You win with the {general.village}"
   voyante:
-    name: "&a&lSeer"
+    name: "&a&lPsychic"
     title: "&6You are the {roles.voyante.name}"
     subtitle: "&6You win with the {general.village}"
   sorciere:
@@ -66,8 +66,19 @@ roles:
     subtitle: "&6You win with the {general.village}"
   chasseur:
     name: "&a&lHunter"
-    title: "&6You are the {roles.chasseur.name}"
+    title: "&6You are {roles.chasseur.name}"
     subtitle: "&6You win with the {general.village}"
+  ange:
+    name: "&b&lAngel"
+    title: "&6You are {roles.ange.name}"
+    subtitle: "&6You must be eliminated in the first vote"
+    becomes-villager: "&9You were not eliminated in the first vote, you become {roles.villageois.name}&9."
+  voleur:
+    name: "&e&lThief"
+    title: "&6You are {roles.voleur.name}"
+    subtitle: "&6You can steal someone's role"
+    stole-role: "&9You stole the role of &7&l{player}&9 and became {role}&9!"
+    victim-message: "&9Your role has been stolen by {roles.voleur.name}&9! You are now {roles.villageois.name}&9."
   capitaine:
     name: "&6&lCaptain"
   spectator:
@@ -83,6 +94,12 @@ actions:
     same-player: "&cYou cannot choose the same person twice!"
     no-couple: "&9You didn't create a couple."
     in-love: "&d❤ You fell in love with &l{player}&d! ❤"
+
+  voleur:
+    announce: "&9{roles.voleur.name} &9will choose a role to steal..."
+    timer: "&e{roles.voleur.name} &echooses a victim"
+    no-steal: "&9You didn't steal anyone's role."
+    stole: "&9You stole the role of &7&l{player}&9!"
 
   voyante:
     announce: "&9The {roles.voyante.name} &9will investigate a player."
@@ -204,6 +221,14 @@ victory:
     broadcast-no-winner: "&8No one won!"
     broadcast-footer: "&6═══════════════════════════════════"
 
+  ange:
+    title: "&b&lVictory!"
+    subtitle: "&eThe {roles.ange.name}&e won!"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&b&l{roles.ange.name} Victory &b&l!"
+    broadcast-message: "&9{player}&9 was eliminated in the first vote and wins as the {roles.ange.name}&9!"
+    broadcast-footer: "&6═══════════════════════════════════"
+
   defeat:
     title: "&c&lDefeat!"
 
@@ -218,6 +243,7 @@ gui:
   sorciere-poison: "&4&lChoose a target"
   cupidon-first: "&dChoose the first lover"
   cupidon-second: "&dChoose the second lover"
+  voleur: "&eChoose a player to steal their role"
 
   items:
     werewolf-attack: "&4&lDesignate victim"
@@ -226,11 +252,20 @@ gui:
     testament: "&6&lTestament"
     skip: "&c&lDo nothing"
     skip-gray: "&7&lDo nothing"
+    feather-skip: "&7&lSkip your turn"
+    crystal: "&b&lCrystal ball"
     life-potion: "&a&lLife Potion"
     life-potion-lore: "&9Save {player}'s life."
     death-potion: "&c&lDeath Potion"
     death-potion-lore: "&9Poison someone."
     first-lover: "&d❤ First lover"
+    steal-role: "&e&lSteal role"
+  
+  click-mode:
+    vote-player: "&aYou voted for &l{player}&a."
+    target-player: "&cYou targeted &l{player}&c."
+    hold-item: "&cYou must hold the appropriate item to vote!"
+    left-click-hint: "&9Left-click a player to target them."
 
 # Commands
 commands:
@@ -293,7 +328,7 @@ commands:
     usage: "&cUsage: /love <message>"
     not-lover: "&cYou are not a lover or your love is unrequited."
   opengui:
-    usage: "&cUsage: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"
+    usage: "&cUsage: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon|voleur>"
   linkDiscord:
     usage: "&cUsage: /linkDiscord <uuid>"
     uuid-invalid: "&c❌ The provided UUID is invalid!"
@@ -333,7 +368,7 @@ errors:
   ressource-pack-failed: "&c❌ Failed to download resource pack!"
 
 motd:
-  waiting: "&e{players}&9/&e12 &9players &9| Waiting for players..."
+  waiting: "&e{players}&9/&e{max} &9players &9| Waiting for players..."
   in-progress: "&cGame in progress &9| You can spectate!"
   starting: "Starting soon! &9| Join quickly!"
   full: "&cServer full &9| Try again later!"

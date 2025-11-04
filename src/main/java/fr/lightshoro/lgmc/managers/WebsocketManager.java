@@ -14,8 +14,8 @@ import com.google.gson.JsonParser;
 public class WebsocketManager {
 
     private WebSocketClient socket;
-    private final String uri;
-    private final String secret;
+    private String uri;
+    private String secret;
     private final Lgmc plugin;
     private final Logger logger;
 
@@ -37,6 +37,15 @@ public class WebsocketManager {
     }
 
     private void connect() {
+        // If disabled, don't connect
+        if (isDisabled()) {
+            return;
+        }
+        
+        // Get current config values (in case they changed)
+        this.uri = plugin.getConfigManager().getWebsocketUrl();
+        this.secret = plugin.getConfigManager().getWebsocketSecret();
+        
         try {
             socket = new WebSocketClient(new URI(uri)) {
                 @Override
@@ -176,5 +185,27 @@ public class WebsocketManager {
 
     public boolean isDisabled() {
         return !plugin.getConfigManager().isWebsocketEnabled();
+    }
+
+    /**
+     * Reconnects to the WebSocket server with new configuration
+     * Closes existing connection if any and establishes a new one
+     */
+    public void reconnect() {
+        logger.info("Reconnecting to WebSocket...");
+        
+        // Close existing connection if any
+        if (socket != null && !socket.isClosed()) {
+            logger.info("Closing existing WebSocket connection...");
+            socket.close();
+        }
+        
+        // Only reconnect if enabled in config
+        if (!isDisabled()) {
+            logger.info("Establishing new WebSocket connection...");
+            connect();
+        } else {
+            logger.info("WebSocket is disabled in config, skipping reconnection.");
+        }
     }
 }

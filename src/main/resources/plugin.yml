@@ -1,9 +1,11 @@
 name: lgmc
-version: '4.1.0'
+version: '5.0.0'
 main: fr.lightshoro.lgmc.Lgmc
 api-version: '1.21'
-description: Plugin de jeu Loup-Garou pour Minecraft (4-12 joueurs)
+description: Plugin de jeu Loup-Garou pour Minecraft (4+ joueurs, basé sur le nombre de spawns)
 author: LightShoro
+depend: [ProtocolLib]
+softdepend: [ "SkinsRestorer" ]
 
 commands:
   lg:

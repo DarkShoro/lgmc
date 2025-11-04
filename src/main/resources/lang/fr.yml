@@ -12,7 +12,7 @@ general:
   game-reset: "&eLe jeu a été réinitialisé par un administrateur."
   game-in-progress: "&eUne partie est déjà en cours. Vous pouvez observer mais vous ne pouvez pas participer à cette partie."
   not-enough-players: "&9Pas assez de joueurs pour démarrer. Minimum : 4 joueurs."
-  too-many-players: "&cTrop de joueurs connectés ! Maximum : 12 joueurs."
+  too-many-players: "&cTrop de joueurs connectés ! Maximum : {max} joueurs."
   player-joined: "&a{player} a rejoint la partie"
   player-left: "&c{player} a quitté la partie"
   village: "&a&lVillage"
@@ -69,6 +69,17 @@ roles:
     name: "&a&lChasseur"
     title: "&6Tu es {roles.chasseur.name}"
     subtitle: "&6Tu gagnes avec le {general.village}"
+  ange:
+    name: "&b&lAnge"
+    title: "&6Tu es {roles.ange.name}"
+    subtitle: "&6Tu dois te faire éliminer au premier vote"
+    becomes-villager: "&9Tu n'as pas été éliminé au premier vote, tu deviens {roles.villageois.name}&9."
+  voleur:
+    name: "&e&lVoleur"
+    title: "&6Tu es {roles.voleur.name}"
+    subtitle: "&6Tu peux voler le rôle de quelqu'un"
+    stole-role: "&9Tu as volé le rôle de &7&l{player}&9 et tu es devenu {role}&9 !"
+    victim-message: "&9Ton rôle a été volé par {roles.voleur.name}&9 ! Tu es maintenant {roles.villageois.name}&9."
   capitaine:
     name: "&6&lCapitaine"
   spectator:
@@ -84,6 +95,12 @@ actions:
     same-player: "&cVous ne pouvez pas choisir la même personne deux fois !"
     no-couple: "&9Vous n'avez créé aucun couple."
     in-love: "&d❤ Vous êtes tombé amoureux de &l{player}&d ! ❤"
+
+  voleur:
+    announce: "&9{roles.voleur.name} &9va choisir un rôle à voler..."
+    timer: "&e{roles.voleur.name} &echoisit une victime"
+    no-steal: "&9Vous n'avez volé le rôle de personne."
+    stole: "&9Vous avez volé le rôle de &7&l{player}&9 !"
 
   voyante:
     announce: "&9La {roles.voyante.name} &9va sonder un joueur."
@@ -205,6 +222,14 @@ victory:
     broadcast-no-winner: "&8Personne n'a gagné !"
     broadcast-footer: "&6═══════════════════════════════════"
 
+  ange:
+    title: "&b&lVictoire !"
+    subtitle: "&eL'{roles.ange.name}&e a gagné !"
+    broadcast-header: "&6═══════════════════════════════════"
+    broadcast-title: "&b&lVictoire de l'{roles.ange.name} &b&l!"
+    broadcast-message: "&9{player}&9 a été éliminé au premier vote et remporte la partie en tant qu'{roles.ange.name}&9 !"
+    broadcast-footer: "&6═══════════════════════════════════"
+
   defeat:
     title: "&c&lDéfaite !"
 
@@ -219,6 +244,7 @@ gui:
   sorciere-poison: "&4&lChoisir une cible"
   cupidon-first: "&dChoisir le premier amoureux"
   cupidon-second: "&dChoisir le second amoureux"
+  voleur: "&eChoisir un joueur pour lui voler son rôle"
 
   items:
     werewolf-attack: "&4&lDésigner une victime"
@@ -227,11 +253,20 @@ gui:
     testament: "&6&lTestament"
     skip: "&c&lNe rien faire"
     skip-gray: "&7&lNe rien faire"
+    feather-skip: "&7&lPasser votre tour"
+    crystal: "&b&lBoule de cristal"
     life-potion: "&a&lPotion de vie"
     life-potion-lore: "&9Sauver la vie de {player}."
     death-potion: "&c&lPotion de mort"
     death-potion-lore: "&9Empoisonner quelqu'un."
     first-lover: "&d❤ Premier amoureux"
+    steal-role: "&e&lVoler un rôle"
+  
+  click-mode:
+    vote-player: "&aVous avez voté pour &l{player}&a."
+    target-player: "&cVous avez ciblé &l{player}&c."
+    hold-item: "&cVous devez tenir l'objet approprié pour voter!"
+    left-click-hint: "&9Cliquez gauche sur un joueur pour le cibler."
 
 # Commandes
 commands:
@@ -295,7 +330,7 @@ commands:
     not-lover: "&cVous n'êtes pas amoureux ou votre amour n'est pas partagé."
 
   opengui:
-    usage: "&cUtilisation: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon>"
+    usage: "&cUtilisation: /lgopengui <sorciere|voyante|loupgarou|vote|capitaine|sorcierePoison|cupidon|voleur>"
   linkDiscord:
     usage: "&cUtilisation: /linkDiscord <uuid>"
     uuid-invalid: "&c❌ L'UUID fourni est invalide."
@@ -336,7 +371,7 @@ errors:
   ressource-pack-failed: "&c❌ Échec du téléchargement du pack de ressources"
 
 motd:
-  waiting: "&e{players}&9/&e12 &9joueurs | En attente de démarrage..."
+  waiting: "&e{players}&9/&e{max} &9joueurs | En attente de démarrage..."
   in-progress: "&cPartie en cours &9| Vous pouvez observer!"
   starting: "&aDémarrage imminent &9| Rejoignez vite!"
   full: "&cServeur plein | Réessayez plus tard!"
