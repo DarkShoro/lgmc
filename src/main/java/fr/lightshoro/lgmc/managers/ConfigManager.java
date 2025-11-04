@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ConfigManager {
     private final Lgmc plugin;
     private FileConfiguration config;
-    private final int CURRENT_CONFIG_VERSION = 7;
+    private final int CURRENT_CONFIG_VERSION = 8;
 
     public ConfigManager(Lgmc plugin) {
         this.plugin = plugin;
