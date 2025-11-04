@@ -4,10 +4,17 @@
 # ============================================
 
 # Ne modifiez pas cette valeur - elle permet la mise à jour automatique de la config
-config-version: 7
+config-version: 8
 
 # Langue du plugin (fr, en)
 language: en
+
+# Vérificateur de mises à jour
+update-checker:
+  # Activer la vérification des mises à jour
+  enabled: true
+  # Inclure les pre-releases dans les vérifications
+  include-prereleases: false
 
 # Emplacements pour le jeu
 locations:

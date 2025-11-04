@@ -1,24 +1,39 @@
 package fr.lightshoro.lgmc;
 
-import fr.lightshoro.lgmc.commands.*;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Objects;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.CachedServerIcon;
+
+import fr.lightshoro.lgmc.commands.DiscordLinkCommand;
+import fr.lightshoro.lgmc.commands.GoodGuysCommand;
+import fr.lightshoro.lgmc.commands.LGCommand;
+import fr.lightshoro.lgmc.commands.LoveCommand;
+import fr.lightshoro.lgmc.commands.WSActionCommand;
+import fr.lightshoro.lgmc.listeners.ChatListener;
+import fr.lightshoro.lgmc.listeners.ClickVoteListener;
 import fr.lightshoro.lgmc.listeners.GameListener;
 import fr.lightshoro.lgmc.listeners.VoteListener;
-import fr.lightshoro.lgmc.listeners.ClickVoteListener;
-import fr.lightshoro.lgmc.listeners.ChatListener;
-import fr.lightshoro.lgmc.managers.*;
+import fr.lightshoro.lgmc.managers.ChatManager;
+import fr.lightshoro.lgmc.managers.ConfigManager;
+import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.managers.LanguageManager;
+import fr.lightshoro.lgmc.managers.LocationManager;
+import fr.lightshoro.lgmc.managers.MotdManager;
+import fr.lightshoro.lgmc.managers.ResourcePackManager;
+import fr.lightshoro.lgmc.managers.ScoreboardManager;
+import fr.lightshoro.lgmc.managers.SkinManager;
+import fr.lightshoro.lgmc.managers.TimerManager;
+import fr.lightshoro.lgmc.managers.UpdateChecker;
+import fr.lightshoro.lgmc.managers.VoteDisplayManager;
+import fr.lightshoro.lgmc.managers.WebsocketManager;
 import fr.lightshoro.lgmc.tasks.DeadPlayerActionBarTask;
 import fr.lightshoro.lgmc.tasks.ScoreboardUpdateTask;
 import fr.lightshoro.lgmc.tasks.VisibilityTask;
 import fr.lightshoro.lgmc.tasks.VoteCheckTask;
-import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.server.ServerListPingEvent;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.CachedServerIcon;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Objects;
 
 /**
  * Lgmc - Loup-Garou Minecraft Plugin
@@ -30,6 +45,7 @@ import java.util.Objects;
  * - Capitaine et succession
  * - Conditions de victoire
  */
+@SuppressWarnings("deprecation")
 public final class Lgmc extends JavaPlugin {
 
     private ConfigManager configManager;
@@ -44,6 +60,7 @@ public final class Lgmc extends JavaPlugin {
     private ScoreboardManager scoreboardManager;
     private VoteDisplayManager voteDisplayManager;
     private SkinManager skinManager;
+    private UpdateChecker updateChecker;
     public CachedServerIcon serverIcon;
 
     private static final String ASCII_ART =
@@ -76,6 +93,7 @@ public final class Lgmc extends JavaPlugin {
         this.scoreboardManager = new ScoreboardManager(this);
         this.voteDisplayManager = new VoteDisplayManager(this);
         this.skinManager = new SkinManager(this);
+        this.updateChecker = new UpdateChecker(this);
 
         // Enregistrement des listeners
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
@@ -134,9 +152,13 @@ public final class Lgmc extends JavaPlugin {
 
         getLogger().info("╔════════════════════════════════════════╗");
         getLogger().info("║   Lgmc Plugin - Loup-Garou Minecraft   ║");
-        getLogger().info("║          Plugin activé avec succès     ║");
-        getLogger().info("║   Langue: " + languageManager.getCurrentLanguage().toUpperCase() + " | Config v" + configManager.getConfig().getInt("config-version") + "               ║");
+        getLogger().info("║       Plugin activé avec succès        ║");
+        getLogger().info("║        Langue: " + languageManager.getCurrentLanguage().toUpperCase() + " | Config v" + configManager.getConfig().getInt("config-version") + "          ║");
+        getLogger().info("║       Version du plugin: " + this.getDescription().getVersion() + "         ║");
         getLogger().info("╚════════════════════════════════════════╝");
+
+        // Check for updates (will print results automatically)
+        updateChecker.checkForUpdates();
 
         // Initialize WebsocketManager before registering commands
         if (this.getConfigManager().isWebsocketEnabled()) {
@@ -278,5 +300,13 @@ public final class Lgmc extends JavaPlugin {
      */
     public SkinManager getSkinManager() {
         return skinManager;
+    }
+
+    /**
+     * Récupère le vérificateur de mises à jour
+     * @return UpdateChecker instance
+     */
+    public UpdateChecker getUpdateChecker() {
+        return updateChecker;
     }
 }

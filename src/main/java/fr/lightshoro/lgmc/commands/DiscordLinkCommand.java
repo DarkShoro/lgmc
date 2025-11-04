@@ -1,12 +1,12 @@
 package fr.lightshoro.lgmc.commands;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.managers.WebsocketManager;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.managers.WebsocketManager;
 
 public class DiscordLinkCommand implements CommandExecutor {
 

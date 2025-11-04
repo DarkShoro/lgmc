@@ -1,21 +1,23 @@
 package fr.lightshoro.lgmc.listeners;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.managers.GameManager;
-import fr.lightshoro.lgmc.models.GamePlayer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
 
 /**
  * Listener pour le système de vote par clic gauche
  * Alternative au système GUI traditionnel
  */
+@SuppressWarnings("deprecation")
 public class ClickVoteListener implements Listener {
     private final Lgmc plugin;
 
@@ -142,6 +144,7 @@ public class ClickVoteListener implements Listener {
      */
     private void handlePlayerClick(Player damager, Player target, ItemStack itemInHand, String gameStep) {
         GameManager gm = plugin.getGameManager();
+        @SuppressWarnings("unused")
         GamePlayer gp = gm.getGamePlayer(damager);
 
         // TESTAMENT DU CAPITAINE (avec livre)
@@ -441,6 +444,7 @@ public class ClickVoteListener implements Listener {
     /**
      * Vérifie si tous les joueurs vivants ont voté pour le capitaine
      */
+    @SuppressWarnings("unused")
     private boolean checkAllVotedCapitaine() {
         GameManager gm = plugin.getGameManager();
         for (Player player : gm.getPlayersAlive()) {
@@ -455,6 +459,7 @@ public class ClickVoteListener implements Listener {
     /**
      * Vérifie si tous les joueurs vivants ont voté pour le vote du jour
      */
+    @SuppressWarnings("unused")
     private boolean checkAllVotedDay() {
         GameManager gm = plugin.getGameManager();
         for (Player player : gm.getPlayersAlive()) {

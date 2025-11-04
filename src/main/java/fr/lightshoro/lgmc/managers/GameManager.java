@@ -1,10 +1,18 @@
 package fr.lightshoro.lgmc.managers;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.gui.TestamentGUI;
-import fr.lightshoro.lgmc.models.GamePlayer;
-import fr.lightshoro.lgmc.models.Role;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Player;
@@ -13,9 +21,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.models.GamePlayer;
+import fr.lightshoro.lgmc.models.Role;
 
+@SuppressWarnings("deprecation")
 public class GameManager {
     private final Lgmc plugin;
     private final RoleFinishers finishers;
@@ -60,6 +70,7 @@ public class GameManager {
     private boolean capitaineSuccession;
     private boolean successorChosen;
     private boolean voteInProg;
+    @SuppressWarnings("unused")
     private boolean voteWasMade;
     private boolean chasseurDidLastKill;
     private boolean cupidonAction;
@@ -72,11 +83,14 @@ public class GameManager {
     private final Map<Player, Integer> designatedPlayers;
     private int designationCount;
     private int goodGuysCount;
+    @SuppressWarnings("unused")
     private int badGuysCount;
 
     private Player mostVoted;
+    @SuppressWarnings("unused")
     private int mostVotedNum;
     private Player doubleMostVoted;
+    @SuppressWarnings("unused")
     private int doubleMostVotedNum;
     private boolean isStarting;
 

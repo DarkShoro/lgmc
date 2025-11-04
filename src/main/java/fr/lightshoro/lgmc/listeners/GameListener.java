@@ -1,8 +1,5 @@
 package fr.lightshoro.lgmc.listeners;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.models.GamePlayer;
-import fr.lightshoro.lgmc.models.Role;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +15,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.models.GamePlayer;
+import fr.lightshoro.lgmc.models.Role;
 
+@SuppressWarnings("deprecation")
 public class GameListener implements Listener {
     private final Lgmc plugin;
 
@@ -39,6 +40,13 @@ public class GameListener implements Listener {
 
         // Initialiser le skin du joueur dans SkinsRestorer si nécessaire
         plugin.getSkinManager().initializePlayerSkin(player);
+
+        // Notify admins about updates
+        if (player.hasPermission("lgmc.admin") || player.isOp()) {
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                plugin.getUpdateChecker().notifyPlayer(player);
+            }, 40L); // 2 seconds delay
+        }
 
         // Si une partie est en cours et que le joueur n'a pas de GamePlayer, le créer avec le rôle NOT_IN_GAME
         if (plugin.getGameManager().isInGame()) {

@@ -1,18 +1,19 @@
 package fr.lightshoro.lgmc.managers;
 
-import fr.lightshoro.lgmc.Lgmc;
-import net.kyori.adventure.text.Component;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import fr.lightshoro.lgmc.Lgmc;
+import net.kyori.adventure.text.Component;
 
 /**
  * Gestionnaire centralisé pour les packs de ressources
@@ -185,10 +186,20 @@ public class ResourcePackManager implements Listener {
             case ACCEPTED:
                 plugin.getLogger().info("Le joueur " + player.getName() + " a accepté le pack de ressources");
                 break;
+            case DISCARDED:
             case DECLINED:
+            case FAILED_RELOAD:
                 plugin.getLogger().info("Le joueur " + player.getName() + " a décliné le pack de ressources - Expulsion en cours...");
                 kickPlayer(player, plugin.getLanguageManager().getMessage("errors.ressource-pack-needed"));
                 break;
+            case DOWNLOADED:
+                plugin.getLogger().info("Le pack de ressources a été téléchargé pour le joueur " + player.getName());
+                break;
+            case INVALID_URL:
+                plugin.getLogger().warning("URL du pack de ressources invalide pour le joueur " + player.getName());
+                kickPlayer(player, plugin.getLanguageManager().getMessage("errors.ressource-pack-failed"));
+                break;
+            
         }
     }
 

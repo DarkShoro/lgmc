@@ -1,16 +1,18 @@
 package fr.lightshoro.lgmc.tasks;
 
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.managers.GameManager;
 import fr.lightshoro.lgmc.models.GamePlayer;
 import fr.lightshoro.lgmc.models.Role;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Tâche périodique pour afficher un message dans l'action bar des joueurs morts
  * Le message reste affiché jusqu'à la fin de la partie
  */
+@SuppressWarnings("deprecation")
 public class DeadPlayerActionBarTask extends BukkitRunnable {
     private final Lgmc plugin;
 

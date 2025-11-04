@@ -1,21 +1,27 @@
 package fr.lightshoro.lgmc.managers;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.models.GamePlayer;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.models.GamePlayer;
 
 /**
  * Classe contenant tous les "finishers" - méthodes qui finalisent les actions des rôles
  */
+@SuppressWarnings("deprecation")
 public class RoleFinishers {
     private final Lgmc plugin;
     private final GameManager gm;

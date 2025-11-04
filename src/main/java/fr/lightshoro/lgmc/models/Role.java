@@ -37,6 +37,7 @@ public enum Role {
         return team;
     }
 
+    @SuppressWarnings("deprecation")
     public String getFormattedName() {
         return ChatColor.translateAlternateColorCodes('&', colorCode + name);
     }

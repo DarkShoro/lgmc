@@ -1,11 +1,13 @@
 package fr.lightshoro.lgmc.listeners;
 
-import fr.lightshoro.lgmc.Lgmc;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import fr.lightshoro.lgmc.Lgmc;
+
+@SuppressWarnings("deprecation")
 public class ChatListener implements Listener {
     private final Lgmc plugin;
 

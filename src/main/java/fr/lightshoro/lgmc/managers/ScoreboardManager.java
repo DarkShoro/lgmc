@@ -1,17 +1,20 @@
 package fr.lightshoro.lgmc.managers;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.models.GamePlayer;
-import fr.lightshoro.lgmc.models.Role;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+
+import fr.lightshoro.lgmc.Lgmc;
+
+@SuppressWarnings("deprecation")
 public class ScoreboardManager {
     private final Lgmc plugin;
     private final Map<Player, Scoreboard> playerScoreboards;

@@ -73,6 +73,14 @@ public class ConfigManager {
                     defConfig.set("language", oldConfig.get("language"));
                 }
 
+                // Update checker settings (préserver si définis)
+                if (oldConfig.contains("update-checker.enabled")) {
+                    defConfig.set("update-checker.enabled", oldConfig.get("update-checker.enabled"));
+                }
+                if (oldConfig.contains("update-checker.include-prereleases")) {
+                    defConfig.set("update-checker.include-prereleases", oldConfig.get("update-checker.include-prereleases"));
+                }
+
                 // Locations (toujours préserver)
                 if (oldConfig.contains("locations")) {
                     defConfig.set("locations", oldConfig.get("locations"));
@@ -276,6 +284,14 @@ public class ConfigManager {
 
     public boolean isAngeEnabled() {
         return config.getBoolean("game.ange-enabled", true);
+    }
+
+    public boolean isUpdateCheckerEnabled() {
+        return config.getBoolean("update-checker.enabled", true);
+    }
+
+    public boolean isUpdateCheckerIncludePrereleases() {
+        return config.getBoolean("update-checker.include-prereleases", false);
     }
 
     public boolean isVoleurEnabled() {

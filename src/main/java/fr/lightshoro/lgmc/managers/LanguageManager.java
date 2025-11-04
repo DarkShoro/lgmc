@@ -1,12 +1,5 @@
 package fr.lightshoro.lgmc.managers;
 
-import fr.lightshoro.lgmc.Lgmc;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.checkerframework.framework.qual.DefaultQualifier;
-
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,9 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import fr.lightshoro.lgmc.Lgmc;
+
 /**
  * Gestionnaire de langue pour supporter plusieurs langues
  */
+@SuppressWarnings("deprecation")
 public class LanguageManager {
     private final Lgmc plugin;
     private FileConfiguration langConfig;

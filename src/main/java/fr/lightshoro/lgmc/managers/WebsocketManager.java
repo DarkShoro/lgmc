@@ -1,15 +1,17 @@
 package fr.lightshoro.lgmc.managers;
 
-import com.google.gson.JsonArray;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Logger;
+
 import org.bukkit.entity.Player;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import java.net.URI;
-import java.net.URISyntaxException;
-import fr.lightshoro.lgmc.Lgmc;
-import java.util.logging.Logger;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import fr.lightshoro.lgmc.Lgmc;
 
 public class WebsocketManager {
 

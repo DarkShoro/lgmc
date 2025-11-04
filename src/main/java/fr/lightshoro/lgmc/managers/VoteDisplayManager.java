@@ -1,23 +1,25 @@
 package fr.lightshoro.lgmc.managers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+
 import fr.lightshoro.lgmc.Lgmc;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Manages vote display features:
@@ -67,6 +69,7 @@ public class VoteDisplayManager {
             byte newFlags = (byte) (currentFlags | 0x40);
             
             // Create the data value list manually
+            @SuppressWarnings("removal")
             WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
             List<WrappedDataValue> dataValues = new ArrayList<>();
             dataValues.add(new WrappedDataValue(0, serializer, newFlags));
@@ -109,6 +112,7 @@ public class VoteDisplayManager {
             byte newFlags = (byte) (currentFlags & ~0x40);
             
             // Create the data value list manually
+            @SuppressWarnings("removal")
             WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
             List<WrappedDataValue> dataValues = new ArrayList<>();
             dataValues.add(new WrappedDataValue(0, serializer, newFlags));

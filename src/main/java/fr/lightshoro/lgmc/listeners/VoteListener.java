@@ -1,15 +1,11 @@
 package fr.lightshoro.lgmc.listeners;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.gui.CapitaineVoteGUI;
-import fr.lightshoro.lgmc.gui.LoupGarouGUI;
-import fr.lightshoro.lgmc.gui.TestamentGUI;
-import fr.lightshoro.lgmc.gui.VoteGUI;
-import fr.lightshoro.lgmc.managers.GameManager;
-import fr.lightshoro.lgmc.models.GamePlayer;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.Bukkit;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,6 +18,15 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.gui.CapitaineVoteGUI;
+import fr.lightshoro.lgmc.gui.LoupGarouGUI;
+import fr.lightshoro.lgmc.gui.TestamentGUI;
+import fr.lightshoro.lgmc.gui.VoteGUI;
+import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
+
+@SuppressWarnings("deprecation")
 public class VoteListener implements Listener {
     private final Lgmc plugin;
 
@@ -192,7 +197,6 @@ public class VoteListener implements Listener {
     public void handleWoodenHoe(PlayerInteractEvent event) {
         GameManager gm = plugin.getGameManager();
         Player player = event.getPlayer();
-        ItemStack item = event.getItem();
 
         if (!gm.isInGame()) {
             // Le jeu n'est pas en cours, permettre de tirer librement
@@ -233,7 +237,6 @@ public class VoteListener implements Listener {
     public void handleIronHoe(PlayerInteractEvent event) {
         GameManager gm = plugin.getGameManager();
         Player player = event.getPlayer();
-        ItemStack item = event.getItem();
 
         if (!gm.isInGame()) {
             // Le jeu n'est pas en cours, le vote n'a pas lieu d'être
@@ -264,7 +267,6 @@ public class VoteListener implements Listener {
 
     @EventHandler
     public void onRightClickWithHoe(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
         if (item == null) {
@@ -437,8 +439,6 @@ public class VoteListener implements Listener {
 
         // Check for block hit
         if (result.getHitBlock() != null) {
-            Block block = result.getHitBlock();
-            BlockFace face = result.getHitBlockFace();
             // Example: spawn particles at the hit position
             player.getWorld().spawnParticle(
                     Particle.CRIT,

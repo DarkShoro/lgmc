@@ -221,6 +221,14 @@ All commands support tab completion for easier use.
 ### Main Config (`config.yml`)
 
 ```yaml
+# Language
+language: en
+
+# Update checker
+update-checker:
+  enabled: true                # Enable update checking
+  include-prereleases: false   # Include pre-releases in update checks
+
 # Game settings
 game:
   min-players: 4

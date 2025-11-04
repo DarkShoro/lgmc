@@ -1,13 +1,14 @@
 package fr.lightshoro.lgmc.tasks;
 
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.managers.GameManager;
-import fr.lightshoro.lgmc.models.GamePlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
+
+@SuppressWarnings("deprecation")
 public class VoteCheckTask extends BukkitRunnable {
     private final Lgmc plugin;
 

@@ -1,18 +1,21 @@
 package fr.lightshoro.lgmc.gui;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.BrewingStandGui;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import fr.lightshoro.lgmc.Lgmc;
-import fr.lightshoro.lgmc.managers.GameManager;
-import fr.lightshoro.lgmc.models.GamePlayer;
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.BrewingStandGui;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 
+import fr.lightshoro.lgmc.Lgmc;
+import fr.lightshoro.lgmc.managers.GameManager;
+import fr.lightshoro.lgmc.models.GamePlayer;
+
+@SuppressWarnings("deprecation")
 public class SorciereGUI {
     private final Lgmc plugin;
     private final GameManager gm;
