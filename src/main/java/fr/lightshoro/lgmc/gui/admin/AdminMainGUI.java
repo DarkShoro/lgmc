@@ -97,9 +97,8 @@ public class AdminMainGUI {
 
         GuiItem reloadConfigItem = new GuiItem(reloadConfig, event -> {
             event.setCancelled(true);
-            plugin.getConfigManager().reload();
-            admin.sendMessage(plugin.getLanguageManager().getMessage("admin.main.reloaded"));
             admin.closeInventory();
+            admin.performCommand("lg reload");
         });
 
         // Close Button
