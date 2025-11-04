@@ -37,6 +37,9 @@ public class GameListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        // Initialiser le skin du joueur dans SkinsRestorer si nécessaire
+        plugin.getSkinManager().initializePlayerSkin(player);
+
         // Si une partie est en cours et que le joueur n'a pas de GamePlayer, le créer avec le rôle NOT_IN_GAME
         if (plugin.getGameManager().isInGame()) {
             GamePlayer gamePlayer = plugin.getGameManager().getGamePlayer(player);

@@ -54,6 +54,49 @@ public class SkinManager {
     }
 
     /**
+     * Initialise le skin d'un joueur dans la base de données SkinsRestorer
+     * Doit être appelé quand un joueur rejoint le serveur pour s'assurer que son skin est bien enregistré
+     */
+    public void initializePlayerSkin(Player player) {
+        if (!enabled || skinsRestorer == null) return;
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                SkinStorage skinStorage = skinsRestorer.getSkinStorage();
+                
+                // Vérifier si le joueur a déjà un skin enregistré
+                skinStorage.findSkinData(player.getName()).ifPresentOrElse(
+                    inputData -> {
+                        // Le skin existe déjà, tout va bien
+                        plugin.getLogger().fine("Player " + player.getName() + " already has a skin in the database");
+                    },
+                    () -> {
+                        // Le skin n'existe pas, essayer de le récupérer depuis Mojang
+                        try {
+                            plugin.getLogger().info("Initializing skin for player " + player.getName() + " in SkinsRestorer database...");
+                            
+                            // Utiliser l'API SkinsRestorer pour récupérer le skin depuis Mojang
+                            var skinDataResult = skinStorage.getPlayerSkin(player.getName(), false);
+                            
+                            skinDataResult.ifPresent(mojangSkinData -> {
+                                plugin.getLogger().info("Successfully initialized skin for " + player.getName());
+                            });
+                            
+                            if (!skinDataResult.isPresent()) {
+                                plugin.getLogger().warning("Could not retrieve skin from Mojang for " + player.getName());
+                            }
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("Failed to initialize skin for " + player.getName() + ": " + e.getMessage());
+                        }
+                    }
+                );
+            } catch (Exception e) {
+                plugin.getLogger().warning("Error checking/initializing skin for " + player.getName() + ": " + e.getMessage());
+            }
+        });
+    }
+
+    /**
      * Change le skin d'un loup-garou pour le skin personnalisé
      */
     public void setWerewolfSkin(Player player) {

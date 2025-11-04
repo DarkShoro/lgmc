@@ -85,6 +85,10 @@ public class RoleFinishers {
                 lg.sendMessage(plugin.getLanguageManager().getMessage("actions.loups-garous.no-target"));
             }
             plugin.getTimerManager().advanceTimer();
+            // Retire leur ironhoe aux loups-garous
+            for (Player lg : gm.getLoupGarous()) {
+                gm.clearRelevantItems(lg);
+            }
             return;
         }
 
@@ -97,6 +101,10 @@ public class RoleFinishers {
             gm.setNextLGTarget(target);
             gm.waitListAdd(target, "loupGarou");
             plugin.getTimerManager().advanceTimer();
+            // Retire leur ironhoe aux loups-garous
+            for (Player lg : gm.getLoupGarous()) {
+                gm.clearRelevantItems(lg);
+            }
             return;
         }
 
