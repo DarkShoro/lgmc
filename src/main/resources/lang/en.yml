@@ -49,11 +49,11 @@ roles:
     title: "&6You are a {roles.villageois.name}"
     subtitle: "&6You win with the {general.village}"
   petite-fille:
-    name: "&a&lLittle Girl"
+    name: "&a&lInsomniac"
     title: "&6You are the {roles.petite-fille.name}"
     subtitle: "&6You win with the {general.village}"
   voyante:
-    name: "&a&lSeer"
+    name: "&a&lPsychic"
     title: "&6You are the {roles.voyante.name}"
     subtitle: "&6You win with the {general.village}"
   sorciere:

@@ -23,7 +23,7 @@ A feature-complete Minecraft implementation of the classic Werewolf social deduc
 
 ### Core Gameplay
 - **4-12 Players** - Balanced role distribution
-- **9 Unique Roles** - Werewolf, Seer, Witch, Hunter, Cupid, Little Girl, Thief, Angel, Villager
+- **9 Unique Roles** - Werewolf, Psychic, Witch, Hunter, Cupid, Insomniac, Thief, Angel, Villager
 - **Day/Night Cycles** - Automated phase management with visual effects
 - **Captain System** - Election, tie-breaking, succession
 - **Lovers Mechanic** - Linked fate and private communication with `<3` prefix
@@ -159,7 +159,7 @@ All commands support tab completion for easier use.
 
 ### Village Team
 
-**👁️ Seer (Voyante)**
+**👁️ Psychic (Voyante)**
 - Investigate one player's role each night
 - Guides village with information
 
@@ -176,7 +176,7 @@ All commands support tab completion for easier use.
 - Creates special win condition
 - Enabled with 9+ players (configurable)
 
-**👧 Little Girl (Petite Fille)**
+**👧 Insomniac (Petite Fille)**
 - Spy on werewolves during night (anonymous)
 - Risk/reward information gathering
 
@@ -282,9 +282,9 @@ Change with `/lg reload` without restart.
 1. **Thief** (first night only, if present) - Steal a role
 2. **Cupid** (first night only) - Choose lovers
 3. **Lovers Meet** (first night only) - Reveal each other
-4. **Seer** - Investigate player
+4. **Psychic** - Investigate player
 5. **Werewolves** - Designate victim (skins transform with SkinsRestorer)
-6. **Little Girl** - Spy on werewolves
+6. **Insomniac** - Spy on werewolves
 7. **Witch** - Use potions
 
 ### Day Sequence
