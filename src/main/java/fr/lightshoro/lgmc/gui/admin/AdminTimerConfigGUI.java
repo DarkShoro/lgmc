@@ -76,7 +76,7 @@ public class AdminTimerConfigGUI {
         pane.addItem(backItem, 0, 5);
 
         // Save button
-        ItemStack save = new ItemStack(Material.FEATHER);
+        ItemStack save = new ItemStack(Material.CLAY_BALL);
         ItemMeta saveMeta = save.getItemMeta();
         if (saveMeta != null) {
             saveMeta.setDisplayName(plugin.getLanguageManager().getMessage("admin.roles.save"));
