@@ -55,13 +55,52 @@ public class VoteListener implements Listener {
             GamePlayer gp = gm.getGamePlayer(player);
             
             // Skip pour les votes
-            if ("doCapitaine".equals(gameStep) && !gp.isDidVoteForCapitaine()) {
-                gp.setDidVoteForCapitaine(true);
-                player.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.no-vote"));
+            if ("doCapitaine".equals(gameStep)) {
+                // If the player already voted, remove their previous vote (vote blank)
+                if (gp.isDidVoteForCapitaine()) {
+                    Player previousVote = gp.getVotedCapitaine();
+                    if (previousVote != null) {
+                        int currentVotes = gm.getVoteCapitaine().getOrDefault(previousVote, 0);
+                        if (currentVotes > 0) {
+                            gm.getVoteCapitaine().put(previousVote, currentVotes - 1);
+                        }
+                        // Remove glow effect
+                        plugin.getVoteDisplayManager().removeGlowEffect(player, previousVote);
+                        // Update vote displays
+                        plugin.getVoteDisplayManager().updateCapitaineVoteDisplays();
+                    }
+                    // Mark as having voted but with no vote registered (blank vote)
+                    gp.setVotedCapitaine(null);
+                    player.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.no-vote"));
+                } else {
+                    // First time clicking skip
+                    gp.setDidVoteForCapitaine(true);
+                    player.sendMessage(plugin.getLanguageManager().getMessage("vote.capitaine.no-vote"));
+                }
                 return;
-            } else if ("doVote".equals(gameStep) && !gp.isDidVote()) {
-                gp.setDidVote(true);
-                player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.no-vote"));
+            } else if ("doVote".equals(gameStep)) {
+                // If the player already voted, remove their previous vote (vote blank)
+                if (gp.isDidVote()) {
+                    Player previousVote = gp.getVotedPlayer();
+                    if (previousVote != null) {
+                        int voteValue = (player.equals(gm.getCapitaine())) ? 2 : 1;
+                        int currentVotes = gm.getVoteCount().getOrDefault(previousVote, 0);
+                        if (currentVotes >= voteValue) {
+                            gm.getVoteCount().put(previousVote, currentVotes - voteValue);
+                        }
+                        // Remove glow effect
+                        plugin.getVoteDisplayManager().removeGlowEffect(player, previousVote);
+                        // Update vote displays
+                        plugin.getVoteDisplayManager().updateAllVoteDisplays();
+                    }
+                    // Mark as having voted but with no vote registered (blank vote)
+                    gp.setVotedPlayer(null);
+                    player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.no-vote"));
+                } else {
+                    // First time clicking skip
+                    gp.setDidVote(true);
+                    player.sendMessage(plugin.getLanguageManager().getMessage("vote.day.no-vote"));
+                }
                 return;
             } else if ("doVoyante".equals(gameStep) && player.equals(gm.getVoyante()) && !gm.isVoyanteSondage()) {
                 gm.setVoyanteSondage(true);

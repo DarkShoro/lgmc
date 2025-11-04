@@ -538,6 +538,9 @@ public class GameManager {
      * Annonce la victoire de l'Ange
      */
     private void announceAngeVictory(Player ange) {
+        // Play the kill animation (lightning strike) before announcing victory
+        ange.getWorld().strikeLightningEffect(ange.getLocation());
+
         for (Player player : playingPlayers) {
             if (player.equals(ange)) {
                 player.sendTitle(plugin.getLanguageManager().getMessage("victory.ange.title"),
@@ -826,48 +829,64 @@ public class GameManager {
         }
 
         // Distribution du Voleur (seulement si seuil atteint, avec chance configurable et si activé)
-        boolean voleurEnabled = plugin.getConfigManager().isVoleurEnabled();
-        double voleurChance = plugin.getConfigManager().getVoleurChance();
-        int voleurThreshold = plugin.getConfigManager().getVoleurThreshold();
-        if (voleurEnabled && playerNumber >= voleurThreshold && Math.random() < voleurChance && !allPlayers.isEmpty()) {
+        if (plugin.getConfigManager().isRoleEnabled("voleur") && 
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("voleur") && 
+            Math.random() < plugin.getConfigManager().getRoleChance("voleur") && 
+            !allPlayers.isEmpty()) {
             voleur = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(voleur);
         }
 
-        // Distribution de Cupidon si seuil atteint
-        int cupidonThreshold = plugin.getConfigManager().getCupidonThreshold();
-        if (playerNumber >= cupidonThreshold && !allPlayers.isEmpty()) {
+        // Distribution de Cupidon si seuil atteint, activé et chance respectée
+        if (plugin.getConfigManager().isRoleEnabled("cupidon") &&
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("cupidon") &&
+            Math.random() < plugin.getConfigManager().getRoleChance("cupidon") &&
+            !allPlayers.isEmpty()) {
             cupidon = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(cupidon);
         }
 
-        // Distribution de l'Ange si seuil atteint
-        int angeThreshold = plugin.getConfigManager().getAngeThreshold();
-        if (playerNumber >= angeThreshold && !allPlayers.isEmpty()) {
+        // Distribution de l'Ange si seuil atteint, activé et chance respectée
+        if (plugin.getConfigManager().isRoleEnabled("ange") &&
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("ange") &&
+            Math.random() < plugin.getConfigManager().getRoleChance("ange") &&
+            !allPlayers.isEmpty()) {
             ange = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(ange);
         }
 
-        // Distribution de la Petite Fille
-        if (!allPlayers.isEmpty()) {
+        // Distribution de la Petite Fille si activée, seuil atteint et chance respectée
+        if (plugin.getConfigManager().isRoleEnabled("petite-fille") &&
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("petite-fille") &&
+            Math.random() < plugin.getConfigManager().getRoleChance("petite-fille") &&
+            !allPlayers.isEmpty()) {
             petiteFille = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(petiteFille);
         }
 
-        // Distribution du Chasseur
-        if (!allPlayers.isEmpty()) {
+        // Distribution du Chasseur si activé, seuil atteint et chance respectée
+        if (plugin.getConfigManager().isRoleEnabled("chasseur") &&
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("chasseur") &&
+            Math.random() < plugin.getConfigManager().getRoleChance("chasseur") &&
+            !allPlayers.isEmpty()) {
             chasseur = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(chasseur);
         }
 
-        // Distribution de la Sorcière
-        if (!allPlayers.isEmpty()) {
+        // Distribution de la Sorcière si activée, seuil atteint et chance respectée
+        if (plugin.getConfigManager().isRoleEnabled("sorciere") &&
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("sorciere") &&
+            Math.random() < plugin.getConfigManager().getRoleChance("sorciere") &&
+            !allPlayers.isEmpty()) {
             sorciere = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(sorciere);
         }
 
-        // Distribution de la Voyante
-        if (!allPlayers.isEmpty()) {
+        // Distribution de la Voyante si activée, seuil atteint et chance respectée
+        if (plugin.getConfigManager().isRoleEnabled("voyante") &&
+            playerNumber >= plugin.getConfigManager().getRoleThreshold("voyante") &&
+            Math.random() < plugin.getConfigManager().getRoleChance("voyante") &&
+            !allPlayers.isEmpty()) {
             voyante = allPlayers.get((int)(Math.random() * allPlayers.size()));
             allPlayers.remove(voyante);
         }

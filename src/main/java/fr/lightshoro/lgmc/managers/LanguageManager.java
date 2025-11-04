@@ -231,6 +231,30 @@ public class LanguageManager {
     }
 
     /**
+     * Récupère une liste de messages traduits
+     */
+    public java.util.List<String> getMessageList(String path) {
+        // Si, pour n'importe quelle raison, le path a un _, le remplacer par un -
+        path = path.replace("_", "-");
+
+        java.util.List<String> messages = langConfig.getStringList(path);
+        if (messages == null || messages.isEmpty()) {
+            plugin.getLogger().warning("Liste de messages manquante pour la clé: " + path);
+            return java.util.Arrays.asList(path);
+        }
+
+        // Traduire les codes couleur pour chaque message
+        java.util.List<String> translatedMessages = new java.util.ArrayList<>();
+        for (String message : messages) {
+            String translated = ChatColor.translateAlternateColorCodes('&', message);
+            translated = resolveInternalReferences(translated);
+            translatedMessages.add(translated);
+        }
+
+        return translatedMessages;
+    }
+
+    /**
      * Change la langue
      */
     public void setLanguage(String language) {

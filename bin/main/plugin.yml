@@ -1,5 +1,5 @@
 name: lgmc
-version: '5.0.5'
+version: '5.1.0'
 main: fr.lightshoro.lgmc.Lgmc
 api-version: '1.21'
 description: Plugin de jeu Loup-Garou pour Minecraft (4+ joueurs, basé sur le nombre de spawns)

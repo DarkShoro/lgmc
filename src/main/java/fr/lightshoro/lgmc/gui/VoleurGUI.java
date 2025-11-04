@@ -48,6 +48,22 @@ public class VoleurGUI {
 
         GuiItem skipGuiItem = new GuiItem(skipItem, event -> {
             event.setCancelled(true);
+            
+            // Transform Voleur into Villageois when skipping
+            GamePlayer voleurGp = gm.getGamePlayer(voleur);
+            if (voleurGp != null) {
+                voleurGp.setRole(Role.VILLAGEOIS);
+                gm.removePlayerFromRole(voleur);
+                
+                // Update item in hand to Villageois
+                voleur.getInventory().setItemInOffHand(
+                    plugin.getConfigManager().getRoleHelmetItemStack("villageois")
+                );
+                
+                // Update scoreboard to reflect role change
+                plugin.getScoreboardManager().updateScoreboards();
+            }
+            
             voleur.sendMessage(plugin.getLanguageManager().getMessage("actions.voleur.no-steal"));
             gm.setVoleurAction(true);
             plugin.getTimerManager().advanceTimer();
@@ -127,6 +143,20 @@ public class VoleurGUI {
             }
             
             if (!gm.isVoleurAction()) {
+                // Transform Voleur into Villageois when closing GUI without action
+                if (gp != null) {
+                    gp.setRole(Role.VILLAGEOIS);
+                    gm.removePlayerFromRole(voleur);
+                    
+                    // Update item in hand to Villageois
+                    voleur.getInventory().setItemInOffHand(
+                        plugin.getConfigManager().getRoleHelmetItemStack("villageois")
+                    );
+                    
+                    // Update scoreboard to reflect role change
+                    plugin.getScoreboardManager().updateScoreboards();
+                }
+                
                 voleur.sendMessage(plugin.getLanguageManager().getMessage("actions.voleur.no-steal"));
                 gm.setVoleurAction(true);
                 plugin.getTimerManager().advanceTimer();

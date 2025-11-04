@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ConfigManager {
     private final Lgmc plugin;
     private FileConfiguration config;
-    private final int CURRENT_CONFIG_VERSION = 8;
+    private final int CURRENT_CONFIG_VERSION = 9;
 
     public ConfigManager(Lgmc plugin) {
         this.plugin = plugin;
@@ -93,27 +93,45 @@ public class ConfigManager {
                 if (oldConfig.contains("game.two-wolves-threshold")) {
                     defConfig.set("game.two-wolves-threshold", oldConfig.get("game.two-wolves-threshold"));
                 }
+                
+                // Migrate old role config to new format (version 9+)
                 if (oldConfig.contains("game.cupidon-threshold")) {
-                    defConfig.set("game.cupidon-threshold", oldConfig.get("game.cupidon-threshold"));
-                }
-                if (oldConfig.contains("game.ange-threshold")) {
-                    defConfig.set("game.ange-threshold", oldConfig.get("game.ange-threshold"));
-                }
-                if (oldConfig.contains("game.voleur-threshold")) {
-                    defConfig.set("game.voleur-threshold", oldConfig.get("game.voleur-threshold"));
+                    defConfig.set("game.roles.cupidon.threshold", oldConfig.get("game.cupidon-threshold"));
                 }
                 if (oldConfig.contains("game.cupidon-enabled")) {
-                    defConfig.set("game.cupidon-enabled", oldConfig.get("game.cupidon-enabled"));
+                    defConfig.set("game.roles.cupidon.enabled", oldConfig.get("game.cupidon-enabled"));
+                }
+                if (oldConfig.contains("game.ange-threshold")) {
+                    defConfig.set("game.roles.ange.threshold", oldConfig.get("game.ange-threshold"));
                 }
                 if (oldConfig.contains("game.ange-enabled")) {
-                    defConfig.set("game.ange-enabled", oldConfig.get("game.ange-enabled"));
+                    defConfig.set("game.roles.ange.enabled", oldConfig.get("game.ange-enabled"));
+                }
+                if (oldConfig.contains("game.voleur-threshold")) {
+                    defConfig.set("game.roles.voleur.threshold", oldConfig.get("game.voleur-threshold"));
                 }
                 if (oldConfig.contains("game.voleur-enabled")) {
-                    defConfig.set("game.voleur-enabled", oldConfig.get("game.voleur-enabled"));
+                    defConfig.set("game.roles.voleur.enabled", oldConfig.get("game.voleur-enabled"));
                 }
                 if (oldConfig.contains("game.voleur-chance")) {
-                    defConfig.set("game.voleur-chance", oldConfig.get("game.voleur-chance"));
+                    defConfig.set("game.roles.voleur.chance", oldConfig.get("game.voleur-chance"));
                 }
+                
+                // Preserve new role config if already migrated
+                if (oldConfig.contains("game.roles")) {
+                    for (String role : new String[]{"cupidon", "ange", "voleur", "petite-fille", "chasseur", "sorciere", "voyante"}) {
+                        if (oldConfig.contains("game.roles." + role + ".enabled")) {
+                            defConfig.set("game.roles." + role + ".enabled", oldConfig.get("game.roles." + role + ".enabled"));
+                        }
+                        if (oldConfig.contains("game.roles." + role + ".threshold")) {
+                            defConfig.set("game.roles." + role + ".threshold", oldConfig.get("game.roles." + role + ".threshold"));
+                        }
+                        if (oldConfig.contains("game.roles." + role + ".chance")) {
+                            defConfig.set("game.roles." + role + ".chance", oldConfig.get("game.roles." + role + ".chance"));
+                        }
+                    }
+                }
+                
                 if (oldConfig.contains("game.countdown-duration")) {
                     defConfig.set("game.countdown-duration", oldConfig.get("game.countdown-duration"));
                 }
@@ -266,24 +284,53 @@ public class ConfigManager {
         return config.getInt("game.two-wolves-threshold", 9);
     }
 
+    // Role configuration getters - new unified system
+    public boolean isRoleEnabled(String roleName) {
+        return config.getBoolean("game.roles." + roleName + ".enabled", true);
+    }
+
+    public int getRoleThreshold(String roleName) {
+        return config.getInt("game.roles." + roleName + ".threshold", 0);
+    }
+
+    public double getRoleChance(String roleName) {
+        return config.getDouble("game.roles." + roleName + ".chance", 1.0);
+    }
+
+    // Backward compatibility getters (deprecated but kept for compatibility)
+    @Deprecated
     public int getCupidonThreshold() {
-        return config.getInt("game.cupidon-threshold", 9);
+        return getRoleThreshold("cupidon");
     }
 
+    @Deprecated
     public int getAngeThreshold() {
-        return config.getInt("game.ange-threshold", 9);
+        return getRoleThreshold("ange");
     }
 
+    @Deprecated
     public int getVoleurThreshold() {
-        return config.getInt("game.voleur-threshold", 6);
+        return getRoleThreshold("voleur");
     }
 
+    @Deprecated
     public boolean isCupidonEnabled() {
-        return config.getBoolean("game.cupidon-enabled", true);
+        return isRoleEnabled("cupidon");
     }
 
+    @Deprecated
     public boolean isAngeEnabled() {
-        return config.getBoolean("game.ange-enabled", true);
+        return isRoleEnabled("ange");
+    }
+
+    @Deprecated
+    public boolean isVoleurEnabled() {
+        return isRoleEnabled("voleur");
+    }
+
+    @Deprecated
+    public double getVoleurChance() {
+        return getRoleChance("voleur");
     }
 
     public boolean isUpdateCheckerEnabled() {
@@ -292,14 +339,6 @@ public class ConfigManager {
 
     public boolean isUpdateCheckerIncludePrereleases() {
         return config.getBoolean("update-checker.include-prereleases", false);
-    }
-
-    public boolean isVoleurEnabled() {
-        return config.getBoolean("game.voleur-enabled", true);
-    }
-
-    public double getVoleurChance() {
-        return config.getDouble("game.voleur-chance", 0.5);
     }
 
     public int getCountdownDuration() {

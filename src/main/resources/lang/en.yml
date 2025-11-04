@@ -372,3 +372,100 @@ motd:
   in-progress: "&cGame in progress &9| You can spectate!"
   starting: "Starting soon! &9| Join quickly!"
   full: "&cServer full &9| Try again later!"
+
+# Admin GUI
+admin:
+  main:
+    title: "&c&lAdmin Configuration"
+    role-config: "&6Role Configuration"
+    role-config-desc:
+      - "&7Enable/disable roles"
+      - "&7Configure spawn chances"
+      - "&7Set player thresholds"
+    game-settings: "&6Game Settings"
+    game-settings-desc:
+      - "&7Minimum players"
+      - "&7Wolf thresholds"
+      - "&7Countdown duration"
+    timer-config: "&6Timer Configuration"
+    timer-config-desc:
+      - "&7Configure phase durations"
+      - "&7Set custom timers"
+      - "&7Optimize game flow"
+    save: "&aSave Configuration"
+    save-desc:
+      - "&7Save all changes to config.yml"
+      - "&eClick to save"
+    reload: "&eReload Configuration"
+    reload-desc:
+      - "&7Reload config from file"
+      - "&cUnsaved changes will be lost!"
+    close: "&cClose"
+    saved: "&aConfiguration saved successfully!"
+    reloaded: "&eConfiguration reloaded!"
+  
+  roles:
+    title: "&6Role Configuration"
+    enabled: "&aEnabled"
+    disabled: "&cDisabled"
+    status: "&7Status: {status}"
+    threshold: "&7Threshold: &e{threshold} players"
+    chance: "&7Chance: &e{chance}%"
+    toggle: "&eLeft-click: &fToggle enable/disable"
+    configure: "&eRight-click: &fConfigure settings"
+    enabled-msg: "&6{role} &7is now &aenabled"
+    disabled-msg: "&6{role} &7is now &cdisabled"
+    saved: "&aRole configuration saved!"
+    back: "&e← Back"
+    save: "&aSave Changes"
+  
+  role-detail:
+    title: "&6{role} Configuration"
+    player-threshold: "&bPlayer Threshold"
+    threshold-current: "&7Current: &e{threshold} players"
+    threshold-desc: "&7Minimum players needed for this role"
+    spawn-chance: "&dSpawn Chance"
+    chance-current: "&7Current: &e{chance}%"
+    chance-desc: "&7Probability of role appearing"
+    decrease: "&c- Decrease"
+    increase: "&a+ Increase"
+    decrease-lore:
+      - "&7Left-click: {small}"
+      - "&7Right-click: {large}"
+    increase-lore:
+      - "&7Left-click: {small}"
+      - "&7Right-click: {large}"
+    set-to: "&eSet to {value}"
+    threshold-set: "&6{role} &7threshold set to &e{value}"
+    chance-set: "&6{role} &7chance set to &e{value}%"
+  
+  game:
+    title: "&6Game Settings"
+    min-players: "&bMinimum Players"
+    two-wolves: "&bTwo Wolves Threshold"
+    countdown: "&bCountdown Duration"
+    current: "&7Current: &e{value}"
+    range: "&7Range: {min}-{max}"
+    set: "&6{setting} &7set to &e{value}"
+    saved: "&aGame settings saved!"
+  
+  timers:
+    title: "&6Timer Configuration"
+    voleur: "&eThief"
+    cupidon: "&eCupid"
+    voyante: "&ePsychic"
+    loups-garous: "&eWerewolves"
+    sorciere: "&eWitch"
+    vote-capitaine: "&eCaptain Vote"
+    debat: "&eDebate"
+    chasseur: "&eHunter"
+    succession: "&eCaptain Succession"
+    tiebreaker: "&eCaptain Tiebreaker"
+    current: "&7Current: &e{time} seconds"
+    controls:
+      - "&eLeft-click: &f+10s"
+      - "&eRight-click: &f-10s"
+      - "&eShift+Left: &f+30s"
+      - "&eShift+Right: &f-30s"
+    set: "&6{timer} &7timer set to &e{time} seconds"
+    saved: "&aTimer configuration saved!"

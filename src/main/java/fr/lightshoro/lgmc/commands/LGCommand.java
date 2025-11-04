@@ -2,6 +2,7 @@ package fr.lightshoro.lgmc.commands;
 
 import fr.lightshoro.lgmc.Lgmc;
 import fr.lightshoro.lgmc.gui.*;
+import fr.lightshoro.lgmc.gui.admin.AdminMainGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -69,6 +70,9 @@ public class LGCommand implements CommandExecutor, TabCompleter {
             }
             case "gui" -> {
                 return handleGui(sender, args);
+            }
+            case "admin", "config" -> {
+                return handleAdmin(sender, args);
             }
             case "neighbors", "voisins" -> {
                 return handleNeighbors(sender, args);
@@ -321,6 +325,21 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean handleAdmin(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("lgmc.admin")) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
+            return true;
+        }
+
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.player-only"));
+            return true;
+        }
+
+        new AdminMainGUI(plugin).open(player);
+        return true;
+    }
+
     private boolean handleNeighbors(CommandSender sender, String[] args) {
         if (!sender.hasPermission("lgmc.debug")) {
             sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
@@ -430,6 +449,7 @@ public class LGCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("§e/lg reset §f- Réinitialiser la partie en cours");
         sender.sendMessage("§e/lg reload §f- Recharger la configuration");
         sender.sendMessage("§e/lg setup <type> [args] §f- Configuration du jeu");
+        sender.sendMessage("§e/lg admin §f- Ouvrir le panneau de configuration admin");
         sender.sendMessage("§e/lg gui <type> §f- Ouvrir un GUI (debug)");
         sender.sendMessage("§e/lg neighbors <player> §f- Afficher les voisins d'un joueur (debug)");
         sender.sendMessage("§e/lg testskin <apply|restore> [player] §f- Tester les skins (debug)");
@@ -473,7 +493,7 @@ public class LGCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             // Sous-commandes principales
-            List<String> subCommands = Arrays.asList("start", "stop", "reset", "reload", "setup", "gui", "neighbors", "voisins", "testskin", "help");
+            List<String> subCommands = Arrays.asList("start", "stop", "reset", "reload", "setup", "admin", "config", "gui", "neighbors", "voisins", "testskin", "help");
             return subCommands.stream()
                     .filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());

@@ -375,3 +375,100 @@ motd:
   in-progress: "&cPartie en cours &9| Vous pouvez observer!"
   starting: "&aDémarrage imminent &9| Rejoignez vite!"
   full: "&cServeur plein | Réessayez plus tard!"
+
+# Admin GUI
+admin:
+  main:
+    title: "&c&lConfiguration Admin"
+    role-config: "&6Configuration des Rôles"
+    role-config-desc:
+      - "&7Activer/désactiver les rôles"
+      - "&7Configurer les chances d'apparition"
+      - "&7Définir les seuils de joueurs"
+    game-settings: "&6Paramètres de Jeu"
+    game-settings-desc:
+      - "&7Joueurs minimum"
+      - "&7Seuils de loups"
+      - "&7Durée du compte à rebours"
+    timer-config: "&6Configuration des Timers"
+    timer-config-desc:
+      - "&7Configurer les durées des phases"
+      - "&7Définir des timers personnalisés"
+      - "&7Optimiser le déroulement du jeu"
+    save: "&aSauvegarder la Configuration"
+    save-desc:
+      - "&7Sauvegarder tous les changements dans config.yml"
+      - "&eCliquez pour sauvegarder"
+    reload: "&eRecharger la Configuration"
+    reload-desc:
+      - "&7Recharger la config depuis le fichier"
+      - "&cLes changements non sauvegardés seront perdus !"
+    close: "&cFermer"
+    saved: "&aConfiguration sauvegardée avec succès !"
+    reloaded: "&eConfiguration rechargée !"
+  
+  roles:
+    title: "&6Configuration des Rôles"
+    enabled: "&aActivé"
+    disabled: "&cDésactivé"
+    status: "&7Statut: {status}"
+    threshold: "&7Seuil: &e{threshold} joueurs"
+    chance: "&7Chance: &e{chance}%"
+    toggle: "&eClic gauche: &fActiver/désactiver"
+    configure: "&eClic droit: &fConfigurer les paramètres"
+    enabled-msg: "&6{role} &7est maintenant &aactivé"
+    disabled-msg: "&6{role} &7est maintenant &cdésactivé"
+    saved: "&aConfiguration des rôles sauvegardée !"
+    back: "&e← Retour"
+    save: "&aSauvegarder les Changements"
+  
+  role-detail:
+    title: "&6Configuration de {role}"
+    player-threshold: "&bSeuil de Joueurs"
+    threshold-current: "&7Actuel: &e{threshold} joueurs"
+    threshold-desc: "&7Nombre minimum de joueurs requis pour ce rôle"
+    spawn-chance: "&dChance d'Apparition"
+    chance-current: "&7Actuel: &e{chance}%"
+    chance-desc: "&7Probabilité d'apparition du rôle"
+    decrease: "&c- Diminuer"
+    increase: "&a+ Augmenter"
+    decrease-lore:
+      - "&7Clic gauche: {small}"
+      - "&7Clic droit: {large}"
+    increase-lore:
+      - "&7Clic gauche: {small}"
+      - "&7Clic droit: {large}"
+    set-to: "&eDéfinir à {value}"
+    threshold-set: "&6{role} &7seuil défini à &e{value}"
+    chance-set: "&6{role} &7chance définie à &e{value}%"
+  
+  game:
+    title: "&6Paramètres de Jeu"
+    min-players: "&bJoueurs Minimum"
+    two-wolves: "&bSeuil Deux Loups"
+    countdown: "&bDurée du Compte à Rebours"
+    current: "&7Actuel: &e{value}"
+    range: "&7Plage: {min}-{max}"
+    set: "&6{setting} &7défini à &e{value}"
+    saved: "&aParamètres de jeu sauvegardés !"
+  
+  timers:
+    title: "&6Configuration des Timers"
+    voleur: "&eVoleur"
+    cupidon: "&eCupidon"
+    voyante: "&eVoyante"
+    loups-garous: "&eLoups-Garous"
+    sorciere: "&eSorcière"
+    vote-capitaine: "&eVote Capitaine"
+    debat: "&eDébat"
+    chasseur: "&eChasseur"
+    succession: "&eSuccession Capitaine"
+    tiebreaker: "&eDépartage Capitaine"
+    current: "&7Actuel: &e{time} secondes"
+    controls:
+      - "&eClic gauche: &f+10s"
+      - "&eClic droit: &f-10s"
+      - "&eShift+Clic gauche: &f+30s"
+      - "&eShift+Clic droit: &f-30s"
+    set: "&6{timer} &7timer défini à &e{time} secondes"
+    saved: "&aConfiguration des timers sauvegardée !"

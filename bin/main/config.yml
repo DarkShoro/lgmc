@@ -4,7 +4,7 @@
 # ============================================
 
 # Ne modifiez pas cette valeur - elle permet la mise à jour automatique de la config
-config-version: 8
+config-version: 9
 
 # Langue du plugin (fr, en)
 language: en
@@ -60,27 +60,46 @@ game:
   # Nombre de joueurs pour avoir 2 loups-garous
   two-wolves-threshold: 9
 
-  # Nombre minimum de joueurs pour Cupidon
-  cupidon-threshold: 9
-
-  # Nombre minimum de joueurs pour l'Ange
-  ange-threshold: 9
-
-  # Nombre minimum de joueurs pour le Voleur
-  voleur-threshold: 6
-
-  # Activer Cupidon
-  cupidon-enabled: true
-
-  # Activer l'Ange
-  ange-enabled: true
-
-  # Activer le Voleur
-  voleur-enabled: true
-
-  # Chance d'apparition du Voleur (0.0 = jamais, 1.0 = toujours)
-  # Le Voleur peut voler le rôle d'un joueur lors de la première nuit
-  voleur-chance: 0.5
+  # Configuration des rôles
+  # Format pour chaque rôle:
+  #   enabled: true/false - Activer ou désactiver le rôle
+  #   threshold: nombre - Nombre minimum de joueurs pour que le rôle apparaisse
+  #   chance: 0.0-1.0 - Probabilité d'apparition (1.0 = toujours, 0.5 = 50%, etc.)
+  roles:
+    cupidon:
+      enabled: true
+      threshold: 9
+      chance: 1.0
+    
+    ange:
+      enabled: true
+      threshold: 9
+      chance: 1.0
+    
+    voleur:
+      enabled: true
+      threshold: 6
+      chance: 0.5
+    
+    petite-fille:
+      enabled: true
+      threshold: 0
+      chance: 1.0
+    
+    chasseur:
+      enabled: true
+      threshold: 0
+      chance: 1.0
+    
+    sorciere:
+      enabled: true
+      threshold: 0
+      chance: 1.0
+    
+    voyante:
+      enabled: true
+      threshold: 0
+      chance: 1.0
 
   # Durée du compte à rebours avant le début (secondes)
   countdown-duration: 10
@@ -125,7 +144,7 @@ roles:
   # Casques des rôles (items Minecraft)
   helmets:
     loup-garou: RED_DYE
-    villageois: LIME_DYE
+    villageois: GREEN_DYE
     petite-fille: PURPLE_DYE
     voyante: PINK_DYE
     sorciere: GRAY_DYE
