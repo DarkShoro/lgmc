@@ -586,6 +586,26 @@ public class RoleFinishers {
         plugin.getTimerManager().advanceTimer();
     }
     
+    public void finishCupidon() {
+        if (gm.getCupidon() != null) {
+            // Re-hide players and re-apply blindness to Cupidon
+            gm.getCupidon().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false));
+            for (Player player : gm.getPlayersAlive()) {
+                gm.getCupidon().hidePlayer(plugin, player);
+            }
+            
+            // Nettoyer l'inventaire de Cupidon
+            gm.clearRelevantItems(gm.getCupidon());
+        }
+        
+        if (!gm.isCupidonAction()) {
+            if (gm.getCupidon() != null) {
+                gm.getCupidon().sendMessage(plugin.getLanguageManager().getMessage("actions.cupidon.no-action"));
+            }
+        }
+        
+        plugin.getTimerManager().advanceTimer();
+    }
 
 }
 

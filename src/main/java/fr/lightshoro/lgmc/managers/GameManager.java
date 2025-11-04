@@ -191,7 +191,8 @@ public class GameManager {
                 player.showPlayer(plugin, other);
             }
 
-         
+            // Clear relevant items from inventory (including netherite scrap)
+            clearRelevantItems(player);
 
             // If the player have any kind of inventory GUI open, close it
             player.closeInventory();
@@ -1253,6 +1254,9 @@ public class GameManager {
             case "doVoleur":
                 finishers.finishVoleur();
                 break;
+            case "doCupidon":
+                finishers.finishCupidon();
+                break;
             case "doVoyante":
                 finishers.finishVoyante();
                 break;
@@ -1326,6 +1330,12 @@ public class GameManager {
         plugin.getTimerManager().defineTimer(plugin.getLanguageManager().getMessage("actions.cupidon.timer"), 60);
 
         cupidonAction = false;
+        
+        // Remove blindness and show players to Cupidon
+        cupidon.removePotionEffect(PotionEffectType.BLINDNESS);
+        for (Player player : playersAlive) {
+            cupidon.showPlayer(plugin, player);
+        }
         
         // En mode clic, ne pas ouvrir le GUI, juste donner les instructions
         if (plugin.getConfigManager().isClickVoteMode()) {
